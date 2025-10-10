@@ -1,0 +1,1256 @@
+<?xml version="1.0"?>
+<!--
+	This xml have been constructed by cross referencing information from
+	the freemint documentation, the Atari compendium and the GEM programmers reference.
+	When they didn't agree, the two that agreed won.
+	There is a lot of disagreement between the documents, so the validity of this xml
+	can be regarded as potentially inaccurate and in need of verification.
+	Maybe adding a comment or attribute for verified function?
+	Some functions are designed for specific versions of vdi. Maybe include that in an attribute
+	so it is possible to generate code for a specified version?
+-->
+<vdi>
+	<include name="&quot;vdi_def.h&quot;" />
+	<structs>
+		<typedef typename="fix31" type="int32_t" />
+		<callback name="INT16_VDI_CB">
+			<return type="int16_t" />
+		</callback>
+		<struct name="VDIPARBLK" extern="vdiparblk">
+			<member name="contrl" type="int16_t[16]"/>
+			<member name="intin" type="int16_t[256]"/>
+			<member name="ptsin" type="int16_t[256]"/>
+			<member name="intout" type="int16_t[256]"/>
+			<member name="ptsout" type="int16_t[256]"/>
+		</struct>
+
+		<struct name="VDIPB" extern="vdipb">
+			<member name="contrl" type="int16_t*"/>
+			<member name="intin" type="int16_t*"/>
+			<member name="ptsin" type="int16_t*"/>
+			<member name="intout" type="int16_t*"/>
+			<member name="ptsout" type="int16_t*"/>
+		</struct>
+
+		<struct name="MFDB">
+			<member name="fd_addr" type="void*"/>
+			<member name="fd_w" type="int16_t"/>
+			<member name="fd_h" type="int16_t"/>
+			<member name="fd_wdwidth" type="int16_t"/>
+			<member name="fd_stand" type="int16_t"/>
+			<member name="fd_nplanes" type="int16_t"/>
+			<member name="fd_r1" type="int16_t"/>
+			<member name="fd_r2" type="int16_t"/>
+			<member name="fd_r3" type="int16_t"/>
+		</struct>
+		<struct name="MFORM">
+			<member name="mf_xhot" type="int16_t"/>
+			<member name="mf_yhot" type="int16_t"/>
+			<member name="mf_nplanes" type="int16_t"/>
+			<member name="mf_fg" type="int16_t"/>
+			<member name="mf_bg" type="int16_t"/>
+			<member name="mf_mask" type="int16_t[16]"/>
+			<member name="mf_data" type="int16_t[16]"/>
+		</struct>
+	</structs>
+
+	<functions grpid="2" category="Control">
+		<function id="1" name="v_opnwk" >
+			<return type="void" />
+			<arg name="work_in" dst="intin" words="11" type="int16_t*"/>
+			<arg name="handle" src="contrl" idx="6" type="int16_t*"/>
+			<arg name="work_out" type="int16_t*">
+				<sequence src="intout" words="45"/>
+				<sequence src="ptsout" words="11"/>
+			</arg>
+		</function>
+		<function id="2" name="v_clswk" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+		</function>
+		<function id="100" name="v_opnvwk" >
+			<return type="void" />
+			<arg name="work_in" dst="intin" words="11" type="int16_t*"/>
+			<arg name="handle" src="contrl" idx="6" type="int16_t*"/>
+			<arg name="work_out" type="int16_t*">
+				<sequence src="intout" words="45"/>
+				<sequence src="ptsout" words="11"/>
+			</arg>
+		</function>
+		<function id="101" name="v_clsvwk" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+		</function>
+		<function id="3" name="v_clrwk" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+		</function>
+		<function id="4" name="v_updwk" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+		</function>
+		<function id="119" name="vst_load_fonts" >
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="select" dst="intin" type="int16_t"/>
+		</function>
+		<function id="120" name="vst_unload_fonts" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="select" dst="intin" type="int16_t"/>
+		</function>
+		<function id="129" name="vs_clip" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="clip_flag" dst="intin" type="int16_t"/>
+			<arg name="xyarray" dst="ptsin" longs="2" test="clip_flag != 0 &amp;&amp; xyarray != 0" type="int16_t*"/>
+		</function>
+	</functions>
+
+	<functions grpid="2" category="Output">
+		<function id="6" name="v_pline" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="count" type="int16_t"/>
+			<arg name="xyarray" dst="ptsin" longs="count" type="int16_t*"/>
+		</function>
+		<function id="7" name="v_pmarker" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="count" type="int16_t"/>
+			<arg name="xyarray" dst="ptsin" longs="count" type="int16_t*"/>
+		</function>
+		<function id="8" name="v_gtext" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="x" dst="ptsin" type="int16_t"/>
+			<arg name="y" dst="ptsin" type="int16_t"/>
+			<arg name="string" dst="intin" words="strlen" type="int8_t*"/>
+		</function>
+		<function id="9" name="v_fillarea" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="count" type="int16_t"/>
+			<arg name="xyarray" dst="ptsin" longs="count" type="int16_t*"/>
+		</function>
+		<function id="10" name="v_cellarray" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="xyarray" dst="ptsin" longs="2" type="int16_t*"/>
+			<arg name="row_length" dst="contrl" idx="7" type="int16_t"/>
+			<arg name="elements" dst="contrl" idx="8" type="int16_t"/>
+			<arg name="num_rows" dst="contrl" idx="9" type="int16_t"/>
+			<arg name="wrt_mode" dst="contrl" idx="10" type="int16_t"/>
+			<arg name="colarray" dst="intin" words="elements*num_rows" type="int16_t*"/>
+		</function>
+		<function id="103" name="v_contourfill" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="x" dst="ptsin" type="int16_t"/>
+			<arg name="y" dst="ptsin" type="int16_t"/>
+			<arg name="idx" dst="intin" type="int16_t"/>
+		</function>
+		<function id="114" name="vr_recfl" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="xyarray" dst="ptsin" longs="2" type="int16_t*"/>
+		</function>
+		<function id="11" subid="1" name="v_bar" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="xyarray" dst="ptsin" longs="2" type="int16_t*"/>
+		</function>
+		<function id="11" subid="2" name="v_arc" >
+			<return type="void" />
+			<reserve dst="ptsin" longs="4" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="x" dst="ptsin" idx="0" type="int16_t"/>
+			<arg name="y" dst="ptsin" idx="1" type="int16_t"/>
+			<arg name="radius" dst="ptsin" idx="6" type="int16_t"/>
+			<arg name="startangle" dst="intin" type="int16_t"/>
+			<arg name="endangle" dst="intin" type="int16_t"/>
+		</function>
+		<function id="11" subid="3" name="v_pieslice" >
+			<return type="void" />
+			<reserve dst="ptsin" longs="4" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="x" dst="ptsin" idx="0" type="int16_t"/>
+			<arg name="y" dst="ptsin" idx="1" type="int16_t"/>
+			<arg name="radius" dst="ptsin" idx="6" type="int16_t"/>
+			<arg name="startangle" dst="intin" type="int16_t"/>
+			<arg name="endangle" dst="intin" type="int16_t"/>
+		</function>
+		<function id="11" subid="4" name="v_circle" >
+			<return type="void" />
+			<reserve dst="ptsin" longs="3" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="x" dst="ptsin" idx="0" type="int16_t"/>
+			<arg name="y" dst="ptsin" idx="1" type="int16_t"/>
+			<arg name="radius" dst="ptsin" idx="4" type="int16_t"/>
+		</function>
+		<function id="11" subid="6" name="v_ellarc" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="x" dst="ptsin" type="int16_t"/>
+			<arg name="y" dst="ptsin" type="int16_t"/>
+			<arg name="xradius" dst="ptsin" type="int16_t"/>
+			<arg name="yradius" dst="ptsin" type="int16_t"/>
+			<arg name="startangle" dst="intin" type="int16_t"/>
+			<arg name="endangle" dst="intin" type="int16_t"/>
+		</function>
+		<function id="11" subid="7" name="v_ellpie" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="x" dst="ptsin" type="int16_t"/>
+			<arg name="y" dst="ptsin" type="int16_t"/>
+			<arg name="xradius" dst="ptsin" type="int16_t"/>
+			<arg name="yradius" dst="ptsin" type="int16_t"/>
+			<arg name="startangle" dst="intin" type="int16_t"/>
+			<arg name="endangle" dst="intin" type="int16_t"/>
+		</function>
+		<function id="11" subid="5" name="v_ellipse" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="x" dst="ptsin" type="int16_t"/>
+			<arg name="y" dst="ptsin" type="int16_t"/>
+			<arg name="xradius" dst="ptsin" type="int16_t"/>
+			<arg name="yradius" dst="ptsin" type="int16_t"/>
+		</function>
+		<function id="11" subid="8" name="v_rbox" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="xyarray" dst="ptsin" longs="2" type="int16_t*"/>
+		</function>
+		<function id="11" subid="9" name="v_rfbox" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="xyarray" dst="ptsin" longs="2" type="int16_t*"/>
+		</function>
+		<function id="11" subid="10" name="v_justified" >
+			<return type="void" />
+			<reserve dst="ptsin" longs="2" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="x" dst="ptsin" type="int16_t"/>
+			<arg name="y" dst="ptsin" type="int16_t"/>
+			<arg name="string" dst="intin" idx="2" words="strlen" type="int8_t*"/>
+			<arg name="length" dst="ptsin" type="int16_t"/>
+			<arg name="word_space" dst="intin" idx="0" type="int16_t"/>
+			<arg name="char_space" dst="intin" idx="1" type="int16_t"/>
+			<!--
+				There is no argument for it in the api, but intout[strlen] can 
+				depending on word_space contain the character widths.
+			-->
+		</function>
+	</functions>
+
+	<defines category="Attribute">
+		<define name="IP_HOLLOW" value="0"/>
+		<define name="IP_1PATT" value="1"/>
+		<define name="IP_2PATT" value="2"/>
+		<define name="IP_3PATT" value="3"/>
+		<define name="IP_4PATT" value="4"/>
+		<define name="IP_5PATT" value="5"/>
+		<define name="IP_6PATT" value="6"/>
+		<define name="IP_SOLID" value="7"/>
+
+		<define name="MD_REPLACE" value="1"/>
+		<define name="MD_TRANS" value="2"/>
+		<define name="MD_XOR" value="3"/>
+		<define name="MD_ERASE" value="4"/>
+
+		<define name="FIS_HOLLOW" value="0"/>
+		<define name="FIS_SOLID" value="1"/>
+		<define name="FIS_PATTERN" value="2"/>
+		<define name="FIS_HATCH" value="3"/>
+		<define name="FIS_USER" value="4"/>
+
+		<define name="ALL_WHITE" value="0"/>
+		<define name="S_AND_D" value="1"/>
+		<define name="S_AND_NOTD" value="2"/>
+		<define name="S_ONLY" value="3"/>
+		<define name="NOTS_AND_D" value="4"/>
+		<define name="D_ONLY" value="5"/>
+		<define name="S_XOR_D" value="6"/>
+		<define name="S_OR_D" value="7"/>
+		<define name="NOT_SORD" value="8"/>
+		<define name="NOT_SXORD" value="9"/>
+		<define name="D_INVERT" value="10"/>
+		<define name="NOT_D" value="11"/>
+		<define name="S_OR_NOTD" value="12"/>
+		<define name="NOTS_OR_D" value="13"/>
+		<define name="NOT_SANDD" value="14"/>
+		<define name="ALL_BLACK" value="15"/>
+
+		<define name="SOLID" value="1"/>
+		<define name="LONGDASH" value="2"/>
+		<define name="DOT" value="3"/>
+		<define name="DASHDOT" value="4"/>
+		<define name="DASH" value="5"/>
+		<define name="DASH2DOT" value="6"/>
+		<define name="USERLINE" value="7"/>
+		<define name="SQUARE" value="0"/>
+		<define name="ARROWED" value="1"/>
+		<define name="ROUND" value="2"/>
+	</defines>
+
+	<functions grpid="2" category="Attribute">
+		<function id="32" name="vswr_mode" >
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="mode" dst="intin" type="int16_t"/>
+		</function>
+		<function id="14" name="vs_color" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="index" dst="intin" type="int16_t"/>
+			<arg name="rgb" dst="intin" words="3" type="int16_t*"/>
+		</function>
+		<function id="15" name="vsl_type" >
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="type" dst="intin" type="int16_t"/>
+		</function>
+		<function id="113" name="vsl_udsty" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="pattern" dst="intin" type="int16_t"/>
+		</function>
+		<function id="16" name="vsl_width" >
+			<return src="ptsout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="width" dst="ptsin" type="int16_t"/>
+		</function>
+		<function id="17" name="vsl_color" >
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="col_idx" dst="intin" type="int16_t"/>
+		</function>
+		<function id="108" name="vsl_ends" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="start" dst="intin" type="int16_t"/>
+			<arg name="end" dst="intin" type="int16_t"/>
+		</function>
+		<function id="18" name="vsm_type" >
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="type" dst="intin" type="int16_t"/>
+		</function>
+		<function id="19" name="vsm_height" >
+			<return src="ptsout" idx="1" type="int16_t" />
+			<reserve dst="ptsin" longs="1" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="height" dst="ptsin" idx="1" type="int16_t"/>
+		</function>
+		<function id="20" name="vsm_color" >
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="col_idx" dst="intin" type="int16_t"/>
+		</function>
+		<function id="12" name="vst_height" >
+			<return type="void" />
+			<reserve dst="ptsin" longs="1" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="height" dst="ptsin" idx="1" type="int16_t"/>
+			<arg name="wchar" src="ptsout" idx="0" type="int16_t*"/>
+			<arg name="hchar" src="ptsout" idx="1" type="int16_t*"/>
+			<arg name="wcell" src="ptsout" idx="2" type="int16_t*"/>
+			<arg name="hcell" src="ptsout" idx="3" type="int16_t*"/>
+		</function>
+		<function id="107" name="vst_point" >
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="point" dst="intin" type="int16_t"/>
+			<arg name="wchar" src="ptsout" idx="0" type="int16_t*"/>
+			<arg name="hchar" src="ptsout" idx="1" type="int16_t*"/>
+			<arg name="wcell" src="ptsout" idx="2" type="int16_t*"/>
+			<arg name="hcell" src="ptsout" idx="3" type="int16_t*"/>
+		</function>
+		<function id="13" name="vst_rotation" >
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="angle" dst="intin" type="int16_t"/>
+		</function>
+		<function id="21" name="vst_font" >
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="idx" dst="intin" type="int16_t"/>
+		</function>
+		<function id="22" name="vst_color" >
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="col_idx" dst="intin" type="int16_t"/>
+		</function>
+		<function id="106" name="vst_effects" >
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="effects" dst="intin" type="int16_t"/>
+		</function>
+		<function id="39" name="vst_alignment" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="halign" dst="intin" type="int16_t"/>
+			<arg name="valign" dst="intin" type="int16_t"/>
+			<arg name="hout" src="intout" type="int16_t*"/>
+			<arg name="vout" src="intout" type="int16_t*"/>
+		</function>
+		<function id="23" name="vsf_interior" >
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="interior" dst="intin" type="int16_t"/>
+		</function>
+		<function id="24" name="vsf_style" >
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="style" dst="intin" type="int16_t"/>
+		</function>
+		<function id="25" name="vsf_color" >
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="col_idx" dst="intin" type="int16_t"/>
+		</function>
+		<function id="104" name="vsf_perimeter" >
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="flag" dst="intin" type="int16_t"/>
+		</function>
+		<function id="112" name="vsf_udpat" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="pattern" dst="intin" words="planes*16" type="int16_t*"/>
+			<arg name="planes" type="int16_t"/>
+		</function>
+	</functions>
+
+	<functions grpid="2" category="Raster">
+		<function id="109" name="vro_cpyfm" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="mode" dst="intin" type="int16_t"/>
+			<arg name="xyarray" dst="ptsin" longs="4" type="int16_t*"/>
+			<arg name="src" dst="contrl" idx="7" longs="0" type="MFDB*"/>
+			<arg name="dst" dst="contrl" idx="9" longs="0" type="MFDB*"/>
+		</function>
+		<function id="121" name="vrt_cpyfm" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="mode" dst="intin" type="int16_t"/>
+			<arg name="xyarray" dst="ptsin" longs="4" type="int16_t*"/>
+			<arg name="src" dst="contrl" idx="7" longs="0" type="MFDB*"/>
+			<arg name="dst" dst="contrl" idx="9" longs="0" type="MFDB*"/>
+			<arg name="col_indexes" dst="intin" words="2" type="int16_t*"/>
+		</function>
+		<function id="110" name="vr_trnfm" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="src" dst="contrl" idx="7" longs="0" type="MFDB*"/>
+			<arg name="dst" dst="contrl" idx="9" longs="0" type="MFDB*"/>
+		</function>
+		<function id="105" name="v_get_pixel" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="x" dst="ptsin" type="int16_t"/>
+			<arg name="y" dst="ptsin" type="int16_t"/>
+			<arg name="pindex" src="intout" type="int16_t*"/>
+			<arg name="vindex" src="intout" type="int16_t*"/>
+		</function>
+	</functions>
+
+	<functions grpid="2" category="Input">
+		<function id="33" name="vsin_mode" >
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="device" dst="intin" type="int16_t"/>
+			<arg name="mode" dst="intin" type="int16_t"/>
+		</function>
+		<function id="28" name="vrq_locator" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="x" dst="ptsin" type="int16_t"/>
+			<arg name="y" dst="ptsin" type="int16_t"/>
+			<arg name="xout" src="ptsout" type="int16_t*"/>
+			<arg name="yout" src="ptsout" type="int16_t*"/>
+			<arg name="term" src="intout" type="int16_t*"/>
+		</function>
+		<function id="28" name="vsm_locator" >
+			<return type="int16_t" code="(contrl[4] &lt;&lt; 1) | contrl[2]" />
+			<reserve dst="ptsin" longs="1" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="x" dst="ptsin" type="int16_t"/>
+			<arg name="y" dst="ptsin" type="int16_t"/>
+			<arg name="xout" src="ptsout" type="int16_t*"/>
+			<arg name="yout" src="ptsout" type="int16_t*"/>
+			<arg name="term" src="intout" type="int16_t*"/>
+		</function>
+		<function id="29" name="vrq_valuator" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="vin" dst="intin" type="int16_t"/>
+			<arg name="vout" src="intout" type="int16_t*"/>
+			<arg name="term" src="intout" type="int16_t*"/>
+		</function>
+		<function id="29" name="vsm_valuator" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="vin" dst="intin" type="int16_t"/>
+			<arg name="vout" src="intout" type="int16_t*"/>
+			<arg name="term" src="intout" type="int16_t*"/>
+			<arg name="status" src="contrl" idx="4" words="1" type="int16_t*"/>
+		</function>
+		<function id="30" name="vrq_choice" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="chin" dst="intin" type="int16_t"/>
+			<arg name="chout" src="intout" type="int16_t*"/>
+		</function>
+		<function id="30" name="vsm_choice" >
+			<return type="int16_t" src="contrl" idx="4" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="chout" src="intout" type="int16_t*"/>
+		</function>
+		<function id="31" name="vrq_string" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="maxlen" dst="intin" type="int16_t"/>
+			<arg name="echo" dst="intin" type="int16_t"/>
+			<arg name="echo_xy" dst="ptsin" longs="1" type="int16_t*"/>
+			<arg name="string" src="intout" words="all" type="int8_t*"/>
+		</function>
+		<function id="31" name="vsm_string" >
+			<return type="int16_t" src="contrl" idx="4" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="maxlen" dst="intin" type="int16_t"/>
+			<arg name="echo" dst="intin" type="int16_t"/>
+			<arg name="echo_xy" dst="ptsin" longs="1" type="int16_t*"/>
+			<arg name="string" src="intout" words="all" type="int8_t*"/>
+		</function>
+		<function id="111" name="vsc_form" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="pcur_form" dst="intin" words="37" type="MFORM*"/>
+		</function>
+		<function id="118" name="vex_timv" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="tim_addr" dst="contrl" idx="7" longs="1" type="INT16_VDI_CB"/>
+			<arg name="otim_addr" src="contrl" idx="9" longs="1" type="INT16_VDI_CB*"/>
+			<arg name="tim_conv" src="intout" type="int16_t*"/>
+		</function>
+		<function id="122" name="v_show_c" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="reset" dst="intin" type="int16_t"/>
+		</function>
+		<function id="123" name="v_hide_c" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+		</function>
+		<function id="124" name="vq_mouse" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="pstatus" src="intout" type="int16_t*"/>
+			<arg name="x" src="ptsout" idx="0" type="int16_t*"/>
+			<arg name="y" src="ptsout" idx="1" type="int16_t*"/>
+		</function>
+		<function id="125" name="vex_butv" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="pusrcode" dst="contrl" idx="7" longs="1" type="INT16_VDI_CB"/>
+			<arg name="psavcode" src="contrl" idx="9" longs="1" type="INT16_VDI_CB*"/>
+		</function>
+		<function id="126" name="vex_motv" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="pusrcode" dst="contrl" idx="7" longs="1" type="INT16_VDI_CB"/>
+			<arg name="psavcode" src="contrl" idx="9" longs="1" type="INT16_VDI_CB*"/>
+		</function>
+		<function id="127" name="vex_curv" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="pusrcode" dst="contrl" idx="7" longs="1" type="INT16_VDI_CB"/>
+			<arg name="psavcode" src="contrl" idx="9" longs="1" type="INT16_VDI_CB*"/>
+		</function>
+		<function id="128" name="vq_key_s" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="pstatus" src="intout" type="int16_t*"/>
+		</function>
+	</functions>
+	<functions grpid="2" category="Inquire">
+		<function id="102" name="vq_extnd" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="owflag" dst="intin" type="int16_t"/>
+			<arg name="work_out" type="int16_t*">
+				<sequence src="intout" words="45"/>
+				<sequence src="ptsout" words="11"/>
+			</arg>
+		</function>
+		<function id="26" name="vq_color" >
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="color_index" dst="intin" type="int16_t"/>
+			<arg name="set_flag" dst="intin" type="int16_t"/>
+			<arg name="rgb" src="intout" idx="1" words="3" type="int16_t*"/>
+		</function>
+		<!--
+			None of the freemint documentation, the Atari compendium and the GEM programmers reference
+			agree of vql_attributes.
+			Freemint (nvdi) and GEM programmers reference agree that this is function 35 while
+			Atari compendium says 36... 
+			Freemint (nvdi) and GEM programmers reference agree that width comes from ptsout[0].
+			Atari compendium and the GEM programmers reference agree that width is output in attrib[5].
+			So we do a Frankenstein and hopefully get it correct:
+			Function id 35 and attrib[5] = ptsout[0].
+		-->
+		<function id="35" name="vql_attributes" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="attrib" type="int16_t*">
+				<sequence src="intout" words="5"/>
+				<sequence src="ptsout" words="1"/>
+			</arg>
+		</function>
+		<function id="36" name="vqm_attributes" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="attrib" type="int16_t*">
+				<sequence src="intout" words="3"/>
+				<sequence src="ptsout" words="2"/>
+			</arg>
+		</function>
+		<function id="37" name="vqf_attributes" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="attrib" src="intout" words="5" type="int16_t*"/>
+		</function>
+		<function id="38" name="vqt_attributes" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="attrib" type="int16_t*">
+				<sequence src="intout" words="6"/>
+				<sequence src="ptsout" words="4"/>
+			</arg>
+		</function>
+		<function id="116" name="vqt_extent" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="string" dst="intin" words="strlen" type="int8_t*"/>
+			<arg name="extent" src="ptsout" longs="4" type="int16_t*"/>
+		</function>
+		<function id="117" name="vqt_width" >
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="character" dst="intin" type="int16_t"/>
+			<arg name="cell_width" src="ptsout" longs="1" type="int16_t*"/>
+			<arg name="left_delta" src="ptsout" longs="1" type="int16_t*"/>
+			<arg name="right_delta" src="ptsout" longs="1" type="int16_t*"/>
+		</function>
+		<function id="130" name="vqt_name" >
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="element_num" dst="intin" type="int16_t"/>
+			<arg name="name" src="intout" idx="1" words="32" type="int8_t*"/>
+		</function>
+		<function id="27" name="vq_cellarray" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="xyarray" dst="ptsin" longs="2" type="int16_t*"/>
+			<arg name="row_length" dst="contrl" idx="7" type="int16_t"/>
+			<arg name="num_rows" dst="contrl" idx="8" type="int16_t"/>
+			<arg name="el_used" src="contrl" idx="9" type="int16_t*"/>
+			<arg name="rows_used" src="contrl" idx="10" type="int16_t*"/>
+			<arg name="status" src="contrl" idx="11" type="int16_t*"/>
+			<arg name="colarray" src="ptsout" longs="contrl[4]" type="int16_t*"/>
+		</function>
+		<function id="115" name="vqin_mode" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="dev_type" dst="intin" type="int16_t"/>
+			<arg name="input_mode" src="intout" type="int16_t*"/>
+		</function>
+		<!--
+			vqt_fontinfo:
+			Why is distances, maxwidth and effects mixed and interleaved in ptsout?
+			None of them are points.
+			There is a guy out there who shouldn't design api's...
+		-->
+		<function id="131" name="vqt_fontinfo" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="minADE" src="intout" type="int16_t*"/>
+			<arg name="maxADE" src="intout" type="int16_t*"/>
+			<arg name="distances" type="int16_t*">
+				<sequence src="ptsout" idx="1"/>
+				<sequence src="ptsout" idx="3"/>
+				<sequence src="ptsout" idx="5"/>
+				<sequence src="ptsout" idx="7"/>
+				<sequence src="ptsout" idx="9"/>
+			</arg>
+			<arg name="maxwidth" type="int16_t*">
+				<sequence src="ptsout" idx="0"/>
+				<sequence src="ptsout" idx="2"/>
+				<sequence src="ptsout" idx="4"/>
+				<sequence src="ptsout" idx="6"/>
+			</arg>
+		</function>
+	</functions>
+	<functions grpid="2" category="Escape">
+		<function id="5" subid="1" name="vq_chcells" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="rows" src="intout" type="int16_t*"/>
+			<arg name="columns" src="intout" type="int16_t*"/>
+		</function>
+		<function id="5" subid="2" name="v_exit_cur" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+		</function>
+		<function id="5" subid="3" name="v_enter_cur" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+		</function>
+		<function id="5" subid="4" name="v_curup" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+		</function>
+		<function id="5" subid="5" name="v_curdown" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+		</function>
+		<function id="5" subid="6" name="v_curright" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+		</function>
+		<function id="5" subid="7" name="v_curleft" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+		</function>
+		<function id="5" subid="8" name="v_curhome" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+		</function>
+		<function id="5" subid="9" name="v_eeos" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+		</function>
+		<function id="5" subid="10" name="v_eeol" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+		</function>
+		<function id="5" subid="11" name="vs_curaddress" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="row" dst="intin" type="int16_t"/>
+			<arg name="column" dst="intin" type="int16_t"/>
+		</function>
+		<function id="5" subid="11" name="v_curaddress" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="row" dst="intin" type="int16_t"/>
+			<arg name="column" dst="intin" type="int16_t"/>
+		</function>
+		<function id="5" subid="12" name="v_curtext" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="string" dst="intin" words="strlen" type="int8_t*"/>
+		</function>
+		<function id="5" subid="13" name="v_rvon" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+		</function>
+		<function id="5" subid="14" name="v_rvoff" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+		</function>
+		<function id="5" subid="15" name="vq_curaddress" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="row" src="intout" type="int16_t*"/>
+			<arg name="column" src="intout" type="int16_t*"/>
+		</function>
+		<function id="5" subid="16" name="vq_tabstatus" >
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+		</function>
+		<function id="5" subid="17" name="v_hardcopy" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+		</function>
+		<function id="5" subid="18" name="v_dspcur" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="x" dst="ptsin" type="int16_t"/>
+			<arg name="y" dst="ptsin" type="int16_t"/>
+		</function>
+		<function id="5" subid="19" name="v_rmcur" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+		</function>
+		<function id="5" subid="20" name="v_form_adv" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+		</function>
+		<function id="5" subid="21" name="v_output_window" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="xyarray" dst="ptsin" longs="2" type="int16_t*"/>
+		</function>
+		<function id="5" subid="22" name="v_clear_disp_list" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+		</function>
+		<function id="5" subid="23" name="v_bit_image" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="filename" dst="intin" idx="5" words="strlen" type="int8_t*"/>
+			<arg name="aspect" dst="intin" idx="0" type="int16_t"/>
+			<arg name="x_scale" dst="intin" idx="1" type="int16_t"/>
+			<arg name="y_scale" dst="intin" idx="2" type="int16_t"/>
+			<arg name="h_align" dst="intin" idx="3" type="int16_t"/>
+			<arg name="v_align" dst="intin" idx="4" type="int16_t"/>
+			<arg name="xyarray" dst="ptsin" longs="2" type="int16_t*"/>
+		</function>
+		<function id="5" subid="24" name="vq_scan" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="g_slice" src="intout" type="int16_t*"/>
+			<arg name="g_page" src="intout" type="int16_t*"/>
+			<arg name="a_slice" src="intout" type="int16_t*"/>
+			<arg name="a_page" src="intout" type="int16_t*"/>
+			<arg name="div_fac" src="intout" type="int16_t*"/>
+		</function>
+		<function id="5" subid="25" name="v_alpha_text" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="string" dst="intin" words="strlen" type="int8_t*"/>
+		</function>
+		<function id="5" subid="60" name="vs_palette" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="palette" dst="intin" type="int16_t"/>
+		</function>
+		<function id="5" subid="61" name="v_sound" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="frequency" dst="intin" type="int16_t"/>
+			<arg name="duration" dst="intin" type="int16_t"/>
+		</function>
+		<function id="5" subid="62" name="vs_mute" >
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="action" dst="intin" type="int16_t"/>
+		</function>
+		<!-- 
+			id="5" subid="91" is used by both "vsp_film" and "vqp_films"
+			They do not have the same arguments.
+		-->
+		<function id="5" subid="91" name="vqp_films" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="film_names" src="intout" words="125" type="int8_t*"/>
+		</function>
+		<!--
+			There are some disagreement about the size of indexes below, but
+			as it should be possible to store 2^planes words, and planes can be up to 4,
+			then 16 words seems to be the correct size.
+		-->
+		<function id="5" subid="92" name="vqp_state" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="port" src="intout" type="int16_t*"/>
+			<arg name="film_name" src="intout" words="1" type="int8_t*"/>
+			<arg name="lightness" src="intout" type="int16_t*"/>
+			<arg name="interlace" src="intout" type="int16_t*"/>
+			<arg name="planes" src="intout" type="int16_t*"/>
+			<arg name="indexes" src="intout" words="16" type="int16_t*"/>
+		</function>
+		<!-- 
+			id="5" subid="93" is used by both "vsc_expose" and "vsp_state"
+			They do not have the same arguments.
+		-->
+		<function id="5" subid="93" name="vsp_state" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="port" dst="intin" type="int16_t"/>
+			<arg name="film_num" dst="intin" type="int16_t"/>
+			<arg name="lightness" dst="intin" type="int16_t"/>
+			<arg name="interlace" dst="intin" type="int16_t"/>
+			<arg name="planes" dst="intin" type="int16_t"/>
+			<arg name="indexes" dst="intin" words="16" type="int16_t*"/>
+		</function>
+		<function id="5" subid="94" name="vsp_save" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+		</function>
+		<function id="5" subid="95" name="vsp_message" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+		</function>
+		<function id="5" subid="96" name="vqp_error" >
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+		</function>
+		<function id="5" subid="98" name="v_meta_extents" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="min_x" dst="ptsin" type="int16_t"/>
+			<arg name="min_y" dst="ptsin" type="int16_t"/>
+			<arg name="max_x" dst="ptsin" type="int16_t"/>
+			<arg name="max_y" dst="ptsin" type="int16_t"/>
+		</function>
+		<function id="5" subid="99" name="v_write_meta" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="num_int" type="int16_t"/>
+			<arg name="intin" dst="intin" words="num_int" type="int16_t*"/>
+			<arg name="num_pts" type="int16_t"/>
+			<arg name="ptsin" dst="ptsin" words="num_pts" type="int16_t*"/>
+		</function>
+		<function id="5" subid="99" name="vm_coords" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg value="1" dst="intin" type="int16_t"/>
+			<arg name="llx" dst="intin" type="int16_t"/>
+			<arg name="lly" dst="intin" type="int16_t"/>
+			<arg name="urx" dst="intin" type="int16_t"/>
+			<arg name="ury" dst="intin" type="int16_t"/>
+		</function>
+		<function id="5" subid="100" name="vm_filename" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="filename" dst="intin" words="strlen" type="int8_t*"/>
+		</function>
+		<function id="5" subid="99" name="vm_pagesize" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg value="0" dst="intin" type="int16_t"/>
+			<arg name="pgwidth" dst="intin" type="int16_t"/>
+			<arg name="pgheight" dst="intin" type="int16_t"/>
+		</function>
+		<function id="5" subid="101" name="v_offset" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="offset" dst="intin" type="int16_t"/>
+		</function>
+		<function id="5" subid="102" name="v_fontinit" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="fh_high" dst="intin" type="int16_t"/>
+			<arg name="fh_low" dst="intin" type="int16_t"/>
+		</function>
+		<function id="5" subid="2000" name="v_escape2000" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="times" dst="intin" type="int16_t"/>
+		</function>
+		<function id="5" subid="81" name="vt_resolution" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="xres" dst="intin" type="int16_t"/>
+			<arg name="yres" dst="intin" type="int16_t"/>
+			<arg name="xset" src="intout" type="int16_t*"/>
+			<arg name="yset" src="intout" type="int16_t*"/>
+		</function>
+		<function id="5" subid="82" name="vt_axis" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="xres" dst="intin" type="int16_t"/>
+			<arg name="yres" dst="intin" type="int16_t"/>
+			<arg name="xset" src="intout" type="int16_t*"/>
+			<arg name="yset" src="intout" type="int16_t*"/>
+		</function>
+		<function id="5" subid="83" name="vt_origin" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="xorigin" dst="intin" type="int16_t"/>
+			<arg name="yorigin" dst="intin" type="int16_t"/>
+		</function>
+		<function id="5" subid="84" name="vq_tdimensions" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="xdimension" src="intout" type="int16_t*"/>
+			<arg name="ydimension" src="intout" type="int16_t*"/>
+		</function>
+		<function id="5" subid="85" name="vt_alignment" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="dx" dst="intin" type="int16_t"/>
+			<arg name="dy" dst="intin" type="int16_t"/>
+		</function>
+		<!-- 
+			id="5" subid="91" is used by both "vsp_film" and "vqp_films"
+			They do not have the same arguments.
+		-->
+		<function id="5" subid="91" name="vsp_film" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="index" dst="intin" type="int16_t"/>
+			<arg name="lightness" dst="intin" type="int16_t"/>
+		</function>
+		<!-- 
+			id="5" subid="93" is used by both "vsc_expose" and "vsp_state"
+			They do not have the same arguments.
+		-->
+		<function id="5" subid="93" name="vsc_expose" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="state" dst="intin" type="int16_t"/>
+		</function>
+	</functions>
+
+	<defines category="GDOS">
+		<define name="GDOS_NONE" value="-2L"/>
+		<define name="GDOS_FSM" value="0x5F46534DL"/>
+		<define name="GDOS_FNT" value="0x5F464E54L"/>
+	</defines>
+
+	<functions grpid="2" category="Query GDOS">
+		<function name="vq_gdos" onlyheader="1">
+			<return type="int16_t" />
+		</function>
+		<function name="vq_vgdos" onlyheader="1">
+			<return type="int32_t" />
+		</function>
+	</functions>
+
+	<functions grpid="2" category="GDOS">
+		<function id="11" subid="13" name="v_bez_on" >
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+		</function>
+		<function id="11" subid="13" name="v_bez_off" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+		</function>
+		<function id="-1" subid="6" name="v_set_app_buff" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="address" dst="intin" longs="0" type="void*"/>
+			<arg name="nparagraphs" dst="intin" type="int16_t"/>
+		</function>
+		<function id="6" subid="13" name="v_bez" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="count" type="int16_t"/>
+			<arg name="xyarray" dst="ptsin" longs="count" type="int16_t*"/>
+			<arg name="bezarray" dst="intin" words="count" type="int8_t*"/>
+			<arg name="extent" src="ptsout" words="4" type="int16_t*"/>
+			<arg name="totpts" src="intout" type="int16_t*"/>
+			<arg name="totmoves" src="intout" type="int16_t*"/>
+		</function>
+		<function id="9" subid="13" name="v_bez_fill" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="count" type="int16_t"/>
+			<arg name="xyarray" dst="ptsin" longs="count" type="int16_t*"/>
+			<arg name="bezarray" dst="intin" words="count" type="int8_t*"/>
+			<arg name="extent" src="ptsout" words="4" type="int16_t*"/>
+			<arg name="totpts" src="intout" type="int16_t*"/>
+			<arg name="totmoves" src="intout" type="int16_t*"/>
+		</function>
+		<function id="5" subid="99" name="v_bez_qual" >
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg value="32" dst="intin" type="int16_t"/>
+			<arg value="1" dst="intin" type="int16_t"/>
+			<arg name="prcnt" dst="intin" type="int16_t"/>
+			<arg name="actual" src="intout" type="int16_t*"/>
+		</function>
+	</functions>
+
+	<functions grpid="2" category="SpeedoGDOS">
+		<function id="240" name="vqt_f_extent" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="string" dst="intin" words="strlen" type="int8_t*"/>
+			<arg name="extent" src="ptsout" longs="4" type="int16_t*"/>
+		</function>
+		<function id="241" name="v_ftext" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="x" dst="ptsin" type="int16_t"/>
+			<arg name="y" dst="ptsin" type="int16_t"/>
+			<arg name="string" dst="intin" words="strlen" type="int8_t*"/>
+		</function>
+		<function id="241" name="v_ftext_offset" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="x" dst="ptsin" type="int16_t"/>
+			<arg name="y" dst="ptsin" type="int16_t"/>
+			<arg name="string" dst="intin" words="strlen" type="int8_t*"/>
+			<arg name="offset" dst="ptsin" longs="_str_len" type="int16_t*"/> <!--_str_len = strlen above -->
+		</function>
+		<function id="243" name="v_getoutline" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="ch" dst="intin" idx="0" type="int16_t"/>
+			<arg name="xyarray" dst="intin" idx="2" longs="0" type="int16_t*"/>
+			<arg name="maxverts" dst="intin" idx="1" type="int16_t"/>
+			<arg name="bezarray" dst="intin" idx="4" longs="0" type="int8_t*"/>
+			<arg name="numverts" src="intout" type="int16_t*"/>
+		</function>
+		<function id="244" name="vst_scratch" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="mode" dst="intin" type="int16_t"/>
+		</function>
+		<function id="245" name="vst_error" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="mode" dst="intin" type="int16_t"/>
+			<arg name="errorvar" dst="intin" longs="0" type="int16_t*"/>
+		</function>
+		<function id="247" name="vqt_advance" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="ch" dst="intin" type="int16_t"/>
+			<arg name="advx" src="ptsout" type="int16_t*"/>
+			<arg name="advy" src="ptsout" type="int16_t*"/>
+			<arg name="remx" src="ptsout" type="int16_t*"/>
+			<arg name="remy" src="ptsout" type="int16_t*"/>
+		</function>
+		<function id="247" name="vqt_advance32" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="ch" dst="intin" type="int16_t"/>
+			<arg name="advx" src="ptsout" idx="4" longs="1" type="fix31*"/>
+			<arg name="advy" src="ptsout" idx="6" longs="1" type="fix31*"/>
+		</function>
+		<function id="246" name="vst_arbpt" >
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="point" dst="intin" type="int16_t"/>
+			<arg name="chwd" src="ptsout" type="int16_t*"/>
+			<arg name="chht" src="ptsout" type="int16_t*"/>
+			<arg name="cellwd" src="ptsout" type="int16_t*"/>
+			<arg name="cellht" src="ptsout" type="int16_t*"/>
+		</function>
+		<function id="246" name="vst_arbpt32" >
+			<return src="intout" idx="0" type="fix31" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="point" dst="intin" type="fix31"/>
+			<arg name="chwd" src="ptsout" type="int16_t*"/>
+			<arg name="chht" src="ptsout" type="int16_t*"/>
+			<arg name="cellwd" src="ptsout" type="int16_t*"/>
+			<arg name="cellht" src="ptsout" type="int16_t*"/>
+		</function>
+		<function id="236" name="vst_charmap" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="mode" dst="intin" type="int16_t"/>
+		</function>
+		<function id="239" name="v_getbitmap_info" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="ch" dst="intin" type="int16_t"/>
+			<arg name="advx" src="intout" idx="2" longs="1" type="fix31*"/>
+			<arg name="advy" src="intout" idx="4" longs="1" type="fix31*"/>
+			<arg name="xoff" src="intout" idx="6" longs="1" type="fix31*"/>
+			<arg name="yoff" src="intout" idx="8" longs="1" type="fix31*"/>
+			<arg name="width" src="intout" idx="0" type="int16_t*"/>
+			<arg name="height" src="intout" idx="1" type="int16_t*"/>
+			<arg name="bitmap" src="intout" idx="10" longs="1" type="int16_t**"/>
+		</function>
+		<function id="235" name="vqt_pairkern" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="ch1" dst="intin" type="int16_t"/>
+			<arg name="ch2" dst="intin" type="int16_t"/>
+			<arg name="x" src="intout" longs="1" type="fix31*"/>
+			<arg name="y" src="intout" longs="1" type="fix31*"/>
+		</function>
+		<function id="234" name="vqt_trackkern" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="x" src="intout" longs="1" type="fix31*"/>
+			<arg name="y" src="intout" longs="1" type="fix31*"/>
+		</function>
+		<function id="232" name="vqt_fontheader" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="buffer" dst="intin" longs="0" type="int8_t*"/>
+			<arg name="pathname" src="intout" words="contrl[4]" type="int8_t*"/> <!-- copy all of intout -->
+		</function>
+		<function id="237" name="vst_kern" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="tmode" dst="intin" type="int16_t"/>
+			<arg name="pmode" dst="intin" type="int16_t"/>
+			<arg name="tracks" src="intout" type="int16_t*"/>
+			<arg name="pairs" src="intout" type="int16_t*"/>
+		</function>
+		<function id="252" name="vst_setsize32" >
+			<return src="intout" idx="0" type="fix31" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="point" dst="intin" type="fix31"/>
+			<arg name="chwd" src="ptsout" type="int16_t*"/>
+			<arg name="chht" src="ptsout" type="int16_t*"/>
+			<arg name="cellwd" src="ptsout" type="int16_t*"/>
+			<arg name="cellht" src="ptsout" type="int16_t*"/>
+		</function>
+		<function id="248" name="vqt_devinfo" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="devnum" dst="intin" type="int16_t"/>
+			<arg name="devexists" src="ptsout" type="int16_t*"/>
+			<arg name="devstr" src="intout" words="contrl[4]" type="int8_t*"/> <!-- copy all of intout -->
+		</function>
+		<function id="251" name="v_flushcache" >
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+		</function>
+		<function id="255" name="vqt_cachesize" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="which" dst="intin" type="int16_t"/>
+			<arg name="size" src="intout" longs="1" type="int32_t*"/>
+		</function>
+		<!--
+			vqt_get_table map type varies depending on source.
+			It have been seen to be: int32_t*, int**, void**.
+			What it is though, is a pointer to a pointer to 7*224 words: int16_t**.
+			So I will go for the usage correct type and let others override for their specific target.
+		-->
+		<function id="254" name="vqt_get_table" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="map" src="intout" longs="1" type="int16_t**"/>
+		</function>
+		<function id="250" name="v_loadcache" >
+			<return src="intout" idx="0" type="int16_t" />(
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="filename" dst="intin" idx= "1" words="strlen" type="int8_t*"/>
+			<arg name="mode" dst="intin" idx="0" type="int16_t"/>
+		</function>
+		<function id="249" name="v_savecache" >
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="filename" dst="intin" words="strlen" type="int8_t*"/>
+		</function>
+		<function id="252" name="vst_setsize" >
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="point" dst="intin" type="int16_t"/>
+			<arg name="chwd" src="ptsout" type="int16_t*"/>
+			<arg name="chht" src="ptsout" type="int16_t*"/>
+			<arg name="cellwd" src="ptsout" type="int16_t*"/>
+			<arg name="cellht" src="ptsout" type="int16_t*"/>
+		</function>
+		<function id="253" name="vst_skew" >
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="skew" dst="intin" type="int16_t"/>
+		</function>
+	</functions>
+
+	<targets>
+		<target name="int_16">
+		</target>
+		<target name="int_32">
+		</target>
+		<target name="stdint">
+		</target>
+	</targets>
+
+</vdi>

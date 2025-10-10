@@ -1,0 +1,1331 @@
+<tos>
+	<structs>
+		<struct name="DTA">
+			<member name="d_reserved" type="int8_t[21]" />
+			<member name="d_attrib" type="uint8_t" />
+			<member name="d_time" type="uint16_t" />
+			<member name="d_date" type="uint16_t" />
+			<member name="d_length" type="uint32_t" />
+			<member name="d_fname" type="int8_t[14]" />
+		</struct>
+		<struct name="DISKINFO">
+			<member name="b_free" type="uint32_t" />
+			<member name="b_total" type="uint32_t" />
+			<member name="b_secsize" type="uint32_t" />
+			<member name="b_clsize" type="uint32_t" />
+		</struct>
+		<struct name="BASEPAGE">
+			<member name="p_lowtpa" type="void*" />
+			<member name="p_hitpa" type="void*" />
+			<member name="p_tbase" type="void*" />
+			<member name="p_tlen" type="int32_t" />
+			<member name="p_dbase" type="void*" />
+			<member name="p_dlen" type="int32_t" />
+			<member name="p_bbase" type="void*" />
+			<member name="p_blen" type="int32_t" />
+			<member name="p_dta" type="DTA*" />
+			<member name="p_parent" type="BASEPAGE*" />
+			<member name="p_resrvd0" type="int32_t" />
+			<member name="p_env" type="int8_t*" />
+			<member name="p_stdfh" type="int8_t[6]" />
+			<member name="p_resrvd1" type="int8_t" />
+			<member name="p_curdrv" type="int8_t" />
+			<member name="p_resrvd2" type="int32_t[18]" />
+			<member name="p_cmdlin" type="int8_t[128]" />
+		</struct>
+		<struct name="BPB">
+			<member name="recsiz" type="int16_t" />
+			<member name="clsiz" type="int16_t" />
+			<member name="clsizb" type="int16_t" />
+			<member name="rdlen" type="int16_t" />
+			<member name="fsiz" type="int16_t" />
+			<member name="fatrec" type="int16_t" />
+			<member name="datrec" type="int16_t" />
+			<member name="numcl" type="int16_t" />
+			<member name="bflags" type="int16_t" />
+		</struct>
+		<struct name="DOSTIME">
+			<member name="time" type="uint16_t" />
+			<member name="date" type="uint16_t" />
+		</struct>
+		<struct name="IOREC">
+			<member name="ibuf" type="void*" />
+			<member name="ibufsiz" type="int16_t" />
+			<member name="ibufhd" type="int16_t" />
+			<member name="ibuftl" type="int16_t" />
+			<member name="ibuflow" type="int16_t" />
+			<member name="ibufhi" type="int16_t" />
+		</struct>
+		<struct name="KBDVBASE">
+			<member name="kb_midivec" type="VOID_TOS_CB" />
+			<member name="kb_vkbderr" type="VOID_TOS_CB" />
+			<member name="kb_vmiderr" type="VOID_TOS_CB" />
+			<member name="kb_statvec" type="VOID_TOS_CB" />
+			<member name="kb_mousevec" type="VOID_TOS_CB" />
+			<member name="kb_clockvec" type="VOID_TOS_CB" />
+			<member name="kb_joyvec" type="VOID_TOS_CB" />
+			<member name="kb_midisys" type="VOID_TOS_CB" />
+			<member name="kb_kbdsys" type="VOID_TOS_CB" />
+		</struct>
+		<struct name="COMMAND">
+			<member name="length" type="uint8_t" />
+			<member name="command_tail" type="int8_t[128]" />
+		</struct>
+		<struct name="MOUSE">
+			<member name="topmode" type="uint8_t" />
+			<member name="buttons" type="uint8_t" />
+			<member name="x_scale" type="uint8_t" />
+			<member name="y_scale" type="uint8_t" />
+			<member name="x_max" type="uint16_t" />
+			<member name="y_max" type="uint16_t" />
+			<member name="x_start" type="uint16_t" />
+			<member name="y_start" type="uint16_t" />
+		</struct>
+		<struct name="PBDEF">
+			<member name="pb_scrptr" type="void*" />
+			<member name="pb_offset" type="uint16_t" />
+			<member name="pb_width" type="uint16_t" />
+			<member name="pb_height" type="uint16_t" />
+			<member name="pb_left" type="uint16_t" />
+			<member name="pb_right" type="uint16_t" />
+			<member name="pb_screz" type="uint16_t" />
+			<member name="pb_prrez" type="uint16_t" />
+			<member name="pb_colptr" type="void*" />
+			<member name="pb_prtype" type="uint16_t" />
+			<member name="pb_prport" type="uint16_t" />
+			<member name="pb_mask" type="void*" />
+		</struct>
+		<struct name="KEYTAB">
+			<member name="unshift" type="int8_t*" />
+			<member name="shift" type="int8_t*" />
+			<member name="capslock" type="int8_t*" />
+		</struct>
+		<struct name="MD">
+			<member name="m_link" type="MD*" />
+			<member name="m_start" type="void*" />
+			<member name="m_length" type="int32_t" />
+			<member name="m_own" type="BASEPAGE*" />
+		</struct>
+		<struct name="MPB">
+			<member name="mp_mfl" type="MD*" />
+			<member name="mp_mal" type="MD*" />
+			<member name="mp_rover" type="MD*" />
+		</struct>
+		<struct name="MAPTAB">
+			<member name="Bconstat" type="INT16_TOS_CB" />
+			<member name="Bconin" type="INT32_TOS_CB" />
+			<member name="Bcostat" type="INT16_TOS_CB" />
+			<member name="Bconout" type="VOID_TOS_CB" />
+			<member name="Rsconf" type="INT32_TOS_CB" />
+			<member name="iorec" type="IOREC*" />
+		</struct>
+		<struct name="BCONMAP">
+			<member name="maptab" type="MAPTAB*" />
+			<member name="maptabsize" type="int16_t" />
+		</struct>
+		<struct name="SYSHDR">
+			<member name="os_entry" type="uint16_t" />
+			<member name="os_version" type="uint16_t" />
+			<member name="os_start" type="void*" />
+			<member name="os_base" type="SYSHDR*" />
+			<member name="os_membot" type="void*" />
+			<member name="os_rsv1" type="void*" />
+			<member name="os_magic" type="int32_t" />
+			<member name="os_gendat" type="int32_t" />
+			<member name="os_palmode" type="int16_t" />
+			<member name="os_gendatg" type="int16_t" />
+			<member name="_root" type="void*" />
+			<member name="kbshift" type="int32_t*" />
+			<member name="_run" type="BASEPAGE**" />
+			<member name="p_rsv2" type="void*" />
+		</struct>
+		<struct name="MSG">
+			<member name="msg1" type="int32_t" />
+			<member name="msg2" type="int32_t" />
+			<member name="pid" type="int16_t" />
+		</struct>
+		<struct name="XATTR">
+			<member name="mode" type="uint16_t" />
+			<member name="index" type="int32_t" />
+			<member name="dev" type="uint16_t" />
+			<member name="reserved1" type="uint16_t" />
+			<member name="nlink" type="uint16_t" />
+			<member name="uid" type="uint16_t" />
+			<member name="gid" type="uint16_t" />
+			<member name="size" type="int32_t" />
+			<member name="blksize" type="int32_t" />
+			<member name="nblocks" type="int32_t" />
+			<member name="mtime" type="int16_t" />
+			<member name="mdate" type="int16_t" />
+			<member name="atime" type="int16_t" />
+			<member name="adate" type="int16_t" />
+			<member name="ctime" type="int16_t" />
+			<member name="cdate" type="int16_t" />
+			<member name="attr" type="int16_t" />
+			<member name="reserved2" type="int16_t" />
+			<member name="reserved3" type="int32_t[2]" />
+		</struct>
+		<struct name="SIGACTION">
+			<member name="sa_handler" type="VOID_TOS_CB_INT32" />
+			<member name="sa_mask" type="int32_t" />
+			<member name="sa_flags" type="int16_t" />
+		</struct>
+		<struct name="DSPBLOCK">
+			<member name="blocktype" type="int16_t" />
+			<member name="blocksize" type="int32_t" />
+			<member name="blockaddr" type="void*" />
+		</struct>
+		<struct name="METAINFO">
+			<member name="drivemap" type="uint32_t" />
+			<member name="version" type="int8_t*" />
+			<member name="reserved" type="int32_t[2]" />
+		</struct>
+		<callback name="VOID_TOS_CB">
+			<return type="void" />
+		</callback>
+		<callback name="INT16_TOS_CB">
+			<return type="int16_t" />
+		</callback>
+		<callback name="INT32_TOS_CB">
+			<return type="int32_t" />
+		</callback>
+		<callback name="VOID_TOS_CB_INT32">
+			<return type="void" />
+			<arg name="arg1" type="int32_t" />
+		</callback>
+	</structs>
+	<defines category="gemdos">
+		<define name="FA_READONLY" value="0x01" />
+		<define name="FA_HIDDEN" value="0x02" />
+		<define name="FA_SYSTEM" value="0x04" />
+		<define name="FA_VOLUME" value="0x08" />
+		<define name="FA_SUBDIR" value="0x10" />
+		<define name="FA_ARCHIVE" value="0x20" />
+		<define name="FO_READ" value="0x00" />
+		<define name="FO_WRITE" value="0x01" />
+		<define name="FO_RW" value="0x02" />
+	</defines>
+	<functions grpid="1" category="gemdos">
+		<function id="0" name="Pterm0">
+			<return type="noreturn" />
+		</function>
+		<function id="1" name="Cconin">
+			<return type="int32_t" />
+		</function>
+		<function id="2" name="Cconout">
+			<arg name="c" type="int16_t" />
+		</function>
+		<function id="3" name="Cauxin">
+			<return type="int16_t" />
+		</function>
+		<function id="4" name="Cauxout">
+			<arg name="c" type="int16_t" />
+		</function>
+		<function id="5" name="Cprnout">
+			<return type="int16_t" />
+			<arg name="c" type="int16_t" />
+		</function>
+		<function id="6" name="Crawio">
+			<return type="int32_t" />
+			<arg name="w" type="int16_t" />
+		</function>
+		<function id="7" name="Crawcin">
+			<return type="int32_t" />
+		</function>
+		<function id="8" name="Cnecin">
+			<return type="int32_t" />
+		</function>
+		<function id="9" name="Cconws">
+			<return type="int16_t" />
+			<arg name="buf" type="cint8_t*" />
+		</function>
+		<function id="10" name="Cconrs">
+			<arg name="str" type="int8_t*" />
+		</function>
+		<function id="11" name="Cconis">
+			<return type="int16_t" />
+		</function>
+		<function id="14" name="Dsetdrv">
+			<return type="int32_t" />
+			<arg name="drv" type="int16_t" />
+		</function>
+		<function id="16" name="Cconos">
+			<return type="int16_t" />
+		</function>
+		<function id="17" name="Cprnos">
+			<return type="int16_t" />
+		</function>
+		<function id="18" name="Cauxis">
+			<return type="int16_t" />
+		</function>
+		<function id="19" name="Cauxos">
+			<return type="int16_t" />
+		</function>
+		<function id="20" name="Maddalt">
+			<return type="int32_t" />
+			<arg name="start" type="void*" />
+			<arg name="size" type="int32_t" />
+		</function>
+		<function id="25" name="Dgetdrv">
+			<return type="int16_t" />
+		</function>
+		<function id="26" name="Fsetdta">
+			<arg name="buf" type="DTA*" />
+		</function>
+		<function id="32" name="Super">
+			<return type="int32_t" />
+			<arg name="stack" type="void*" />
+		</function>
+		<function id="42" name="Tgetdate">
+			<return type="uint16_t" />
+		</function>
+		<function id="43" name="Tsetdate">
+			<return type="uint16_t" />
+			<arg name="date" type="uint16_t" />
+		</function>
+		<function id="44" name="Tgettime">
+			<return type="uint16_t" />
+		</function>
+		<function id="45" name="Tsettime">
+			<return type="uint16_t" />
+			<arg name="time" type="uint16_t" />
+		</function>
+		<function id="47" name="Fgetdta">
+			<return type="DTA*" />
+		</function>
+		<function id="48" name="Sversion">
+			<return type="int16_t" />
+		</function>
+		<function id="49" name="Ptermres">
+			<return type="noreturn" />
+			<arg name="keep" type="int32_t" />
+			<arg name="retcode" type="int16_t" />
+		</function>
+		<function id="54" name="Dfree">
+			<return type="int16_t" />
+			<arg name="buf" type="DISKINFO*" />
+			<arg name="driveno" type="int16_t" />
+		</function>
+		<function id="57" name="Dcreate">
+			<return type="int16_t" />
+			<arg name="path" type="cint8_t*" />
+		</function>
+		<function id="58" name="Ddelete">
+			<return type="int16_t" />
+			<arg name="path" type="cint8_t*" />
+		</function>
+		<function id="59" name="Dsetpath">
+			<return type="int16_t" />
+			<arg name="path" type="cint8_t*" />
+		</function>
+		<function id="60" name="Fcreate">
+			<return type="int32_t" />
+			<arg name="filename" type="cint8_t*" />
+			<arg name="attr" type="int16_t" />
+		</function>
+		<function id="61" name="Fopen">
+			<return type="int32_t" />
+			<arg name="filename" type="cint8_t*" />
+			<arg name="mode" type="int16_t" />
+		</function>
+		<function id="62" name="Fclose">
+			<return type="int16_t" />
+			<arg name="handle" type="int16_t" />
+		</function>
+		<function id="63" name="Fread">
+			<return type="int32_t" />
+			<arg name="handle" type="int16_t" />
+			<arg name="length" type="int32_t" />
+			<arg name="buf" type="void*" />
+		</function>
+		<function id="64" name="Fwrite">
+			<return type="int32_t" />
+			<arg name="handle" type="int16_t" />
+			<arg name="length" type="int32_t" />
+			<arg name="buf" type="void*" />
+		</function>
+		<function id="65" name="Fdelete">
+			<return type="int16_t" />
+			<arg name="filename" type="cint8_t*" />
+		</function>
+		<function id="66" name="Fseek">
+			<return type="int32_t" />
+			<arg name="offset" type="int32_t" />
+			<arg name="handle" type="int16_t" />
+			<arg name="mode" type="int16_t" />
+		</function>
+		<function id="67" name="Fattrib">
+			<return type="int16_t" />
+			<arg name="filename" type="cint8_t*" />
+			<arg name="flag" type="int16_t" />
+			<arg name="attrib" type="int16_t" />
+		</function>
+		<function id="68" name="Mxalloc">
+			<return type="void*" />
+			<arg name="amount" type="int32_t" />
+			<arg name="mode" type="int16_t" />
+		</function>
+		<function id="69" name="Fdup">
+			<return type="int32_t" />
+			<arg name="handle" type="int16_t" />
+		</function>
+		<function id="70" name="Fforce">
+			<return type="int16_t" />
+			<arg name="shandle" type="int16_t" />
+			<arg name="nhandle" type="int16_t" />
+		</function>
+		<function id="71" name="Dgetpath">
+			<return type="int16_t" />
+			<arg name="path" type="int8_t*" />
+			<arg name="driveno" type="int16_t" />
+		</function>
+		<function id="72" name="Malloc">
+			<return type="void*" />
+			<arg name="number" type="int32_t" />
+		</function>
+		<function id="73" name="Mfree">
+			<return type="int16_t" />
+			<arg name="block" type="void*" />
+		</function>
+		<function id="74" name="Mshrink">
+			<return type="int16_t" />
+			<arg value="0" type="int16_t" />
+			<arg name="block" type="void*" />
+			<arg name="newsiz" type="int32_t" />
+		</function>
+		<function id="75" name="Pexec">
+			<return type="int32_t" />
+			<arg name="mode" type="int16_t" />
+			<arg name="fname" type="void*" />
+			<arg name="cmdline" type="void*" />
+			<arg name="envstr" type="void*" />
+		</function>
+		<function id="76" name="Pterm">
+			<return type="noreturn" />
+			<arg name="retcode" type="int16_t" />
+		</function>
+		<function id="78" name="Fsfirst">
+			<return type="int16_t" />
+			<arg name="filename" type="cint8_t*" />
+			<arg name="attr" type="int16_t" />
+		</function>
+		<function id="79" name="Fsnext">
+			<return type="int16_t" />
+		</function>
+		<function id="86" name="Frename">
+			<return type="int16_t" />
+			<arg value="0" type="int16_t" />
+			<arg name="oldname" type="cint8_t*" />
+			<arg name="newname" type="cint8_t*" />
+		</function>
+		<function id="87" name="Fdatime">
+			<return type="int16_t" />
+			<arg name="timeptr" type="DOSTIME*" />
+			<arg name="handle" type="int16_t" />
+			<arg name="flag" type="int16_t" />
+		</function>
+		<function id="92" name="Flock">
+			<return type="int32_t" />
+			<arg name="handle" type="int16_t" />
+			<arg name="mode" type="int16_t" />
+			<arg name="start" type="int32_t" />
+			<arg name="length" type="int32_t" />
+		</function>
+	</functions>
+	<defines category="mint">
+		<define name="SIGNULL" value="0" />
+		<define name="SIGHUP" value="1" />
+		<define name="SIGINT" value="2" />
+		<define name="SIGQUIT" value="3" />
+		<define name="SIGILL" value="4" />
+		<define name="SIGTRAP" value="5" />
+		<define name="SIGABRT" value="6" />
+		<define name="SIGIOT" value="SIGABRT" />
+		<define name="SIGPRIV" value="7" />
+		<define name="SIGEMT" value="SIGPRIV" />
+		<define name="SIGFPE" value="8" />
+		<define name="SIGKILL" value="9" />
+		<define name="SIGBUS" value="10" />
+		<define name="SIGSEGV" value="11" />
+		<define name="SIGSYS" value="12" />
+		<define name="SIGPIPE" value="13" />
+		<define name="SIGALRM" value="14" />
+		<define name="SIGTERM" value="15" />
+		<define name="SIGURG" value="16" />
+		<define name="SIGSTOP" value="17" />
+		<define name="SIGTSTP" value="18" />
+		<define name="SIGCONT" value="19" />
+		<define name="SIGCHLD" value="20" />
+		<define name="SIGTTIN" value="21" />
+		<define name="SIGTTOU" value="22" />
+		<define name="SIGIO" value="23" />
+		<define name="SIGPOLL" value="SIGIO" />
+		<define name="SIGXCPU" value="24" />
+		<define name="SIGXFSZ" value="25" />
+		<define name="SIGVTALRM" value="26" />
+		<define name="SIGPROF" value="27" />
+		<define name="SIGWINCH" value="28" />
+		<define name="SIGUSR1" value="29" />
+		<define name="SIGUSR2" value="30" />
+		<define name="SIGPWR" value="31" />
+		<define name="S_IFMT" value="0170000" />
+		<define name="S_IFCHR" value="0020000" />
+		<define name="S_IFDIR" value="0040000" />
+		<define name="S_IFREG" value="0100000" />
+		<define name="S_IFIFO" value="0120000" />
+		<define name="S_IMEM" value="0140000" />
+		<define name="S_IFLNK" value="0160000" />
+		<define name="S_ISUID" value="04000" />
+		<define name="S_ISGID" value="02000" />
+		<define name="S_ISVTX" value="01000" />
+		<define name="S_IRUSR" value="0400" />
+		<define name="S_IWUSR" value="0200" />
+		<define name="S_IXUSR" value="0100" />
+		<define name="S_IRGRP" value="0040" />
+		<define name="S_IWGRP" value="0020" />
+		<define name="S_IXGRP" value="0010" />
+		<define name="S_IROTH" value="0004" />
+		<define name="S_IWOTH" value="0002" />
+		<define name="S_IXOTH" value="0001" />
+		<define name="DEFAULT_DIRMODE" value="0777" />
+		<define name="DEFAULT_MODE" value="0666" />
+		<define name="SA_NOCLDSTOP" value="1" />
+	</defines>
+	<functions grpid="1" category="mint">
+		<function id="255" name="Syield">
+			<return type="int16_t" />
+		</function>
+		<function id="256" name="Fpipe">
+			<return type="int16_t" />
+			<arg name="usrh" type="int16_t*" />
+		</function>
+		<function id="260" name="Fcntl">
+			<return type="int16_t" />
+			<arg name="handle" type="int16_t" />
+			<arg name="arg" type="int32_t" />
+			<arg name="cmd" type="int16_t" />
+		</function>
+		<function id="261" name="Finstat">
+			<return type="int32_t" />
+			<arg name="handle" type="int16_t" />
+		</function>
+		<function id="262" name="Foutstat">
+			<return type="int32_t" />
+			<arg name="handle" type="int16_t" />
+		</function>
+		<function id="263" name="Fgetchar">
+			<return type="int32_t" />
+			<arg name="handle" type="int16_t" />
+			<arg name="mode" type="int16_t" />
+		</function>
+		<function id="264" name="Fputchar">
+			<return type="int32_t" />
+			<arg name="handle" type="int16_t" />
+			<arg name="c" type="int32_t" />
+			<arg name="mode" type="int16_t" />
+		</function>
+		<function id="265" name="Pwait">
+			<return type="int32_t" />
+		</function>
+		<function id="266" name="Pnice">
+			<return type="int16_t" />
+			<arg name="delta" type="int16_t" />
+		</function>
+		<function id="267" name="Pgetpid">
+			<return type="int16_t" />
+		</function>
+		<function id="268" name="Pgetppid">
+			<return type="int16_t" />
+		</function>
+		<function id="269" name="Pgetpgrp">
+			<return type="int16_t" />
+		</function>
+		<function id="270" name="Psetpgrp">
+			<return type="int16_t" />
+			<arg name="pid" type="int16_t" />
+			<arg name="newgrp" type="int16_t" />
+		</function>
+		<function id="271" name="Pgetuid">
+			<return type="int16_t" />
+		</function>
+		<function id="272" name="Psetuid">
+			<return type="int16_t" />
+			<arg name="id" type="int16_t" />
+		</function>
+		<function id="273" name="Pkill">
+			<return type="int16_t" />
+			<arg name="pid" type="int16_t" />
+			<arg name="sig" type="int16_t" />
+		</function>
+		<function id="274" name="Psignal">
+			<return type="VOID_TOS_CB_INT32" />
+			<arg name="sig" type="int16_t" />
+			<arg name="handler" type="VOID_TOS_CB_INT32" />
+		</function>
+		<function id="275" name="Pvfork">
+			<return type="int16_t" />
+		</function>
+		<function id="276" name="Pgetgid">
+			<return type="int16_t" />
+		</function>
+		<function id="277" name="Psetgid">
+			<return type="int16_t" />
+			<arg name="id" type="int16_t" />
+		</function>
+		<function id="278" name="Psigblock">
+			<return type="int32_t" />
+			<arg name="mask" type="int32_t" />
+		</function>
+		<function id="279" name="Psigsetmask">
+			<return type="int32_t" />
+			<arg name="mask" type="int32_t" />
+		</function>
+		<function id="280" name="Pusrval">
+			<return type="int32_t" />
+			<arg name="arg" type="int32_t" />
+		</function>
+		<function id="281" name="Pdomain">
+			<return type="int16_t" />
+			<arg name="newdom" type="int16_t" />
+		</function>
+		<function id="282" name="Psigreturn">
+		</function>
+		<function id="283" name="Pfork">
+			<return type="int16_t" />
+		</function>
+		<function id="284" name="Pwait3">
+			<return type="int32_t" />
+			<arg name="flag" type="int16_t" />
+			<arg name="rusage" type="int32_t*" />
+		</function>
+		<function id="285" name="Fselect">
+			<return type="int16_t" />
+			<arg name="timeout" type="uint16_t" />
+			<arg name="rfds" type="int32_t*" />
+			<arg name="wfds" type="int32_t*" />
+			<arg name="xfds" type="int32_t*" />
+		</function>
+		<function id="286" name="Prusage">
+			<arg name="r" type="int32_t*" />
+		</function>
+		<function id="287" name="Psetlimit">
+			<return type="int32_t" />
+			<arg name="lim" type="int16_t" />
+			<arg name="value" type="int32_t" />
+		</function>
+		<function id="288" name="Talarm">
+			<return type="int32_t" />
+			<arg name="secs" type="int32_t" />
+		</function>
+		<function id="289" name="Pause">
+		</function>
+		<function id="290" name="Sysconf">
+			<return type="int32_t" />
+			<arg name="n" type="int16_t" />
+		</function>
+		<function id="291" name="Psigpending">
+			<return type="int32_t" />
+		</function>
+		<function id="292" name="Dpathconf">
+			<return type="int32_t" />
+			<arg name="name" type="int8_t*" />
+			<arg name="n" type="int16_t" />
+		</function>
+		<function id="293" name="Pmsg">
+			<return type="int32_t" />
+			<arg name="mode" type="int16_t" />
+			<arg name="mbox" type="int32_t" />
+			<arg name="msg" type="MSG*" />
+		</function>
+		<function id="294" name="Fmidipipe">
+			<return type="int32_t" />
+			<arg name="pid" type="int16_t" />
+			<arg name="in" type="int16_t" />
+			<arg name="out" type="int16_t" />
+		</function>
+		<function id="295" name="Prenice">
+			<return type="int16_t" />
+			<arg name="pid" type="int16_t" />
+			<arg name="delta" type="int16_t" />
+		</function>
+		<function id="296" name="Dopendir">
+			<return type="int32_t" />
+			<arg name="name" type="int8_t*" />
+			<arg name="flag" type="int16_t" />
+		</function>
+		<function id="297" name="Dreaddir">
+			<return type="int32_t" />
+			<arg name="buflen" type="int16_t" />
+			<arg name="dir" type="int32_t" />
+			<arg name="buf" type="int8_t*" />
+		</function>
+		<function id="298" name="Drewinddir">
+			<return type="int32_t" />
+			<arg name="dir" type="int32_t" />
+		</function>
+		<function id="299" name="Dclosedir">
+			<return type="int32_t" />
+			<arg name="dir" type="int32_t" />
+		</function>
+		<function id="300" name="Fxattr">
+			<return type="int32_t" />
+			<arg name="flag" type="int16_t" />
+			<arg name="name" type="int8_t*" />
+			<arg name="buf" type="XATTR*" />
+		</function>
+		<function id="301" name="Flink">
+			<return type="int32_t" />
+			<arg name="oldname" type="int8_t*" />
+			<arg name="newname" type="int8_t*" />
+		</function>
+		<function id="302" name="Fsymlink">
+			<return type="int32_t" />
+			<arg name="oldname" type="int8_t*" />
+			<arg name="newname" type="int8_t*" />
+		</function>
+		<function id="303" name="Freadlink">
+			<return type="int32_t" />
+			<arg name="size" type="int16_t" />
+			<arg name="buf" type="int8_t*" />
+			<arg name="name" type="int8_t*" />
+		</function>
+		<function id="304" name="Dcntl">
+			<return type="int32_t" />
+			<arg name="cmd" type="int16_t" />
+			<arg name="name" type="int8_t*" />
+			<arg name="arg" type="int32_t" />
+		</function>
+		<function id="305" name="Fchown">
+			<return type="int32_t" />
+			<arg name="name" type="int8_t*" />
+			<arg name="uid" type="int16_t" />
+			<arg name="gid" type="int16_t" />
+		</function>
+		<function id="306" name="Fchmod">
+			<return type="int32_t" />
+			<arg name="name" type="int8_t*" />
+			<arg name="mode" type="int16_t" />
+		</function>
+		<function id="307" name="Pumask">
+			<return type="int32_t" />
+			<arg name="mode" type="uint16_t" />
+		</function>
+		<function id="308" name="Psemaphore">
+			<return type="int32_t" />
+			<arg name="mode" type="int16_t" />
+			<arg name="id" type="int32_t" />
+			<arg name="timeout" type="int32_t" />
+		</function>
+		<function id="309" name="Dlock">
+			<return type="int32_t" />
+			<arg name="mode" type="int16_t" />
+			<arg name="drive" type="int16_t" />
+		</function>
+		<function id="310" name="Psigpause">
+			<arg name="mask" type="uint32_t" />
+		</function>
+		<function id="311" name="Psigaction">
+			<return type="int32_t" />
+			<arg name="sig" type="int16_t" />
+			<arg name="act" type="SIGACTION*" />
+			<arg name="oact" type="SIGACTION*" />
+		</function>
+		<function id="312" name="Pgeteuid">
+			<return type="int16_t" />
+		</function>
+		<function id="313" name="Pgetegid">
+			<return type="int16_t" />
+		</function>
+		<function id="314" name="Pwaitpid">
+			<return type="int32_t" />
+			<arg name="pid" type="int16_t" />
+			<arg name="flag" type="int16_t" />
+			<arg name="rusage" type="int32_t*" />
+		</function>
+		<function id="315" name="Dgetcwd">
+			<return type="int32_t" />
+			<arg name="path" type="int8_t*" />
+			<arg name="drv" type="int16_t" />
+			<arg name="size" type="int16_t" />
+		</function>
+		<function id="316" name="Salert">
+			<arg name="str" type="int8_t*" />
+		</function>
+	</functions>
+	<functions grpid="13" category="bios">
+		<function id="0" name="Getmpb">
+			<arg name="ptr" type="MPB*" />
+		</function>
+		<function id="1" name="Bconstat">
+			<return type="int16_t" />
+			<arg name="dev" type="int16_t" />
+		</function>
+		<function id="2" name="Bconin">
+			<return type="int32_t" />
+			<arg name="dev" type="int16_t" />
+		</function>
+		<function id="3" name="Bconout">
+			<arg name="dev" type="int16_t" />
+			<arg name="c" type="int16_t" />
+		</function>
+		<function id="4" name="Rwabs">
+			<return type="int32_t" />
+			<arg name="rwflag" type="int16_t" />
+			<arg name="buf" type="void*" />
+			<arg name="cnt" type="int16_t" />
+			<arg name="recnr" type="int16_t" />
+			<arg name="dev" type="int16_t" />
+			<arg name="lrecno" type="int32_t" />
+		</function>
+		<function id="5" name="Setexc">
+			<return type="VOID_TOS_CB" />
+			<arg name="num" type="int16_t" />
+			<arg name="newvec" type="VOID_TOS_CB" />
+		</function>
+		<function id="6" name="Tickcal">
+			<return type="int32_t" />
+		</function>
+		<function id="7" name="Getbpb">
+			<return type="BPB*" />
+			<arg name="dev" type="int16_t" />
+		</function>
+		<function id="8" name="Bcostat">
+			<return type="int32_t" />
+			<arg name="dev" type="int16_t" />
+		</function>
+		<function id="9" name="Mediach">
+			<return type="int32_t" />
+			<arg name="dev" type="int16_t" />
+		</function>
+		<function id="10" name="Drvmap">
+			<return type="int32_t" />
+		</function>
+		<function id="11" name="Kbshift">
+			<return type="int32_t" />
+			<arg name="mode" type="int16_t" />
+		</function>
+	</functions>
+	<defines category="xbios">
+		<define name="VERTFLAG" value="0x0100" />
+		<define name="STMODES" value="0x0080" />
+		<define name="OVERSCAN" value="0x0040" />
+		<define name="PAL" value="0x0020" />
+		<define name="VGA_FALCON" value="0x0010" />
+		<define name="TV" value="0x0000" />
+		<define name="COL80" value="0x08" />
+		<define name="COL40" value="0x00" />
+		<define name="BPS16" value="4" />
+		<define name="BPS8" value="3" />
+		<define name="BPS4" value="2" />
+		<define name="BPS2" value="1" />
+		<define name="BPS1" value="0" />
+		<define name="NUMCOLS" value="7" />
+	</defines>
+	<functions grpid="14" category="xbios">
+		<function id="0" name="Initmous">
+			<arg name="type" type="int16_t" />
+			<arg name="par" type="MOUSE*" />
+			<arg name="mousevec" type="VOID_TOS_CB" />
+		</function>
+		<function id="1" name="Ssbrk">
+			<return type="void*" />
+			<arg name="count" type="int16_t" />
+		</function>
+		<function id="2" name="Physbase">
+			<return type="void*" />
+		</function>
+		<function id="3" name="Logbase">
+			<return type="void*" />
+		</function>
+		<function id="4" name="Getrez">
+			<return type="int16_t" />
+		</function>
+		<function id="5" name="Setscreen">
+			<arg name="laddr" type="void*" />
+			<arg name="paddr" type="void*" />
+			<arg name="rez" type="int16_t" />
+		</function>
+		<function id="6" name="Setpalette">
+			<arg name="palptr" type="int16_t*" />
+		</function>
+		<function id="7" name="Setcolor">
+			<return type="int16_t" />
+			<arg name="colornum" type="int16_t" />
+			<arg name="color" type="int16_t" />
+		</function>
+		<function id="8" name="Floprd">
+			<return type="int16_t" />
+			<arg name="buf" type="void*" />
+			<arg name="rsrvd" type="int32_t" />
+			<arg name="devno" type="int16_t" />
+			<arg name="sectno" type="int16_t" />
+			<arg name="trackno" type="int16_t" />
+			<arg name="sideno" type="int16_t" />
+			<arg name="count" type="int16_t" />
+		</function>
+		<function id="9" name="Flopwr">
+			<return type="int16_t" />
+			<arg name="buf" type="void*" />
+			<arg name="rsrvd" type="int32_t" />
+			<arg name="devno" type="int16_t" />
+			<arg name="sectno" type="int16_t" />
+			<arg name="trackno" type="int16_t" />
+			<arg name="sideno" type="int16_t" />
+			<arg name="count" type="int16_t" />
+		</function>
+		<function id="10" name="Flopfmt">
+			<return type="int16_t" />
+			<arg name="buf" type="void*" />
+			<arg name="skew" type="int16_t*" />
+			<arg name="devno" type="int16_t" />
+			<arg name="spt" type="int16_t" />
+			<arg name="trackno" type="int16_t" />
+			<arg name="sideno" type="int16_t" />
+			<arg name="interlv" type="int16_t" />
+			<arg name="magic" type="int32_t" />
+			<arg name="virgin" type="int16_t" />
+		</function>
+		<function id="11" name="Dbmsg">
+			<arg name="rsrvd" type="int16_t" />
+			<arg name="msg_num" type="int16_t" />
+			<arg name="msg_arg" type="int32_t" />
+		</function>
+		<function id="12" name="Midiws">
+			<arg name="cnt" type="int16_t" />
+			<arg name="ptr" type="int8_t*" />
+		</function>
+		<function id="13" name="Mfpint">
+			<arg name="erno" type="int16_t" />
+			<arg name="vector" type="VOID_TOS_CB" />
+		</function>
+		<function id="14" name="Iorec">
+			<return type="IOREC*" />
+			<arg name="dev" type="int16_t" />
+		</function>
+		<function id="15" name="Rsconf">
+			<return type="int32_t" />
+			<arg name="baud" type="int16_t" />
+			<arg name="ctr" type="int16_t" />
+			<arg name="ucr" type="int16_t" />
+			<arg name="rsr" type="int16_t" />
+			<arg name="tsr" type="int16_t" />
+			<arg name="scr" type="int16_t" />
+		</function>
+		<function id="16" name="Keytbl">
+			<return type="KEYTAB*" />
+			<arg name="unshift" type="int8_t*" />
+			<arg name="shift" type="int8_t*" />
+			<arg name="capslock" type="int8_t*" />
+		</function>
+		<function id="17" name="Random">
+			<return type="int32_t" />
+		</function>
+		<function id="18" name="Protobt">
+			<arg name="buf" type="void*" />
+			<arg name="serialno" type="int32_t" />
+			<arg name="disktype" type="int16_t" />
+			<arg name="execflag" type="int16_t" />
+		</function>
+		<function id="19" name="Flopver">
+			<return type="int16_t" />
+			<arg name="buf" type="void*" />
+			<arg name="rsrvd" type="int32_t" />
+			<arg name="devno" type="int16_t" />
+			<arg name="sectno" type="int16_t" />
+			<arg name="trackno" type="int16_t" />
+			<arg name="sideno" type="int16_t" />
+			<arg name="count" type="int16_t" />
+		</function>
+		<function id="20" name="Scrdmp">
+		</function>
+		<function id="21" name="Cursconf">
+			<return type="int16_t" />
+			<arg name="mode" type="int16_t" />
+			<arg name="rate" type="int16_t" />
+		</function>
+		<function id="22" name="Settime">
+			<arg name="time" type="uint32_t" />
+		</function>
+		<function id="23" name="Gettime">
+			<return type="uint32_t" />
+		</function>
+		<function id="24" name="Bioskeys">
+		</function>
+		<function id="25" name="Ikbdws">
+			<arg name="count" type="int16_t" />
+			<arg name="ptr" type="int8_t*" />
+		</function>
+		<function id="26" name="Jdisint">
+			<arg name="number" type="int16_t" />
+		</function>
+		<function id="27" name="Jenabint">
+			<arg name="number" type="int16_t" />
+		</function>
+		<function id="28" name="Giaccess">
+			<return type="int8_t" />
+			<arg name="data" type="int16_t" />
+			<arg name="regno" type="int16_t" />
+		</function>
+		<function id="29" name="Offgibit">
+			<arg name="bitno" type="int16_t" />
+		</function>
+		<function id="30" name="Ongibit">
+			<arg name="bitno" type="int16_t" />
+		</function>
+		<function id="31" name="Xbtimer">
+			<arg name="timer" type="int16_t" />
+			<arg name="control" type="int16_t" />
+			<arg name="data" type="int16_t" />
+			<arg name="vector" type="VOID_TOS_CB" />
+		</function>
+		<function id="32" name="Dosound">
+			<arg name="buf" type="int8_t*" />
+		</function>
+		<function id="33" name="Setprt">
+			<return type="int16_t" />
+			<arg name="config" type="int16_t" />
+		</function>
+		<function id="34" name="Kbdvbase">
+			<return type="KBDVBASE*" />
+		</function>
+		<function id="35" name="Kbrate">
+			<return type="int16_t" />
+			<arg name="delay" type="int16_t" />
+			<arg name="rate" type="int16_t" />
+		</function>
+		<function id="36" name="Prtblk">
+			<arg name="par" type="PBDEF*" />
+		</function>
+		<function id="37" name="Vsync">
+		</function>
+		<function id="38" name="Supexec">
+			<return type="int32_t" />
+			<arg name="func" type="INT32_TOS_CB" />
+		</function>
+		<function id="39" name="Puntaes">
+		</function>
+		<function id="41" name="Floprate">
+			<return type="int16_t" />
+			<arg name="devno" type="int16_t" />
+			<arg name="rate" type="int16_t" />
+		</function>
+		<function id="42" name="DMAread">
+			<return type="int16_t" />
+			<arg name="sector" type="uint32_t" />
+			<arg name="count" type="int16_t" />
+			<arg name="buffer" type="void*" />
+			<arg name="devno" type="int16_t" />
+		</function>
+		<function id="43" name="DMAwrite">
+			<return type="int16_t" />
+			<arg name="sector" type="uint32_t" />
+			<arg name="count" type="int16_t" />
+			<arg name="buffer" type="void*" />
+			<arg name="devno" type="int16_t" />
+		</function>
+		<function id="44" name="Bconmap">
+			<return type="int32_t" />
+			<arg name="devno" type="int16_t" />
+		</function>
+		<function id="46" name="NVMaccess">
+			<return type="int16_t" />
+			<arg name="opcode" type="int16_t" />
+			<arg name="start" type="int16_t" />
+			<arg name="count" type="int16_t" />
+			<arg name="buffer" type="void*" />
+		</function>
+		<function id="48" name="Metainit">
+			<arg name="metainfo" type="METAINFO*" />
+		</function>
+		<function id="64" name="Blitmode">
+			<return type="int16_t" />
+			<arg name="mode" type="int16_t" />
+		</function>
+		<function id="80" name="Esetshift">
+			<return type="int16_t" />
+			<arg name="shftMode" type="int16_t" />
+		</function>
+		<function id="81" name="Egetshift">
+			<return type="int16_t" />
+		</function>
+		<function id="82" name="EsetBank">
+			<return type="int16_t" />
+			<arg name="bankNum" type="int16_t" />
+		</function>
+		<function id="83" name="EsetColor">
+			<return type="int16_t" />
+			<arg name="colorNum" type="int16_t" />
+			<arg name="color" type="int16_t" />
+		</function>
+		<function id="84" name="EsetPalette">
+			<arg name="start" type="int16_t" />
+			<arg name="count" type="int16_t" />
+			<arg name="palettePtr" type="int16_t*" />
+		</function>
+		<function id="85" name="EgetPalette">
+			<arg name="start" type="int16_t" />
+			<arg name="count" type="int16_t" />
+			<arg name="palettePtr" type="int16_t*" />
+		</function>
+		<function id="86" name="EsetGray">
+			<return type="int16_t" />
+			<arg name="swtch" type="int16_t" />
+		</function>
+		<function id="87" name="EsetSmear">
+			<return type="int16_t" />
+			<arg name="swtch" type="int16_t" />
+		</function>
+		<function id="88" name="Vsetmode">
+			<return type="int16_t" />
+			<arg name="modecode" type="int16_t" />
+		</function>
+		<function id="89" name="VgetMonitor">
+			<return type="int16_t" />
+		</function>
+		<function id="90" name="VsetSync">
+			<arg name="flag" type="int16_t" />
+		</function>
+		<function id="91" name="VgetSize">
+			<return type="int32_t" />
+			<arg name="mode" type="int16_t" />
+		</function>
+		<function id="92" name="VsetMask">
+			<arg name="ormask" type="int32_t" />
+			<arg name="andmask" type="int32_t" />
+			<arg name="overlay" type="int16_t" />
+		</function>
+		<function id="93" name="VsetRGB">
+			<arg name="index" type="int16_t" />
+			<arg name="count" type="int16_t" />
+			<arg name="array" type="int32_t*" />
+		</function>
+		<function id="94" name="VgetRGB">
+			<arg name="index" type="int16_t" />
+			<arg name="count" type="int16_t" />
+			<arg name="array" type="int32_t*" />
+		</function>
+		<function id="96" name="Dsp_DoBlock">
+			<arg name="data_in" type="int8_t*" />
+			<arg name="size_in" type="int32_t" />
+			<arg name="data_out" type="int8_t*" />
+			<arg name="size_out" type="int32_t" />
+		</function>
+		<function id="97" name="Dsp_BlkHandShake">
+			<arg name="data_in" type="int8_t*" />
+			<arg name="size_in" type="int32_t" />
+			<arg name="data_out" type="int8_t*" />
+			<arg name="size_out" type="int32_t" />
+		</function>
+		<function id="98" name="Dsp_BlkUnpacked">
+			<arg name="data_in" type="int32_t*" />
+			<arg name="size_in" type="int32_t" />
+			<arg name="data_out" type="int32_t*" />
+			<arg name="size_out" type="int32_t" />
+		</function>
+		<function id="99" name="Dsp_InStream">
+			<arg name="data_in" type="int8_t*" />
+			<arg name="block_size" type="int32_t" />
+			<arg name="num_blocks" type="int32_t" />
+			<arg name="blocks_done" type="int32_t*" />
+		</function>
+		<function id="100" name="Dsp_OutStream">
+			<arg name="data_out" type="int8_t*" />
+			<arg name="block_size" type="int32_t" />
+			<arg name="num_blocks" type="int32_t" />
+			<arg name="blocks_done" type="int32_t*" />
+		</function>
+		<function id="101" name="Dsp_IOStream">
+			<arg name="data_in" type="int8_t*" />
+			<arg name="data_out" type="int8_t*" />
+			<arg name="block_insize" type="int32_t" />
+			<arg name="block_outsize" type="int32_t" />
+			<arg name="num_blocks" type="int32_t" />
+			<arg name="blocks_done" type="int32_t*" />
+		</function>
+		<function id="102" name="Dsp_RemoveInterrupts">
+			<arg name="mask" type="int16_t" />
+		</function>
+		<function id="103" name="Dsp_GetWordSize">
+			<return type="int16_t" />
+		</function>
+		<function id="104" name="Dsp_Lock">
+			<return type="int16_t" />
+		</function>
+		<function id="105" name="Dsp_Unlock">
+		</function>
+		<function id="106" name="Dsp_Available">
+			<arg name="xavailable" type="int32_t*" />
+			<arg name="yavailable" type="int32_t*" />
+		</function>
+		<function id="107" name="Dsp_Reserve">
+			<return type="int16_t" />
+			<arg name="xreserve" type="int32_t" />
+			<arg name="yreserve" type="int32_t" />
+		</function>
+		<function id="108" name="Dsp_LoadProg">
+			<return type="int16_t" />
+			<arg name="file" type="int8_t*" />
+			<arg name="ability" type="int16_t" />
+			<arg name="buffer" type="int8_t*" />
+		</function>
+		<function id="109" name="Dsp_ExecProg">
+			<arg name="codeptr" type="int8_t*" />
+			<arg name="codesize" type="int32_t" />
+			<arg name="ability" type="int16_t" />
+		</function>
+		<function id="110" name="Dsp_ExecBoot">
+			<arg name="codeptr" type="int8_t*" />
+			<arg name="codesize" type="int32_t" />
+			<arg name="ability" type="int16_t" />
+		</function>
+		<function id="111" name="Dsp_LodToBinary">
+			<return type="int32_t" />
+			<arg name="file" type="int8_t*" />
+			<arg name="codeptr" type="int8_t*" />
+		</function>
+		<function id="112" name="Dsp_TriggerHC">
+			<arg name="vector" type="int16_t" />
+		</function>
+		<function id="113" name="Dsp_RequestUniqueAbility">
+			<return type="int16_t" />
+		</function>
+		<function id="114" name="Dsp_GetProgAbility">
+			<return type="int16_t" />
+		</function>
+		<function id="115" name="Dsp_FlushSubroutines">
+		</function>
+		<function id="116" name="Dsp_LoadSubroutine">
+			<return type="int16_t" />
+			<arg name="codeptr" type="int8_t*" />
+			<arg name="codesize" type="int32_t" />
+			<arg name="ability" type="int16_t" />
+		</function>
+		<function id="117" name="Dsp_InqSubrAbility">
+			<return type="int16_t" />
+			<arg name="ability" type="int16_t" />
+		</function>
+		<function id="118" name="Dsp_RunSubroutine">
+			<return type="int16_t" />
+			<arg name="handle" type="int16_t" />
+		</function>
+		<function id="119" name="Dsp_Hf0">
+			<return type="int16_t" />
+			<arg name="flag" type="int16_t" />
+		</function>
+		<function id="120" name="Dsp_Hf1">
+			<return type="int16_t" />
+			<arg name="flag" type="int16_t" />
+		</function>
+		<function id="121" name="Dsp_Hf2">
+			<return type="int16_t" />
+		</function>
+		<function id="122" name="Dsp_Hf3">
+			<return type="int16_t" />
+		</function>
+		<function id="123" name="Dsp_BlkWords">
+			<arg name="data_in" type="int16_t*" />
+			<arg name="size_in" type="int32_t" />
+			<arg name="data_out" type="int16_t*" />
+			<arg name="size_out" type="int32_t" />
+		</function>
+		<function id="124" name="Dsp_BlkBytes">
+			<arg name="data_in" type="uint8_t*" />
+			<arg name="size_in" type="int32_t" />
+			<arg name="data_out" type="uint8_t*" />
+			<arg name="size_out" type="int32_t" />
+		</function>
+		<function id="125" name="Dsp_HStat">
+			<return type="int8_t" />
+		</function>
+		<function id="126" name="Dsp_SetVectors">
+			<arg name="receiver" type="VOID_TOS_CB" />
+			<arg name="transmitter" type="INT32_TOS_CB" />
+		</function>
+		<function id="127" name="Dsp_MultBlocks">
+			<arg name="numsend" type="int32_t" />
+			<arg name="numreceive" type="int32_t" />
+			<arg name="sendblocks" type="DSPBLOCK*" />
+			<arg name="receiveblocks" type="DSPBLOCK*" />
+		</function>
+		<function id="128" name="Locksnd">
+			<return type="int32_t" />
+		</function>
+		<function id="129" name="Unlocksnd">
+			<return type="int32_t" />
+		</function>
+		<function id="130" name="Soundcmd">
+			<return type="int32_t" />
+			<arg name="mode" type="int16_t" />
+			<arg name="data" type="int16_t" />
+		</function>
+		<function id="131" name="Setbuffer">
+			<return type="int32_t" />
+			<arg name="reg" type="int16_t" />
+			<arg name="begaddr" type="void*" />
+			<arg name="endaddr" type="void*" />
+		</function>
+		<function id="132" name="Setmode">
+			<return type="int32_t" />
+			<arg name="mode" type="int16_t" />
+		</function>
+		<function id="133" name="Settracks">
+			<return type="int32_t" />
+			<arg name="playtracks" type="int16_t" />
+			<arg name="rectracks" type="int16_t" />
+		</function>
+		<function id="134" name="Setmontracks">
+			<return type="int32_t" />
+			<arg name="montrack" type="int16_t" />
+		</function>
+		<function id="135" name="Setinterrupt">
+			<return type="int32_t" />
+			<arg name="mode" type="int16_t" />
+			<arg name="cause" type="int16_t" />
+		</function>
+		<function id="136" name="Buffoper">
+			<return type="int32_t" />
+			<arg name="mode" type="int16_t" />
+		</function>
+		<function id="137" name="Dsptristate">
+			<return type="int32_t" />
+			<arg name="dspxmit" type="int16_t" />
+			<arg name="dsprec" type="int16_t" />
+		</function>
+		<function id="138" name="Gpio">
+			<return type="int32_t" />
+			<arg name="mode" type="int16_t" />
+			<arg name="data" type="int16_t" />
+		</function>
+		<function id="139" name="Devconnect">
+			<return type="int32_t" />
+			<arg name="src" type="int16_t" />
+			<arg name="dst" type="int16_t" />
+			<arg name="srcclk" type="int16_t" />
+			<arg name="prescale" type="int16_t" />
+			<arg name="protocol" type="int16_t" />
+		</function>
+		<function id="140" name="Sndstatus">
+			<return type="int32_t" />
+			<arg name="reset" type="int16_t" />
+		</function>
+		<function id="141" name="Buffptr">
+			<return type="int32_t" />
+			<arg name="ptr" type="int32_t*" />
+		</function>
+		<function id="165" name="WavePlay">
+			<return type="int16_t" />
+			<arg name="flags" type="int16_t" />
+			<arg name="rate" type="int32_t" />
+			<arg name="sptr" type="void*" />
+			<arg name="slen" type="int32_t" />
+		</function>
+	</functions>
+	<targets>
+		<target name="int_16">
+		</target>
+		<target name="int_32">
+		</target>
+		<target name="stdint">
+		</target>
+	</targets>
+</tos>

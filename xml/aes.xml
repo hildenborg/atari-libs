@@ -1,0 +1,964 @@
+<aes>
+	<include name="&quot;aes_def.h&quot;" />
+	<structs>
+		<callback name="INT16_AES_CB_PARMBLK">
+			<return type="int16_t" />
+			<arg name="arg1" type="PARMBLK*" />
+		</callback>
+		<struct name="AESPARBLK" extern="aesparblk">
+			<member name="contrl" type="int16_t[16]" />
+			<member name="global" type="int16_t[16]" />
+			<member name="intin" type="int16_t[16]" />
+			<member name="intout" type="int16_t[16]" />
+			<member name="addrin" type="void*[8]" />
+			<member name="addrout" type="void*[1]" />
+		</struct>
+		<struct name="AESPB" extern="aespb">
+			<member name="contrl" type="int16_t*" />
+			<member name="global" type="int16_t*" />
+			<member name="intin" type="int16_t*" />
+			<member name="intout" type="int16_t*" />
+			<member name="addrin" type="void**" />
+			<member name="addrout" type="void**" />
+		</struct>
+		<struct name="MOBLK">
+			<member name="m_out" type="int16_t" />
+			<member name="m_x" type="int16_t" />
+			<member name="m_y" type="int16_t" />
+			<member name="m_w" type="int16_t" />
+			<member name="m_h" type="int16_t" />
+		</struct>
+		<struct name="ORECT">
+			<member name="o_link" type="ORECT*" />
+			<member name="o_x" type="int16_t" />
+			<member name="o_y" type="int16_t" />
+			<member name="o_w" type="int16_t" />
+			<member name="o_h" type="int16_t" />
+		</struct>
+		<struct name="GRECT">
+			<member name="g_x" type="int16_t" />
+			<member name="g_y" type="int16_t" />
+			<member name="g_w" type="int16_t" />
+			<member name="g_h" type="int16_t" />
+		</struct>
+		<struct name="TEDINFO">
+			<member name="te_ptext" type="int8_t*" />
+			<member name="te_ptmplt" type="int8_t*" />
+			<member name="te_pvalid" type="int8_t*" />
+			<member name="te_font" type="int16_t" />
+			<member name="te_junk1" type="int16_t" />
+			<member name="te_just" type="int16_t" />
+			<member name="te_color" type="int16_t" />
+			<member name="te_junk2" type="int16_t" />
+			<member name="te_thickness" type="int16_t" />
+			<member name="te_txtlen" type="int16_t" />
+			<member name="te_tmplen" type="int16_t" />
+		</struct>
+		<struct name="ICONBLK">
+			<member name="ib_pmask" type="int16_t*" />
+			<member name="ib_pdata" type="int16_t*" />
+			<member name="ib_ptext" type="int8_t*" />
+			<member name="ib_char" type="int16_t" />
+			<member name="ib_xchar" type="int16_t" />
+			<member name="ib_ychar" type="int16_t" />
+			<member name="ib_xicon" type="int16_t" />
+			<member name="ib_yicon" type="int16_t" />
+			<member name="ib_wicon" type="int16_t" />
+			<member name="ib_hicon" type="int16_t" />
+			<member name="ib_xtext" type="int16_t" />
+			<member name="ib_ytext" type="int16_t" />
+			<member name="ib_wtext" type="int16_t" />
+			<member name="ib_htext" type="int16_t" />
+		</struct>
+		<struct name="CICON">
+			<member name="num_planes" type="int16_t" />
+			<member name="col_data" type="int16_t*" />
+			<member name="col_mask" type="int16_t*" />
+			<member name="sel_data" type="int16_t*" />
+			<member name="sel_mask" type="int16_t*" />
+			<member name="next_res" type="CICON*" />
+		</struct>
+		<struct name="CICONBLK">
+			<member name="monoblk" type="ICONBLK" />
+			<member name="mainlist" type="CICON*" />
+		</struct>
+		<struct name="BITBLK">
+			<member name="bi_pdata" type="int16_t*" />
+			<member name="bi_wb" type="int16_t" />
+			<member name="bi_hl" type="int16_t" />
+			<member name="bi_x" type="int16_t" />
+			<member name="bi_y" type="int16_t" />
+			<member name="bi_color" type="int16_t" />
+		</struct>
+		<struct name="EVNTREC">
+			<member name="ap_event" type="int16_t" />
+			<member name="ap_value" type="int32_t" />
+		</struct>
+		<struct name="USERBLK">
+			<member name="ub_code" type="INT16_AES_CB_PARMBLK" />
+			<member name="ub_parm" type="int32_t" />
+		</struct>
+		<struct name="BFOBSPEC">
+			<member name="character" type="uint16_t:8" />
+			<member name="framesize" type="int16_t:8" />
+			<member name="framecol" type="uint16_t:4" />
+			<member name="textcol" type="uint16_t:4" />
+			<member name="textmode" type="uint16_t:1" />
+			<member name="fillpattern" type="uint16_t:3" />
+			<member name="interiorcol" type="uint16_t:4" />
+		</struct>
+		<union name="OBSPEC">
+			<member name="index" type="int32_t" />
+			<member name="indirect" type="OBSPEC*" />
+			<member name="obspec" type="BFOBSPEC" />
+			<member name="tedinfo" type="TEDINFO*" />
+			<member name="iconblk" type="ICONBLK*" />
+			<member name="ciconblk" type="CICONBLK*" />
+			<member name="bitblk" type="BITBLK*" />
+			<member name="userblk" type="USERBLK*" />
+			<member name="free_string" type="int8_t*" />
+		</union>
+		<struct name="OBJECT">
+			<member name="ob_next" type="int16_t" />
+			<member name="ob_head" type="int16_t" />
+			<member name="ob_tail" type="int16_t" />
+			<member name="ob_type" type="uint16_t" />
+			<member name="ob_flags" type="uint16_t" />
+			<member name="ob_state" type="uint16_t" />
+			<member name="ob_spec" type="OBSPEC" />
+			<member name="ob_x" type="int16_t" />
+			<member name="ob_y" type="int16_t" />
+			<member name="ob_width" type="int16_t" />
+			<member name="ob_height" type="int16_t" />
+		</struct>
+		<struct name="PARMBLK">
+			<member name="pb_tree" type="OBJECT*" />
+			<member name="pb_obj" type="int16_t" />
+			<member name="pb_prevstate" type="int16_t" />
+			<member name="pb_currstate" type="int16_t" />
+			<member name="pb_x" type="int16_t" />
+			<member name="pb_y" type="int16_t" />
+			<member name="pb_w" type="int16_t" />
+			<member name="pb_h" type="int16_t" />
+			<member name="pb_xc" type="int16_t" />
+			<member name="pb_yc" type="int16_t" />
+			<member name="pb_wc" type="int16_t" />
+			<member name="pb_hc" type="int16_t" />
+			<member name="pb_parm" type="int32_t" />
+		</struct>
+		<struct name="MENU">
+			<member name="mn_tree" type="OBJECT*" />
+			<member name="mn_menu" type="int16_t" />
+			<member name="mn_item" type="int16_t" />
+			<member name="mn_scroll" type="int16_t" />
+			<member name="mn_keystate" type="int16_t" />
+		</struct>
+		<struct name="MN_SET">
+			<member name="Display" type="int32_t" />
+			<member name="Drag" type="int32_t" />
+			<member name="Delay" type="int32_t" />
+			<member name="Speed" type="int32_t" />
+			<member name="Height" type="int16_t" />
+		</struct>
+		<struct name="MFORM">
+			<member name="mf_xhot" type="int16_t" />
+			<member name="mf_yhot" type="int16_t" />
+			<member name="mf_nplanes" type="int16_t" />
+			<member name="mf_fg" type="int16_t" />
+			<member name="mf_bg" type="int16_t" />
+			<member name="mf_mask" type="int16_t[16]" />
+			<member name="mf_data" type="int16_t[16]" />
+		</struct>
+		<struct name="RSHDR">
+			<member name="rsh_vrsn" type="uint16_t" />
+			<member name="rsh_object" type="uint16_t" />
+			<member name="rsh_tedinfo" type="uint16_t" />
+			<member name="rsh_iconblk" type="uint16_t" />
+			<member name="rsh_bitblk" type="uint16_t" />
+			<member name="rsh_frstr" type="uint16_t" />
+			<member name="rsh_string" type="uint16_t" />
+			<member name="rsh_imdata" type="uint16_t" />
+			<member name="rsh_frimg" type="uint16_t" />
+			<member name="rsh_trindex" type="uint16_t" />
+			<member name="rsh_nobs" type="uint16_t" />
+			<member name="rsh_ntree" type="uint16_t" />
+			<member name="rsh_nted" type="uint16_t" />
+			<member name="rsh_nib" type="uint16_t" />
+			<member name="rsh_nbb" type="uint16_t" />
+			<member name="rsh_nstring" type="uint16_t" />
+			<member name="rsh_nimages" type="uint16_t" />
+			<member name="rsh_rssize" type="uint16_t" />
+		</struct>
+	</structs>
+	<defines category="Application">
+		<define name="APPEVNT_TIMER" value="0" />
+		<define name="APPEVNT_BUTTON" value="1" />
+		<define name="APPEVNT_MOUSE" value="2" />
+		<define name="APPEVNT_KEYBOARD" value="3" />
+	</defines>
+	<defines category="Events">
+		<define name="MU_KEYBD" value="0x0001" />
+		<define name="MU_BUTTON" value="0x0002" />
+		<define name="MU_M1" value="0x0004" />
+		<define name="MU_M2" value="0x0008" />
+		<define name="MU_MESAG" value="0x0010" />
+		<define name="MU_TIMER" value="0x0020" />
+		<define name="MN_SELECTED" value="10" />
+		<define name="WM_REDRAW" value="20" />
+		<define name="WM_TOPPED" value="21" />
+		<define name="WM_CLOSED" value="22" />
+		<define name="WM_FULLED" value="23" />
+		<define name="WM_ARROWED" value="24" />
+		<define name="WM_HSLID" value="25" />
+		<define name="WM_VSLID" value="26" />
+		<define name="WM_SIZED" value="27" />
+		<define name="WM_MOVED" value="28" />
+		<define name="WM_NEWTOP" value="29" />
+		<define name="WM_UNTOPPED" value="30" />
+		<define name="WM_ONTOP" value="31" />
+		<define name="AC_OPEN" value="40" />
+		<define name="AC_CLOSE" value="41" />
+		<define name="CT_UPDATE" value="50" />
+		<define name="CT_MOVE" value="51" />
+		<define name="CT_NEWTOP" value="52" />
+		<define name="AP_TERM" value="50" />
+		<define name="AP_TFAIL" value="51" />
+		<define name="AP_RESCHG" value="57" />
+		<define name="SHUT_COMPLETED" value="60" />
+		<define name="RESCHG_COMPLETED" value="61" />
+		<define name="AP_DRAGDROP" value="63" />
+		<define name="CH_EXIT" value="80" />
+		<define name="K_RSHIFT" value="0x0001" />
+		<define name="K_LSHIFT" value="0x0002" />
+		<define name="K_CTRL" value="0x0004" />
+		<define name="K_ALT" value="0x0008" />
+	</defines>
+	<defines category="Objects">
+		<define name="G_BOX" value="20" />
+		<define name="G_TEXT" value="21" />
+		<define name="G_BOXTEXT" value="22" />
+		<define name="G_IMAGE" value="23" />
+		<define name="G_USERDEF" value="24" />
+		<define name="G_IBOX" value="25" />
+		<define name="G_BUTTON" value="26" />
+		<define name="G_BOXCHAR" value="27" />
+		<define name="G_STRING" value="28" />
+		<define name="G_FTEXT" value="29" />
+		<define name="G_FBOXTEXT" value="30" />
+		<define name="G_ICON" value="31" />
+		<define name="G_TITLE" value="32" />
+		<define name="G_CICON" value="33" />
+		<define name="NONE" value="0x0000" />
+		<define name="SELECTABLE" value="0x0001" />
+		<define name="DEFAULT" value="0x0002" />
+		<define name="EXIT" value="0x0004" />
+		<define name="EDITABLE" value="0x0008" />
+		<define name="RBUTTON" value="0x0010" />
+		<define name="LASTOB" value="0x0020" />
+		<define name="TOUCHEXIT" value="0x0040" />
+		<define name="HIDETREE" value="0x0080" />
+		<define name="INDIRECT" value="0x0100" />
+		<define name="NORMAL" value="0x00" />
+		<define name="SELECTED" value="0x01" />
+		<define name="CROSSED" value="0x02" />
+		<define name="CHECKED" value="0x04" />
+		<define name="DISABLED" value="0x08" />
+		<define name="OUTLINED" value="0x10" />
+		<define name="SHADOWED" value="0x20" />
+		<define name="__COLORS" value="1" />
+		<define name="WHITE" value="0" />
+		<define name="BLACK" value="1" />
+		<define name="RED" value="2" />
+		<define name="GREEN" value="3" />
+		<define name="BLUE" value="4" />
+		<define name="CYAN" value="5" />
+		<define name="YELLOW" value="6" />
+		<define name="MAGENTA" value="7" />
+		<define name="LWHITE" value="8" />
+		<define name="LBLACK" value="9" />
+		<define name="LRED" value="10" />
+		<define name="LGREEN" value="11" />
+		<define name="LBLUE" value="12" />
+		<define name="LCYAN" value="13" />
+		<define name="LYELLOW" value="14" />
+		<define name="LMAGENTA" value="15" />
+		<define name="ROOT" value="0" />
+		<define name="MAX_LEN" value="81" />
+		<define name="MAX_DEPTH" value="8" />
+		<define name="IBM" value="3" />
+		<define name="SMALL" value="5" />
+		<define name="ED_START" value="0" />
+		<define name="ED_INIT" value="1" />
+		<define name="ED_CHAR" value="2" />
+		<define name="ED_END" value="3" />
+		<define name="TE_LEFT" value="0" />
+		<define name="TE_RIGHT" value="1" />
+		<define name="TE_CNTR" value="2" />
+	</defines>
+	<defines category="Forms">
+		<define name="FMD_START" value="0" />
+		<define name="FMD_GROW" value="1" />
+		<define name="FMD_SHRINK" value="2" />
+		<define name="FMD_FINISH" value="3" />
+	</defines>
+	<defines category="Graph">
+		<define name="ARROW" value="0" />
+		<define name="TEXT_CRSR" value="1" />
+		<define name="HOURGLASS" value="2" />
+		<define name="BUSYBEE" value="2" />
+		<define name="POINT_HAND" value="3" />
+		<define name="FLAT_HAND" value="4" />
+		<define name="THIN_CROSS" value="5" />
+		<define name="THICK_CROSS" value="6" />
+		<define name="OUTLN_CROSS" value="7" />
+		<define name="USER_DEF" value="255" />
+		<define name="M_OFF" value="256" />
+		<define name="M_ON" value="257" />
+	</defines>
+	<defines category="Windows">
+		<define name="NAME" value="0x0001" />
+		<define name="CLOSER" value="0x0002" />
+		<define name="FULLER" value="0x0004" />
+		<define name="MOVER" value="0x0008" />
+		<define name="INFO" value="0x0010" />
+		<define name="SIZER" value="0x0020" />
+		<define name="UPARROW" value="0x0040" />
+		<define name="DNARROW" value="0x0080" />
+		<define name="VSLIDE" value="0x0100" />
+		<define name="LFARROW" value="0x0200" />
+		<define name="RTARROW" value="0x0400" />
+		<define name="HSLIDE" value="0x0800" />
+		<define name="WF_KIND" value="1" />
+		<define name="WF_NAME" value="2" />
+		<define name="WF_INFO" value="3" />
+		<define name="WF_WORKXYWH" value="4" />
+		<define name="WF_CURRXYWH" value="5" />
+		<define name="WF_PREVXYWH" value="6" />
+		<define name="WF_FULLXYWH" value="7" />
+		<define name="WF_HSLIDE" value="8" />
+		<define name="WF_VSLIDE" value="9" />
+		<define name="WF_TOP" value="10" />
+		<define name="WF_FIRSTXYWH" value="11" />
+		<define name="WF_NEXTXYWH" value="12" />
+		<define name="WF_RESVD" value="13" />
+		<define name="WF_NEWDESK" value="14" />
+		<define name="WF_HSLSIZE" value="15" />
+		<define name="WF_VSLSIZE" value="16" />
+		<define name="WF_SCREEN" value="17" />
+		<define name="WF_COLOR" value="18" />
+		<define name="WF_DCOLOR" value="19" />
+		<define name="WF_OWNER" value="20" />
+		<define name="WF_BEVENT" value="24" />
+		<define name="WF_BOTTOM" value="25" />
+		<define name="W_BOX" value="0" />
+		<define name="W_TITLE" value="1" />
+		<define name="W_CLOSER" value="2" />
+		<define name="W_NAME" value="3" />
+		<define name="W_FULLER" value="4" />
+		<define name="W_INFO" value="5" />
+		<define name="W_DATA" value="6" />
+		<define name="W_WORK" value="7" />
+		<define name="W_SIZER" value="8" />
+		<define name="W_VBAR" value="9" />
+		<define name="W_UPARROW" value="10" />
+		<define name="W_DNARROW" value="11" />
+		<define name="W_VSLIDE" value="12" />
+		<define name="W_VELEV" value="13" />
+		<define name="W_HBAR" value="14" />
+		<define name="W_LFARROW" value="15" />
+		<define name="W_RTARROW" value="16" />
+		<define name="W_HSLIDE" value="17" />
+		<define name="W_HELEV" value="18" />
+		<define name="WA_UPPAGE" value="0" />
+		<define name="WA_DNPAGE" value="1" />
+		<define name="WA_UPLINE" value="2" />
+		<define name="WA_DNLINE" value="3" />
+		<define name="WA_LFPAGE" value="4" />
+		<define name="WA_RTPAGE" value="5" />
+		<define name="WA_LFLINE" value="6" />
+		<define name="WA_RTLINE" value="7" />
+		<define name="WC_BORDER" value="0" />
+		<define name="WC_WORK" value="1" />
+		<define name="END_UPDATE" value="0" />
+		<define name="BEG_UPDATE" value="1" />
+		<define name="END_MCTRL" value="2" />
+		<define name="BEG_MCTRL" value="3" />
+	</defines>
+	<defines category="Recources">
+		<define name="R_TREE" value="0" />
+		<define name="R_OBJECT" value="1" />
+		<define name="R_TEDINFO" value="2" />
+		<define name="R_ICONBLK" value="3" />
+		<define name="R_BITBLK" value="4" />
+		<define name="R_STRING" value="5" />
+		<define name="R_IMAGEDATA" value="6" />
+		<define name="R_OBSPEC" value="7" />
+		<define name="R_TEPTEXT" value="8" />
+		<define name="R_TEPTMPLT" value="9" />
+		<define name="R_TEPVALID" value="10" />
+		<define name="R_IBPMASK" value="11" />
+		<define name="R_IBPDATA" value="12" />
+		<define name="R_IPBTEXT" value="13" />
+		<define name="R_BIPDATA" value="14" />
+		<define name="R_FRSTR" value="15" />
+		<define name="R_FRIMG" value="16" />
+	</defines>
+	<functions grpid="2" category="Application">
+		<function id="10" name="appl_init">
+			<return type="int16_t" />
+		</function>
+		<function id="11" name="appl_read">
+			<return type="int16_t" />
+			<arg name="ap_rid" type="int16_t" dst="intin" />
+			<arg name="length" type="int16_t" dst="intin" />
+			<arg name="msg" type="void*" dst="addrin" />
+		</function>
+		<function id="12" name="appl_write">
+			<return type="int16_t" />
+			<arg name="ap_rid" type="int16_t" dst="intin" />
+			<arg name="length" type="int16_t" dst="intin" />
+			<arg name="msg" type="void*" dst="addrin" />
+		</function>
+		<function id="13" name="appl_find">
+			<return type="int16_t" />
+			<arg name="name" type="cint8_t*" dst="addrin" />
+		</function>
+		<function id="14" name="appl_tplay">
+			<return type="int16_t" />
+			<arg name="mem" type="void*" dst="addrin" />
+			<arg name="num" type="int16_t" dst="intin" />
+			<arg name="scale" type="int16_t" dst="intin" />
+		</function>
+		<function id="15" name="appl_trecord">
+			<return type="int16_t" />
+			<arg name="mem" type="EVNTREC*" dst="addrin" />
+			<arg name="num" type="int16_t" dst="intin" />
+		</function>
+		<function id="18" name="appl_search">
+			<return type="int16_t" />
+			<arg name="mode" type="int16_t" dst="intin" />
+			<arg name="name" type="int16_t*" dst="addrin" />
+			<arg name="type" type="int16_t*" dst="addrin" />
+			<arg name="ap_id" type="int16_t*" dst="addrin" />
+		</function>
+		<function id="19" name="appl_exit">
+			<return type="int16_t" />
+		</function>
+		<function id="130" name="appl_getinfo">
+			<return type="int16_t" />
+			<arg name="type" type="int16_t" dst="intin" />
+			<arg name="gout1" type="int16_t*" src="intout" />
+			<arg name="gout2" type="int16_t*" src="intout" />
+			<arg name="gout3" type="int16_t*" src="intout" />
+			<arg name="gout4" type="int16_t*" src="intout" />
+		</function>
+	</functions>
+	<functions grpid="2" category="Events">
+		<function id="20" name="evnt_keybd">
+			<return type="int16_t" />
+		</function>
+		<function id="21" name="evnt_button">
+			<return type="int16_t" />
+			<arg name="clicks" type="int16_t" dst="intin" />
+			<arg name="mask" type="int16_t" dst="intin" />
+			<arg name="state" type="int16_t" dst="intin" />
+			<arg name="mx" type="int16_t*" src="intout" />
+			<arg name="my" type="int16_t*" src="intout" />
+			<arg name="button" type="int16_t*" src="intout" />
+			<arg name="kstate" type="int16_t*" src="intout" />
+		</function>
+		<function id="22" name="evnt_mouse">
+			<return type="int16_t" />
+			<arg name="flags" type="int16_t" dst="intin" />
+			<arg name="x" type="int16_t" dst="intin" />
+			<arg name="y" type="int16_t" dst="intin" />
+			<arg name="width" type="int16_t" dst="intin" />
+			<arg name="height" type="int16_t" dst="intin" />
+			<arg name="mx" type="int16_t*" src="intout" />
+			<arg name="my" type="int16_t*" src="intout" />
+			<arg name="button" type="int16_t*" src="intout" />
+			<arg name="kstate" type="int16_t*" src="intout" />
+		</function>
+		<function id="23" name="evnt_mesag">
+			<return type="int16_t" />
+			<arg name="msg" type="int16_t*" dst="addrin" />
+		</function>
+		<function id="24" name="evnt_timer">
+			<return type="int16_t" />
+			<arg name="locnt" type="int16_t" dst="intin" />
+			<arg name="hicnt" type="int16_t" dst="intin" />
+		</function>
+		<function id="25" name="evnt_multi">
+			<return type="int16_t" />
+			<arg name="events" type="int16_t" dst="intin" />
+			<arg name="bclicks" type="int16_t" dst="intin" />
+			<arg name="bmask" type="int16_t" dst="intin" />
+			<arg name="bstate" type="int16_t" dst="intin" />
+			<arg name="m1flag" type="int16_t" dst="intin" />
+			<arg name="m1x" type="int16_t" dst="intin" />
+			<arg name="m1y" type="int16_t" dst="intin" />
+			<arg name="m1w" type="int16_t" dst="intin" />
+			<arg name="m1h" type="int16_t" dst="intin" />
+			<arg name="m2flag" type="int16_t" dst="intin" />
+			<arg name="m2x" type="int16_t" dst="intin" />
+			<arg name="m2y" type="int16_t" dst="intin" />
+			<arg name="m2w" type="int16_t" dst="intin" />
+			<arg name="m2h" type="int16_t" dst="intin" />
+			<arg name="msg" type="int16_t*" dst="addrin" />
+			<arg name="locnt" type="int16_t" dst="intin" />
+			<arg name="hicnt" type="int16_t" dst="intin" />
+			<arg name="mx" type="int16_t*" src="intout" />
+			<arg name="my" type="int16_t*" src="intout" />
+			<arg name="button" type="int16_t*" src="intout" />
+			<arg name="kstate" type="int16_t*" src="intout" />
+			<arg name="kreturn" type="int16_t*" src="intout" />
+			<arg name="breturn" type="int16_t*" src="intout" />
+		</function>
+		<function id="26" name="evnt_dclick">
+			<return type="int16_t" />
+			<arg name="new" type="int16_t" dst="intin" />
+			<arg name="flag" type="int16_t" dst="intin" />
+		</function>
+	</functions>
+	<functions grpid="2" category="Menu">
+		<function id="30" name="menu_bar">
+			<return type="int16_t" />
+			<arg name="tree" type="OBJECT*" dst="addrin" />
+			<arg name="mode" type="int16_t" dst="intin" />
+		</function>
+		<function id="31" name="menu_icheck">
+			<return type="int16_t" />
+			<arg name="tree" type="OBJECT*" dst="addrin" />
+			<arg name="obj" type="int16_t" dst="intin" />
+			<arg name="check" type="int16_t" dst="intin" />
+		</function>
+		<function id="32" name="menu_ienable">
+			<return type="int16_t" />
+			<arg name="tree" type="OBJECT*" dst="addrin" />
+			<arg name="obj" type="int16_t" dst="intin" />
+			<arg name="flag" type="int16_t" dst="intin" />
+		</function>
+		<function id="33" name="menu_tnormal">
+			<return type="int16_t" />
+			<arg name="tree" type="OBJECT*" dst="addrin" />
+			<arg name="obj" type="int16_t" dst="intin" />
+			<arg name="flag" type="int16_t" dst="intin" />
+		</function>
+		<function id="34" name="menu_text">
+			<return type="int16_t" />
+			<arg name="tree" type="OBJECT*" dst="addrin" />
+			<arg name="obj" type="int16_t" dst="intin" />
+			<arg name="text" type="cint8_t*" dst="addrin" />
+		</function>
+		<function id="35" name="menu_register">
+			<return type="int16_t" />
+			<arg name="ap_id" type="int16_t" dst="intin" />
+			<arg name="title" type="cint8_t*" dst="addrin" />
+		</function>
+		<function id="36" name="menu_popup">
+			<return type="int16_t" />
+			<arg name="menu" type="MENU*" dst="addrin" />
+			<arg name="x" type="int16_t" dst="intin" />
+			<arg name="y" type="int16_t" dst="intin" />
+			<arg name="mdata" type="MENU*" dst="addrin" />
+		</function>
+		<function id="37" name="menu_attach">
+			<return type="int16_t" />
+			<arg name="flag" type="int16_t" dst="intin" />
+			<arg name="tree" type="OBJECT*" dst="addrin" />
+			<arg name="item" type="int16_t" dst="intin" />
+			<arg name="mdata" type="MENU*" dst="addrin" />
+		</function>
+		<function id="38" name="menu_istart">
+			<return type="int16_t" />
+			<arg name="flag" type="int16_t" dst="intin" />
+			<arg name="tree" type="OBJECT*" dst="addrin" />
+			<arg name="menu" type="int16_t" dst="intin" />
+			<arg name="item" type="int16_t" dst="intin" />
+		</function>
+		<function id="39" name="menu_settings">
+			<return type="int16_t" />
+			<arg name="flag" type="int16_t" dst="intin" />
+			<arg name="set" type="MN_SET*" dst="addrin" />
+		</function>
+	</functions>
+	<functions grpid="2" category="Objects">
+		<function id="40" name="objc_add">
+			<return type="int16_t" />
+			<arg name="tree" type="OBJECT*" dst="addrin" />
+			<arg name="parent" type="int16_t" dst="intin" />
+			<arg name="child" type="int16_t" dst="intin" />
+		</function>
+		<function id="41" name="objc_delete">
+			<return type="int16_t" />
+			<arg name="tree" type="OBJECT*" dst="addrin" />
+			<arg name="obj" type="int16_t" dst="intin" />
+		</function>
+		<function id="42" name="objc_draw">
+			<return type="int16_t" />
+			<arg name="tree" type="OBJECT*" dst="addrin" />
+			<arg name="obj" type="int16_t" dst="intin" />
+			<arg name="depth" type="int16_t" dst="intin" />
+			<arg name="ox" type="int16_t" dst="intin" />
+			<arg name="oy" type="int16_t" dst="intin" />
+			<arg name="ow" type="int16_t" dst="intin" />
+			<arg name="oh" type="int16_t" dst="intin" />
+		</function>
+		<function id="43" name="objc_find">
+			<return type="int16_t" />
+			<arg name="tree" type="OBJECT*" dst="addrin" />
+			<arg name="obj" type="int16_t" dst="intin" />
+			<arg name="depth" type="int16_t" dst="intin" />
+			<arg name="ox" type="int16_t" dst="intin" />
+			<arg name="oy" type="int16_t" dst="intin" />
+		</function>
+		<function id="44" name="objc_offset">
+			<return type="int16_t" />
+			<arg name="tree" type="OBJECT*" dst="addrin" />
+			<arg name="obj" type="int16_t" dst="intin" />
+			<arg name="ox" type="int16_t*" src="intout" />
+			<arg name="oy" type="int16_t*" src="intout" />
+		</function>
+		<function id="45" name="objc_order">
+			<return type="int16_t" />
+			<arg name="tree" type="OBJECT*" dst="addrin" />
+			<arg name="obj" type="int16_t" dst="intin" />
+			<arg name="pos" type="int16_t" dst="intin" />
+		</function>
+		<function id="46" name="objc_edit">
+			<return type="int16_t" />
+			<arg name="tree" type="OBJECT*" dst="addrin" />
+			<arg name="obj" type="int16_t" dst="intin" />
+			<arg name="kc" type="int16_t" dst="intin" />
+			<arg name="idx" type="int16_t*" src="intout" dst="intin" />
+			<arg name="mode" type="int16_t" dst="intin" />
+		</function>
+		<function id="47" name="objc_change">
+			<return type="int16_t" />
+			<arg name="tree" type="OBJECT*" dst="addrin" />
+			<arg name="obj" type="int16_t" dst="intin" />
+			<arg name="rsvd" type="int16_t" dst="intin" />
+			<arg name="ox" type="int16_t" dst="intin" />
+			<arg name="oy" type="int16_t" dst="intin" />
+			<arg name="ow" type="int16_t" dst="intin" />
+			<arg name="oh" type="int16_t" dst="intin" />
+			<arg name="newstate" type="int16_t" dst="intin" />
+			<arg name="drawflag" type="int16_t" dst="intin" />
+		</function>
+		<function id="48" name="objc_sysvar">
+			<return type="int16_t" />
+			<arg name="mode" type="int16_t" dst="intin" />
+			<arg name="which" type="int16_t" dst="intin" />
+			<arg name="in1" type="int16_t" dst="intin" />
+			<arg name="in2" type="int16_t" dst="intin" />
+			<arg name="out1" type="int16_t*" src="intout" />
+			<arg name="out2" type="int16_t*" src="intout" />
+		</function>
+	</functions>
+	<functions grpid="2" category="Forms">
+		<function id="50" name="form_do">
+			<return type="int16_t" />
+			<arg name="tree" type="OBJECT*" dst="addrin" />
+			<arg name="obj" type="int16_t" dst="intin" />
+		</function>
+		<function id="51" name="form_dial">
+			<return type="int16_t" />
+			<arg name="mode" type="int16_t" dst="intin" />
+			<arg name="x1" type="int16_t" dst="intin" />
+			<arg name="y1" type="int16_t" dst="intin" />
+			<arg name="w1" type="int16_t" dst="intin" />
+			<arg name="h1" type="int16_t" dst="intin" />
+			<arg name="x2" type="int16_t" dst="intin" />
+			<arg name="y2" type="int16_t" dst="intin" />
+			<arg name="w2" type="int16_t" dst="intin" />
+			<arg name="h2" type="int16_t" dst="intin" />
+		</function>
+		<function id="52" name="form_alert">
+			<return type="int16_t" />
+			<arg name="defbtn" type="int16_t" dst="intin" />
+			<arg name="text" type="cint8_t*" dst="addrin" />
+		</function>
+		<function id="53" name="form_error">
+			<return type="int16_t" />
+			<arg name="error" type="int16_t" dst="intin" />
+		</function>
+		<function id="54" name="form_center">
+			<return type="int16_t" />
+			<arg name="tree" type="OBJECT*" dst="addrin" />
+			<arg name="ox" type="int16_t*" src="intout" />
+			<arg name="oy" type="int16_t*" src="intout" />
+			<arg name="ow" type="int16_t*" src="intout" />
+			<arg name="oh" type="int16_t*" src="intout" />
+		</function>
+		<function id="55" name="form_keybd">
+			<return type="int16_t" />
+			<arg name="tree" type="OBJECT*" dst="addrin" />
+			<arg name="obj" type="int16_t" dst="intin" />
+			<arg name="nxtobj" type="int16_t" dst="intin" />
+			<arg name="kc" type="int16_t" dst="intin" />
+			<arg name="newobj" type="int16_t*" src="intout" />
+			<arg name="keyout" type="int16_t*" src="intout" />
+		</function>
+		<function id="56" name="form_button">
+			<return type="int16_t" />
+			<arg name="tree" type="OBJECT*" dst="addrin" />
+			<arg name="obj" type="int16_t" dst="intin" />
+			<arg name="clicks" type="int16_t" dst="intin" />
+			<arg name="newobj" type="int16_t" dst="intin" />
+		</function>
+	</functions>
+	<functions grpid="2" category="Graph">
+		<function id="79" name="graf_rubberbox">
+			<return type="int16_t" />
+			<arg name="bx" type="int16_t" dst="intin" />
+			<arg name="by" type="int16_t" dst="intin" />
+			<arg name="minwidth" type="int16_t" dst="intin" />
+			<arg name="minheight" type="int16_t" dst="intin" />
+			<arg name="lastwidth" type="int16_t*" src="intout" />
+			<arg name="lastheight" type="int16_t*" src="intout" />
+		</function>
+		<function id="71" name="graf_dragbox">
+			<return type="int16_t" />
+			<arg name="width" type="int16_t" dst="intin" />
+			<arg name="height" type="int16_t" dst="intin" />
+			<arg name="scrx" type="int16_t" dst="intin" />
+			<arg name="scry" type="int16_t" dst="intin" />
+			<arg name="bx" type="int16_t" dst="intin" />
+			<arg name="by" type="int16_t" dst="intin" />
+			<arg name="bwidth" type="int16_t" dst="intin" />
+			<arg name="bheight" type="int16_t" dst="intin" />
+			<arg name="endx" type="int16_t*" src="intout" />
+			<arg name="endy" type="int16_t*" src="intout" />
+		</function>
+		<function id="72" name="graf_movebox">
+			<return type="int16_t" />
+			<arg name="width" type="int16_t" dst="intin" />
+			<arg name="height" type="int16_t" dst="intin" />
+			<arg name="startx" type="int16_t" dst="intin" />
+			<arg name="starty" type="int16_t" dst="intin" />
+			<arg name="endx" type="int16_t" dst="intin" />
+			<arg name="endy" type="int16_t" dst="intin" />
+		</function>
+		<function id="73" name="graf_growbox">
+			<return type="int16_t" />
+			<arg name="startx" type="int16_t" dst="intin" />
+			<arg name="starty" type="int16_t" dst="intin" />
+			<arg name="startw" type="int16_t" dst="intin" />
+			<arg name="starth" type="int16_t" dst="intin" />
+			<arg name="endx" type="int16_t" dst="intin" />
+			<arg name="endy" type="int16_t" dst="intin" />
+			<arg name="endw" type="int16_t" dst="intin" />
+			<arg name="endh" type="int16_t" dst="intin" />
+		</function>
+		<function id="74" name="graf_shrinkbox">
+			<return type="int16_t" />
+			<arg name="endx" type="int16_t" dst="intin" />
+			<arg name="endy" type="int16_t" dst="intin" />
+			<arg name="endw" type="int16_t" dst="intin" />
+			<arg name="endh" type="int16_t" dst="intin" />
+			<arg name="startx" type="int16_t" dst="intin" />
+			<arg name="starty" type="int16_t" dst="intin" />
+			<arg name="startw" type="int16_t" dst="intin" />
+			<arg name="starth" type="int16_t" dst="intin" />
+		</function>
+		<function id="75" name="graf_watchbox">
+			<return type="int16_t" />
+			<arg name="tree" type="OBJECT*" dst="addrin" />
+			<arg name="obj" type="int16_t" dst="intin" />
+			<arg name="instate" type="int16_t" dst="intin" />
+			<arg name="outstate" type="int16_t" dst="intin" />
+		</function>
+		<function id="76" name="graf_slidebox">
+			<return type="int16_t" />
+			<arg name="tree" type="OBJECT*" dst="addrin" />
+			<arg name="parent" type="int16_t" dst="intin" />
+			<arg name="obj" type="int16_t" dst="intin" />
+			<arg name="orient" type="int16_t" dst="intin" />
+		</function>
+		<function id="77" name="graf_handle">
+			<return type="int16_t" />
+			<arg name="wchar" type="int16_t*" src="intout" />
+			<arg name="hchar" type="int16_t*" src="intout" />
+			<arg name="wbox" type="int16_t*" src="intout" />
+			<arg name="hbox" type="int16_t*" src="intout" />
+		</function>
+		<function id="78" name="graf_mouse">
+			<return type="int16_t" />
+			<arg name="mode" type="int16_t" dst="intin" />
+			<arg name="form" type="MFORM*" dst="addrin" />
+		</function>
+		<function id="79" name="graf_mkstate">
+			<return type="int16_t" />
+			<arg name="mx" type="int16_t*" src="intout" />
+			<arg name="my" type="int16_t*" src="intout" />
+			<arg name="keystate" type="int16_t*" src="intout" />
+			<arg name="shiftstate" type="int16_t*" src="intout" />
+		</function>
+	</functions>
+	<functions grpid="2" category="Scrap">
+		<function id="80" name="scrp_read">
+			<return type="int16_t" />
+			<arg name="path" type="int8_t*" dst="addrin" />
+		</function>
+		<function id="81" name="scrp_write">
+			<return type="int16_t" />
+			<arg name="path" type="int8_t*" dst="addrin" />
+		</function>
+	</functions>
+	<functions grpid="2" category="File">
+		<function id="90" name="fsel_input">
+			<return type="int16_t" />
+			<arg name="path" type="int8_t*" dst="addrin" />
+			<arg name="file" type="int8_t*" dst="addrin" />
+			<arg name="button" type="int16_t*" src="intout" />
+		</function>
+		<function id="91" name="fsel_exinput">
+			<return type="int16_t" />
+			<arg name="path" type="int8_t*" dst="addrin" />
+			<arg name="file" type="int8_t*" dst="addrin" />
+			<arg name="button" type="int16_t*" src="intout" />
+			<arg name="title" type="int8_t*" dst="addrin" />
+		</function>
+	</functions>
+	<functions grpid="2" category="Windows">
+		<function id="100" name="wind_create">
+			<return type="int16_t" />
+			<arg name="kind" type="int16_t" dst="intin" />
+			<arg name="x" type="int16_t" dst="intin" />
+			<arg name="y" type="int16_t" dst="intin" />
+			<arg name="w" type="int16_t" dst="intin" />
+			<arg name="h" type="int16_t" dst="intin" />
+		</function>
+		<function id="101" name="wind_open">
+			<return type="int16_t" />
+			<arg name="handle" type="int16_t" dst="intin" />
+			<arg name="x" type="int16_t" dst="intin" />
+			<arg name="y" type="int16_t" dst="intin" />
+			<arg name="w" type="int16_t" dst="intin" />
+			<arg name="h" type="int16_t" dst="intin" />
+		</function>
+		<function id="102" name="wind_close">
+			<return type="int16_t" />
+			<arg name="handle" type="int16_t" dst="intin" />
+		</function>
+		<function id="103" name="wind_delete">
+			<return type="int16_t" />
+			<arg name="handle" type="int16_t" dst="intin" />
+		</function>
+		<function id="104" name="wind_get">
+			<return type="int16_t" />
+			<arg name="handle" type="int16_t" dst="intin" />
+			<arg name="mode" type="int16_t" dst="intin" />
+			<arg name="parm1" type="int16_t*" src="intout" />
+			<arg name="parm2" type="int16_t*" src="intout" />
+			<arg name="parm3" type="int16_t*" src="intout" />
+			<arg name="parm4" type="int16_t*" src="intout" />
+		</function>
+		<function id="105" name="wind_set">
+			<return type="int16_t" />
+			<arg name="handle" type="int16_t" dst="intin" />
+			<arg name="mode" type="int16_t" dst="intin" />
+			<arg name="parm1" type="int16_t" dst="intin" />
+			<arg name="parm2" type="int16_t" dst="intin" />
+			<arg name="parm3" type="int16_t" dst="intin" />
+			<arg name="parm4" type="int16_t" dst="intin" />
+		</function>
+		<function id="106" name="wind_find">
+			<return type="int16_t" />
+			<arg name="x" type="int16_t" dst="intin" />
+			<arg name="y" type="int16_t" dst="intin" />
+		</function>
+		<function id="107" name="wind_update">
+			<return type="int16_t" />
+			<arg name="mode" type="int16_t" dst="intin" />
+		</function>
+		<function id="108" name="wind_calc">
+			<return type="int16_t" />
+			<arg name="request" type="int16_t" dst="intin" />
+			<arg name="kind" type="int16_t" dst="intin" />
+			<arg name="inx" type="int16_t" dst="intin" />
+			<arg name="iny" type="int16_t" dst="intin" />
+			<arg name="inw" type="int16_t" dst="intin" />
+			<arg name="inh" type="int16_t" dst="intin" />
+			<arg name="outx" type="int16_t*" src="intout" />
+			<arg name="outy" type="int16_t*" src="intout" />
+			<arg name="outw" type="int16_t*" src="intout" />
+			<arg name="outh" type="int16_t*" src="intout" />
+		</function>
+		<function id="109" name="wind_new">
+			<return type="int16_t" />
+		</function>
+	</functions>
+	<functions grpid="2" category="Recources">
+		<function id="110" name="rsrc_load">
+			<return type="int16_t" />
+			<arg name="file" type="cint8_t*" dst="addrin" />
+		</function>
+		<function id="111" name="rsrc_free">
+			<return type="int16_t" />
+		</function>
+		<function id="112" name="rsrc_gaddr">
+			<return type="int16_t" />
+			<arg name="type" type="int16_t" dst="intin" />
+			<arg name="index" type="int16_t" dst="intin" />
+			<arg name="addr" type="void**" src="addrout" />
+		</function>
+		<function id="113" name="rsrc_saddr">
+			<return type="int16_t" />
+			<arg name="type" type="int16_t" dst="intin" />
+			<arg name="index" type="int16_t" dst="intin" />
+			<arg name="addr" type="void*" dst="addrin" />
+		</function>
+		<function id="114" name="rsrc_obfix">
+			<return type="int16_t" />
+			<arg name="tree" type="OBJECT*" dst="addrin" />
+			<arg name="obj" type="int16_t" dst="intin" />
+		</function>
+		<function id="115" name="rsrc_rcfix">
+			<return type="int16_t" />
+			<arg name="header" type="RSHDR*" dst="addrin" />
+		</function>
+	</functions>
+	<functions grpid="2" category="Shell">
+		<function id="120" name="shel_read">
+			<return type="int16_t" />
+			<arg name="name" type="int8_t*" dst="addrin" />
+			<arg name="tail" type="int8_t*" dst="addrin" />
+		</function>
+		<function id="121" name="shel_write">
+			<return type="int16_t" />
+			<arg name="mode" type="int16_t" dst="intin" />
+			<arg name="wisgr" type="int16_t" dst="intin" />
+			<arg name="wiscr" type="int16_t" dst="intin" />
+			<arg name="cmd" type="int8_t*" dst="addrin" />
+			<arg name="tail" type="int8_t*" dst="addrin" />
+		</function>
+		<function id="122" name="shel_get">
+			<return type="int16_t" />
+			<arg name="buf" type="int8_t*" dst="addrin" />
+			<arg name="length" type="int8_t*" dst="addrin" />
+		</function>
+		<function id="123" name="shel_put">
+			<return type="int16_t" />
+			<arg name="buf" type="int8_t*" dst="addrin" />
+			<arg name="length" type="int8_t*" dst="addrin" />
+		</function>
+		<function id="124" name="shel_find">
+			<return type="int16_t" />
+			<arg name="buf" type="int8_t*" dst="addrin" />
+		</function>
+		<function id="125" name="shel_envrn">
+			<return type="int16_t" />
+			<arg name="value" type="int8_t**" dst="addrin" />
+			<arg name="name" type="int8_t*" dst="addrin" />
+		</function>
+	</functions>
+	<targets>
+		<target name="int_16">
+		</target>
+		<target name="int_32">
+		</target>
+		<target name="stdint">
+		</target>
+	</targets>
+</aes>

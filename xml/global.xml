@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<global>
+	<target name="int_32">
+		<types>
+			<type name="void" use="void"/>
+			<type name="int8_t" use="char"/>
+			<type name="uint8_t" use="unsigned char"/>
+			<type name="int16_t" use="short"/>
+			<type name="uint16_t" use="unsigned short"/>
+			<type name="int32_t" use="int"/>
+			<type name="uint32_t" use="unsigned int"/>
+		</types>
+	</target>
+
+	<target name="int_16">
+		<types>
+			<type name="void" use="void"/>
+			<type name="int8_t" use="char"/>
+			<type name="uint8_t" use="unsigned char"/>
+			<type name="int16_t" use="int"/>
+			<type name="uint16_t" use="unsigned int"/>
+			<type name="int32_t" use="long"/>
+			<type name="uint32_t" use="unsigned long"/>
+		</types>
+	</target>
+
+	<target name="stdint">
+		<types>
+			<type name="void" use="void"/>
+			<type name="int8_t" use="int8_t"/>
+			<type name="uint8_t" use="uint8_t"/>
+			<type name="int16_t" use="int16_t"/>
+			<type name="uint16_t" use="uint16_t"/>
+			<type name="int32_t" use="int32_t"/>
+			<type name="uint32_t" use="uint32_t"/>
+		</types>
+	</target>
+
+</global>

@@ -1,0 +1,328 @@
+<?xml version="1.0"?>
+<line_a>
+	<include name="&quot;aes.h&quot;" />
+	<include name="&quot;line_a_def.h&quot;" />
+	<structs>
+		<callback name="INT16_LINEA_CB">
+			<return type="int16_t" />
+		</callback>
+		<callback name="VOID_LINEA_CB">
+			<return type="void" />
+		</callback>
+		<typedef typename="SSB" type="int[10 + 4 * 64]" />
+
+		<struct name="LINEA" extern="*Linea">
+			<member name="v_planes" type="int16_t" />
+			<member name="v_lin_wr" type="int16_t" />
+			<member name="contrl" type="int16_t*" />
+			<member name="intin" type="int16_t*" />
+			<member name="ptsin" type="int16_t*" />
+			<member name="intout" type="int16_t*" />
+			<member name="ptsout" type="int16_t*" />
+			<member name="fg_bp_1" type="int16_t" />
+			<member name="fg_bp_2" type="int16_t" />
+			<member name="fg_bp_3" type="int16_t" />
+			<member name="fg_bp_4" type="int16_t" />
+			<member name="lstlin" type="int16_t" />
+			<member name="ln_mask" type="uint16_t" />
+			<member name="wrt_mode" type="int16_t" />
+			<member name="x1" type="int16_t" />
+			<member name="y1" type="int16_t" />
+			<member name="x2" type="int16_t" />
+			<member name="y2" type="int16_t" />
+			<member name="patptr" type="void*" />
+			<member name="patmsk" type="uint16_t" />
+			<member name="multifill" type="int16_t" />
+			<member name="clip" type="int16_t" />
+			<member name="xmn_clip" type="int16_t" />
+			<member name="ymn_clip" type="int16_t" />
+			<member name="xmx_clip" type="int16_t" />
+			<member name="ymx_clip" type="int16_t" />
+			<member name="xacc_dda" type="int16_t" />
+			<member name="dda_inc" type="int16_t" />
+			<member name="t_sclsts" type="int16_t" />
+			<member name="mono_status" type="int16_t" />
+			<member name="sourcex" type="int16_t" />
+			<member name="sourcey" type="int16_t" />
+			<member name="destx" type="int16_t" />
+			<member name="desty" type="int16_t" />
+			<member name="delx" type="int16_t" />
+			<member name="dely" type="int16_t" />
+			<member name="fbase" type="FONT_HDR*" />
+			<member name="fwidth" type="int16_t" />
+			<member name="style" type="int16_t" />
+			<member name="litemask" type="uint16_t" />
+			<member name="skewmask" type="uint16_t" />
+			<member name="weight" type="int16_t" />
+			<member name="r_off" type="int16_t" />
+			<member name="l_off" type="int16_t" />
+			<member name="scale" type="int16_t" />
+			<member name="chup" type="int16_t" />
+			<member name="text_fg" type="int16_t" />
+			<member name="scrtchp" type="void*" />
+			<member name="scrpt2" type="int16_t" />
+			<member name="text_bg" type="int16_t" />
+			<member name="copy_tran" type="int16_t" />
+			<member name="fill_abort" type="INT16_LINEA_CB" />
+		</struct>
+		<struct name="VDIESC" extern="*Vdiesc">
+			<member name="reserved6" type="int32_t" />
+			<member name="cur_font" type="FONT_HDR*" />
+			<member name="reserved5" type="int16_t[23]" /> <!-- Atari compendium says 92 bytes, but the offsets are 46 bytes. -->
+			<member name="m_pos_hx" type="int16_t" />
+			<member name="m_pos_hy" type="int16_t" />
+			<member name="m_planes" type="int16_t" />
+			<member name="m_cdb_bg" type="int16_t" />
+			<member name="m_cdb_fg" type="int16_t" />
+			<member name="mask_form" type="int16_t[32]" />
+			<member name="inq_tab" type="int16_t[45]" />
+			<member name="dev_tab" type="int16_t[45]" />
+			<member name="gcurx" type="int16_t" />
+			<member name="gcury" type="int16_t" />
+			<member name="m_hid_ct" type="int16_t" />
+			<member name="mouse_bt" type="int16_t" />
+			<member name="req_col" type="int16_t[3][16]" />
+			<member name="siz_tab" type="int16_t[15]" />
+			<member name="reserved4" type="int16_t[2]" />
+			<member name="cur_work" type="void*" />
+			<member name="def_font" type="FONT_HDR*" />
+			<member name="font_ring" type="FONT_HDR*[4]" />
+			<member name="font_count" type="int16_t" />
+			<member name="reserved3" type="int16_t[45]" />
+			<member name="cur_ms_stat" type="int8_t" />
+			<member name="reserved2" type="int8_t" />
+			<member name="v_hid_cnt" type="int16_t" />
+			<member name="cur_x" type="int16_t" />
+			<member name="cur_y" type="int16_t" />
+			<member name="cur_flag" type="int8_t" />
+			<member name="mouse_flag" type="int8_t" />
+			<member name="reserved1" type="int32_t" />
+			<member name="v_sav_xy" type="int16_t[2]" />
+			<member name="save_len" type="int16_t" />
+			<member name="save_addr" type="void*" />
+			<member name="save_stat" type="int16_t" />
+			<member name="save_area" type="int32_t[4][16]" />
+			<member name="user_tim" type="VOID_LINEA_CB" />
+			<member name="next_tim" type="VOID_LINEA_CB" />
+			<member name="user_but" type="VOID_LINEA_CB" />
+			<member name="user_cur" type="VOID_LINEA_CB" />
+			<member name="user_mot" type="VOID_LINEA_CB" />
+			<member name="v_cel_ht" type="int16_t" />
+			<member name="v_cel_mx" type="int16_t" />
+			<member name="v_cel_my" type="int16_t" />
+			<member name="v_cel_wr" type="int16_t" />
+			<member name="v_col_bg" type="int16_t" />
+			<member name="v_col_fg" type="int16_t" />
+			<member name="v_cur_ad" type="void*" />
+			<member name="v_cur_off" type="int16_t" />
+			<member name="v_cur_xy" type="int16_t[2]" />
+			<member name="v_period" type="int8_t" />
+			<member name="v_cur_ct" type="int8_t" />
+			<member name="v_fnt_ad" type="void*" />
+			<member name="v_fnt_nd" type="int16_t" />
+			<member name="v_fnt_st" type="int16_t" />
+			<member name="v_fnt_wd" type="int16_t" />
+			<member name="v_rez_hz" type="int16_t" />
+			<member name="*v_off_ad" type="int16_t" />
+			<member name="reserved" type="int16_t" />
+			<member name="v_rez_vt" type="int16_t" />
+			<member name="bytes_lin" type="int16_t" />
+		</struct>
+		<struct name="FONT_HDR" extern="**Fonts">
+			<member name="id" type="int16_t" />
+			<member name="size" type="int16_t" />
+			<member name="facename" type="int8_t[32]" />
+			<member name="ade_lo" type="int16_t" />
+			<member name="ade_hi" type="int16_t" />
+			<member name="top_dist" type="int16_t" />
+			<member name="asc_dist" type="int16_t" />
+			<member name="hlf_dist" type="int16_t" />
+			<member name="des_dist" type="int16_t" />
+			<member name="bot_dist" type="int16_t" />
+			<member name="wchr_wdt" type="int16_t" />
+			<member name="wcel_wdt" type="int16_t" />
+			<member name="lft_ofst" type="int16_t" />
+			<member name="rgt_ofst" type="int16_t" />
+			<member name="thckning" type="int16_t" />
+			<member name="undrline" type="int16_t" />
+			<member name="lghtng_m" type="int16_t" />
+			<member name="skewng_m" type="int16_t" />
+			<member name="flags" type="uint16_t" />
+			<member name="hz_ofst" type="int8_t*" />
+			<member name="ch_ofst" type="int16_t*" />
+			<member name="fnt_dta" type="void*" />
+			<member name="frm_wdt" type="int16_t" />
+			<member name="frm_hgt" type="int16_t" />
+			<member name="fonthdr" type="FONT_HDR*" />
+		</struct>
+		<struct name="SDB">
+			<member name="xhot" type="int16_t" />
+			<member name="yhot" type="int16_t" />
+			<member name="form" type="int16_t" />
+			<member name="bgcol" type="int16_t" />
+			<member name="fgcol" type="int16_t" />
+			<member name="image" type="int16_t[32]" />
+		</struct>
+		<struct name="BITBLT">
+			<member name="b_wd" type="int16_t" />
+			<member name="b_ht" type="int16_t" />
+			<member name="plane_ct" type="int16_t" />
+			<member name="fg_col" type="int16_t" />
+			<member name="bg_col" type="int16_t" />
+			<member name="op_tab" type="int8_t[4]" />
+			<member name="s_xmin" type="int16_t" />
+			<member name="s_ymin" type="int16_t" />
+			<member name="s_form" type="void*" />
+			<member name="s_nxwd" type="int16_t" />
+			<member name="s_nxln" type="int16_t" />
+			<member name="s_nxpl" type="int16_t" />
+			<member name="d_xmin" type="int16_t" />
+			<member name="d_ymin" type="int16_t" />
+			<member name="d_form" type="void*" />
+			<member name="d_nxwd" type="int16_t" />
+			<member name="d_nxln" type="int16_t" />
+			<member name="d_nxpl" type="int16_t" />
+			<member name="p_addr" type="void*" />
+			<member name="p_nxln" type="int16_t" />
+			<member name="p_nxpl" type="int16_t" />
+			<member name="p_mask" type="int16_t" />
+			<member name="filler" type="int8_t[24]" />
+		</struct>
+
+		<struct name="LINEA_FUNP" extern="*Linea_funp">
+			<member name="funp" type="INT16_LINEA_CB[16]" />
+		</struct>
+
+	</structs>
+
+	<functions grpid="0xa000" category="line_a">
+		<function id="0" name="linea_init" onlyheader="1">
+			<return type="void" />
+		</function>
+		<function id="" name="put_pixel" onlyheader="1">
+			<arg name="x" type="int16_t" />
+			<arg name="y" type="int16_t" />
+			<arg name="color" type="int16_t" />
+			<return type="void" />
+		</function>
+		<function id="" name="get_pixel" onlyheader="1">
+			<arg name="x" type="int16_t" />
+			<arg name="y" type="int16_t" />
+			<return type="int16_t" />
+		</function>
+		<function id="" name="draw_line" onlyheader="1">
+			<arg name="x1" type="int16_t" />
+			<arg name="y1" type="int16_t" />
+			<arg name="x2" type="int16_t" />
+			<arg name="y2" type="int16_t" />
+			<return type="void" />
+		</function>
+		<function id="" name="horizontal_line" onlyheader="1">
+			<arg name="x1" type="int16_t" />
+			<arg name="y1" type="int16_t" />
+			<arg name="x2" type="int16_t" />
+			<return type="void" />
+		</function>
+		<function id="" name="filled_rect" onlyheader="1">
+			<arg name="x1" type="int16_t" />
+			<arg name="y1" type="int16_t" />
+			<arg name="x2" type="int16_t" />
+			<arg name="y2" type="int16_t" />
+			<return type="void" />
+		</function>
+		<function id="" name="filled_polygon" onlyheader="1">
+			<arg name="xy" type="int16_t*" />
+			<arg name="count" type="int16_t" />
+			<return type="void" />
+		</function>
+		<function id="" name="bit_blt" onlyheader="1">
+			<arg name="bitblt" type="BITBLT*" />
+			<return type="void" />
+		</function>
+		<function id="" name="text_blt" onlyheader="1">
+			<arg name="x" type="int16_t" />
+			<arg name="y" type="int16_t" />
+			<arg name="c" type="uint8_t" />
+			<return type="void" />
+		</function>
+		<function id="" name="show_mouse" onlyheader="1">
+			<arg name="flag" type="int16_t" />
+			<return type="void" />
+		</function>
+		<function id="" name="hide_mouse" onlyheader="1">
+			<return type="void" />
+		</function>
+		<function id="" name="transform_mouse" onlyheader="1">
+			<arg name="mform" type="MFORM*" />
+			<return type="void" />
+		</function>
+		<function id="" name="undraw_sprite" onlyheader="1">
+			<arg name="ssb" type="SSB*" />
+			<return type="void" />
+		</function>
+		<function id="" name="draw_sprite" onlyheader="1">
+			<arg name="x" type="int16_t" />
+			<arg name="y" type="int16_t" />
+			<arg name="sdb" type="SDB*" />
+			<arg name="ssb" type="SSB*" />
+			<return type="void" />
+		</function>
+		<function id="" name="copy_raster" onlyheader="1">
+			<return type="void" />
+		</function>
+		<function id="" name="seed_fill" onlyheader="1">
+			<return type="void" />
+		</function>
+		<function id="" name="set_fg_bp" onlyheader="1">
+			<arg name="auswahl" type="int16_t" />
+			<return type="void" />
+		</function>
+		<function id="" name="set_ln_mask" onlyheader="1">
+			<arg name="mask" type="int16_t" />
+			<return type="void" />
+		</function>
+		<function id="" name="set_wrt_mode" onlyheader="1">
+			<arg name="modus" type="int16_t" />
+			<return type="void" />
+		</function>
+		<function id="" name="set_pattern" onlyheader="1">
+			<arg name="pattern" type="int16_t*" />
+			<arg name="mask" type="int16_t" />
+			<arg name="multifill" type="int16_t" />
+			<return type="void" />
+		</function>
+		<function id="" name="set_clip" onlyheader="1">
+			<arg name="x1" type="int16_t" />
+			<arg name="y1" type="int16_t" />
+			<arg name="x2" type="int16_t" />
+			<arg name="y2" type="int16_t" />
+			<arg name="modus" type="int16_t" />
+			<return type="void" />
+		</function>
+		<function id="" name="set_text_blt" onlyheader="1">
+			<arg name="font" type="FONT_HDR*" />
+			<arg name="scale" type="int16_t" />
+			<arg name="style" type="int16_t" />
+			<arg name="chup" type="int16_t" />
+			<arg name="text_fg" type="int16_t" />
+			<arg name="text_bg" type="int16_t" />
+			<return type="void" />
+		</function>
+		<function id="" name="draw_circle" onlyheader="1">
+			<arg name="x" type="int16_t" />
+			<arg name="y" type="int16_t" />
+			<arg name="radius" type="int16_t" />
+			<arg name="color" type="int16_t" />
+			<return type="void" />
+		</function>
+		<function id="" name="print_string" onlyheader="1">
+			<arg name="x" type="int16_t" />
+			<arg name="y" type="int16_t" />
+			<arg name="xoff" type="int16_t" />
+			<arg name="string" type="int8_t*" />
+			<return type="void" />
+		</function>
+	</functions>
+
+</line_a>
+
