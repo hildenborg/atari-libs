@@ -1,6 +1,7 @@
 # atari-libs
 System specific C libraries for Atari 16/32 bit computers.
 Very little testing have been done so far.
+The libraries are generated from xml files, and the specifications can be found in the wiki.
 
 ## Build (Linux):
 1. Open a terminal.
