@@ -1,9 +1,6 @@
 /*
-bil den 7:e
-utlöpare sjunker
-elda
-träd mot sören
-hög utanför ladan
+	Copyright (C) 2025 Mikael Hildenborg
+	SPDX-License-Identifier: MIT
 */
 
 #include "def_types.h"

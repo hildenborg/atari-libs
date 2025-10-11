@@ -1,3 +1,8 @@
+/*
+	Copyright (C) 2025 Mikael Hildenborg
+	SPDX-License-Identifier: MIT
+*/
+
 #ifndef LINE_A_DEF_DEFINED
 #define LINE_A_DEF_DEFINED
 

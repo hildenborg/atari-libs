@@ -1,4 +1,7 @@
-<?xml version="1.0"?>
+<!--
+	Copyright (C) 2025 Mikael Hildenborg
+	SPDX-License-Identifier: MIT
+-->
 <line_a>
 	<include name="&quot;aes.h&quot;" />
 	<include name="&quot;line_a_def.h&quot;" />

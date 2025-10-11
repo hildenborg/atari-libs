@@ -1,4 +1,7 @@
-<?xml version="1.0"?>
+<!--
+	Copyright (C) 2025 Mikael Hildenborg
+	SPDX-License-Identifier: MIT
+-->
 <global>
 	<target name="int_32">
 		<types>

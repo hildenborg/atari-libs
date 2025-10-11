@@ -1,4 +1,5 @@
-
+#	Copyright (C) 2025 Mikael Hildenborg
+#	SPDX-License-Identifier: MIT
 
 def HeaderBegin(f, name):
 	f.write("#ifndef " + name.upper() + "_DEFINED\n")

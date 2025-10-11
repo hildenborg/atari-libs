@@ -1,3 +1,6 @@
+#	Copyright (C) 2025 Mikael Hildenborg
+#	SPDX-License-Identifier: MIT
+
 import xml.etree.ElementTree as ET
 import os
 import shutil

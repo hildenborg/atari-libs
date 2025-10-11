@@ -1,4 +1,7 @@
-<?xml version="1.0"?>
+<!--
+	Copyright (C) 2025 Mikael Hildenborg
+	SPDX-License-Identifier: MIT
+-->
 <!--
 	This xml have been constructed by cross referencing information from
 	the freemint documentation, the Atari compendium and the GEM programmers reference.
