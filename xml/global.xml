@@ -3,7 +3,7 @@
 	SPDX-License-Identifier: MIT
 -->
 <global>
-	<target name="int_32">
+	<target name="int_is_32bit">
 		<types>
 			<type name="void" use="void"/>
 			<type name="int8_t" use="char"/>
@@ -15,7 +15,7 @@
 		</types>
 	</target>
 
-	<target name="int_16">
+	<target name="int_is_16bit">
 		<types>
 			<type name="void" use="void"/>
 			<type name="int8_t" use="char"/>

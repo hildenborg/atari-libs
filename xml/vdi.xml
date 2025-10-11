@@ -1248,9 +1248,9 @@
 	</functions>
 
 	<targets>
-		<target name="int_16">
+		<target name="int_is_16bit">
 		</target>
-		<target name="int_32">
+		<target name="int_is_32bit">
 		</target>
 		<target name="stdint">
 		</target>

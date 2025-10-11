@@ -164,7 +164,7 @@ def GenerateGlobals(name, target):
 		header_gen.HeaderEnd(f, name)
 
 def main():
-	target = "int_32"
+	target = "int_is_32bit"
 	try:
 		os.mkdir("gen")
 	except FileExistsError:
