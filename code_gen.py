@@ -91,8 +91,8 @@ def CodeTosFunction(iname, ff, dicts):
 				if not first:
 					f.write(", ")
 				first = False
-#				f.write('"r" (' + n + ')')
-				f.write('"g" (' + n + ')')
+				f.write('"r" (' + n + ')')
+#				f.write('"g" (' + n + ')')
 
 		if ret != "void":
 			f.write('\n\t\t: "d1", "d2", "a0", "a1", "a2"\n\t);\n')

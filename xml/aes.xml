@@ -849,7 +849,7 @@
 			<return type="int16_t" />
 			<arg name="handle" type="int16_t" dst="intin" />
 		</function>
-		<function id="104" name="wind_get">
+		<function id="104" name="wind_get" onlyheader="1">
 			<return type="int16_t" />
 			<arg name="handle" type="int16_t" dst="intin" />
 			<arg name="mode" type="int16_t" dst="intin" />

@@ -67,3 +67,23 @@ INT16_T aes_callo(UINT32_T c)
 	return aesparblk.intout[0];
 }
 
+/*
+	Special handling for wind_get
+*/
+INT16_T wind_get(INT16_T handle, INT16_T mode, INT16_T* parm1, INT16_T* parm2, INT16_T* parm3, INT16_T* parm4)
+{
+	UINT32_T call = (104 << 24) | (2 << 16) | (5 << 8) | 0;
+	aesparblk.intin[0] = handle;
+	aesparblk.intin[1] = mode;
+	if(mode == WF_DCOLOR || mode == WF_COLOR)
+	{
+		aesparblk.intin[2] = *parm1;
+		call = (104 << 24) | (3 << 16) | (5 << 8) | 0;
+	}
+	INT16_T result = aes_calli(call);
+	*parm1 = aesparblk.intout[1];
+	*parm2 = aesparblk.intout[2];
+	*parm3 = aesparblk.intout[3];
+	*parm4 = aesparblk.intout[4];
+	return result;
+}
