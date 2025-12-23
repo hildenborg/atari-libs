@@ -346,7 +346,7 @@
 			<return type="int32_t" />
 			<arg name="handle" type="int16_t" />
 			<arg name="length" type="int32_t" />
-			<arg name="buf" type="void*" />
+			<arg name="buf" type="cvoid*" />
 		</function>
 		<function id="65" name="Fdelete">
 			<return type="int16_t" />

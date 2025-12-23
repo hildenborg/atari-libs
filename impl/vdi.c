@@ -29,7 +29,7 @@ INT16_T vq_gdos(void)
 		"ext.w	%%d0\n\t"
 		: "=r" (result)
 		:
-		: "d1", "d2", "a0", "a1", "a2"
+		: "d1", "d2", "a0", "a1", "a2", "cc"
 	);
 	return result;
 }
@@ -43,7 +43,7 @@ INT32_T vq_vgdos(void)
 		"trap	#2\n\t"
 		: "=r" (result)
 		:
-		: "d1", "d2", "a0", "a1", "a2"
+		: "d1", "d2", "a0", "a1", "a2", "cc"
 	);
 	return result;
 }
@@ -57,7 +57,7 @@ void vdi_call(void)
 		"trap	#2\n\t"
 		:
 		: "g" (&vdipb)
-		: "d0", "d1", "d2", "a0", "a1", "a2"
+		: "d0", "d1", "d2", "a0", "a1", "a2", "cc", "memory"
 	);
 }
 
@@ -77,7 +77,7 @@ INT16_T vdi_zero_ended_string_to_words(INT8_T* src, INT16_T* dst)
 		"not.l	%0\n\t"			// !(-(len + 1)) = len
 		: "=r" (len)
 		: "a" (src), "a" (dst)
-		: "d1"
+		: "d1", "cc", "memory"
 	);
 	// len do not include zero at end
 	return len;
@@ -94,7 +94,7 @@ void vdi_words_to_bytes(INT16_T* src, INT8_T* dst, INT16_T len)
 		"dbra	%2, 1b\n\t"
 		:
 		: "a" (src), "a" (dst), "d" (len)
-		:
+		: "cc", "memory"
 	);
 }
 
@@ -109,39 +109,6 @@ void vdi_bytes_to_words(INT8_T* src, INT16_T* dst, INT16_T len)
 		"dbra	%2, 1b\n\t"
 		:
 		: "a" (src), "a" (dst), "d" (len)
-		:
+		: "cc", "memory"
 	);
 }
-/*
-void vdi_large_generic_copy(void* src, void* dst, INT16_T len)
-{
-	__asm__ volatile (
-		"move.w %2, d1\n\t"
-		"lsr.w #4, d1\n\t"
-		"bra.s	2f\n\t"
-		"1:\n\t"
-		".rept 8\n\t"
-		"move.l	%0@+, %1@+\n\t"
-		".endr\n\t"
-		"2:\n\t"
-		"dbra	d1, 1b\n\t"
-
-		"move.w %2, d1\n\t"
-		"lsr.w #1, d1\n\t"
-		"and.w #7, d1\n\t"
-		"bra.s	2f\n\t"
-		"1:\n\t"
-		"move.l	%0@+, %1@+\n\t"
-		"2:\n\t"
-		"dbra	d1, 1b\n\t"
-
-		"and.w	#1, %2\n\t"
-		"beq.s	1f\n\t"
-		"move.w	%0@+, %1@+\n\t"
-		"1:\n\t"
-		:
-		: "a" (src), "a" (dst), "d" (len)
-		:
-	);
-}
-*/

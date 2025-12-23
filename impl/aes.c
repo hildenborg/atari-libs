@@ -37,7 +37,7 @@ INT16_T aes_calli(UINT32_T c)
 		"trap	#2\n\t"
 		:
 		: "g" (&aespb), "r" (c)
-		: "d0", "d1", "d2", "a0", "a1", "a2"
+		: "d0", "d1", "d2", "a0", "a1", "a2", "cc", "memory"
 	);
 	return aesparblk.intout[0];
 }
@@ -62,7 +62,7 @@ INT16_T aes_callo(UINT32_T c)
 		"trap	#2\n\t"
 		:
 		: "g" (&aespb)
-		: "d0", "d1", "d2", "a0", "a1", "a2"
+		: "d0", "d1", "d2", "a0", "a1", "a2", "cc", "memory"
 	);
 	return aesparblk.intout[0];
 }

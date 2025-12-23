@@ -23,7 +23,7 @@ void vdi_bytes_to_words(INT8_T* src, INT16_T* dst, INT16_T len);
 		"move.l	%0@+, %1@+\n\t" \
 		: \
 		: "a" (src), "a" (dst) \
-		: \
+		: "cc", "memory" \
 	);
 
 #define VDI_COPY_WORD(src, dst) \
@@ -31,7 +31,7 @@ void vdi_bytes_to_words(INT8_T* src, INT16_T* dst, INT16_T len);
 		"move.w	%0@+, %1@+\n\t" \
 		: \
 		: "a" (src), "a" (dst) \
-		: \
+		: "cc", "memory" \
 	);
 
 #define VDI_SET_WORD(value, dst) \
@@ -39,7 +39,7 @@ void vdi_bytes_to_words(INT8_T* src, INT16_T* dst, INT16_T len);
 		"move.w	#%0, %1@+\n\t" \
 		: \
 		: "g" (value), "a" (dst) \
-		: \
+		: "cc", "memory" \
 	);
 
 #define VDI_COPY_LONGS(src, dst, len) \
@@ -49,7 +49,7 @@ void vdi_bytes_to_words(INT8_T* src, INT16_T* dst, INT16_T len);
 		"dbra	%2, 1b\n\t" \
 		: \
 		: "a" (src), "a" (dst), "d" (len - 1) \
-		: \
+		: "cc", "memory" \
 	);
 
 #define VDI_COPY_WORDS(src, dst, len) \
@@ -59,7 +59,7 @@ void vdi_bytes_to_words(INT8_T* src, INT16_T* dst, INT16_T len);
 		"dbra	%2, 1b\n\t" \
 		: \
 		: "a" (src), "a" (dst), "d" (len - 1) \
-		: \
+		: "cc", "memory" \
 	);
 
 #define VDI_CAST_FROM_BYTE(src, dst) \
@@ -68,7 +68,7 @@ __asm__ volatile ( \
 	"move.b	%0@+, %1@+\n\t" \
 	: \
 	: "a" (src), "a" (dst) \
-	: \
+	: "cc", "memory" \
 );
 
 #define VDI_CAST_TO_BYTE(src, dst) \
@@ -77,7 +77,7 @@ __asm__ volatile ( \
 	"move.b	%0@+, %1@+\n\t" \
 	: \
 	: "a" (src), "a" (dst) \
-	: \
+	: "cc", "memory" \
 );
 
 #define VDI_CAST_FROM_BYTES(src, dst, len) vdi_bytes_to_words((INT8_T*)(src), (INT16_T*)(dst), (len))
