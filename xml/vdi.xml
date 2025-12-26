@@ -19,6 +19,7 @@
 		<callback name="INT16_VDI_CB">
 			<return type="int16_t" />
 		</callback>
+
 		<struct name="VDIPARBLK" extern="vdiparblk">
 			<member name="contrl" type="int16_t[16]"/>
 			<member name="intin" type="int16_t[256]"/>
@@ -33,6 +34,48 @@
 			<member name="ptsin" type="int16_t*"/>
 			<member name="intout" type="int16_t*"/>
 			<member name="ptsout" type="int16_t*"/>
+		</struct>
+
+		<struct name="WS">
+			<member name="ws_xres" type="int16_t"/>
+			<member name="ws_yres" type="int16_t"/>
+			<member name="ws_noscale" type="int16_t"/>
+			<member name="ws_wpixel" type="int16_t"/>
+			<member name="ws_hpixel" type="int16_t"/>
+			<member name="ws_ncheights" type="int16_t"/>
+			<member name="ws_nlntypes" type="int16_t"/>
+			<member name="ws_nlnwidths" type="int16_t"/>
+			<member name="ws_nmktypes" type="int16_t"/>
+			<member name="ws_nmksizes" type="int16_t"/>
+			<member name="ws_nfaces" type="int16_t"/>
+			<member name="ws_npatts" type="int16_t"/>
+			<member name="ws_nhatchs" type="int16_t"/>
+			<member name="ws_ncolors" type="int16_t"/>
+			<member name="ws_ngdps" type="int16_t"/>
+			<member name="ws_supgdps" type="int16_t[10]"/>
+			<member name="ws_attgdps" type="int16_t[10]"/>
+			<member name="ws_color" type="int16_t"/>
+			<member name="ws_rotate" type="int16_t"/>
+			<member name="ws_fill" type="int16_t"/>
+			<member name="ws_cell" type="int16_t"/>
+			<member name="ws_npals" type="int16_t"/>
+			<member name="ws_nloc" type="int16_t"/>
+			<member name="ws_nval" type="int16_t"/>
+			<member name="ws_nchoice" type="int16_t"/>
+			<member name="ws_nstring" type="int16_t"/>
+			<member name="ws_type" type="int16_t"/>
+			<member name="ws_pts0" type="int16_t"/>
+			<member name="ws_chminh" type="int16_t"/>
+			<member name="ws_pts2" type="int16_t"/>
+			<member name="ws_chmaxh" type="int16_t"/>
+			<member name="ws_lnminw" type="int16_t"/>
+			<member name="ws_pts5" type="int16_t"/>
+			<member name="ws_lnmaxw" type="int16_t"/>
+			<member name="ws_pts7" type="int16_t"/>
+			<member name="ws_pts8" type="int16_t"/>
+			<member name="ws_mkminw" type="int16_t"/>
+			<member name="ws_pts10" type="int16_t"/>
+			<member name="ws_mkmaxw" type="int16_t"/>
 		</struct>
 
 		<struct name="MFDB">
@@ -75,9 +118,9 @@
 			<return type="void" />
 			<arg name="work_in" dst="intin" words="11" type="int16_t*"/>
 			<arg name="handle" src="contrl" idx="6" type="int16_t*"/>
-			<arg name="work_out" type="int16_t*">
+			<arg name="work_out" type="WS*">
 				<sequence src="intout" words="45"/>
-				<sequence src="ptsout" words="11"/>
+				<sequence src="ptsout" words="12"/>
 			</arg>
 		</function>
 		<function id="101" name="v_clsvwk" >

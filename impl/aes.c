@@ -55,13 +55,13 @@ INT16_T aes_callo(UINT32_T c)
 		"move.l	%0, %%d1\n\t"
 		"move.l	%%d1, %%a0\n\t"
 		"move.l	%%a0@, %%a0\n\t"
-		"movep.l	%1, %%a0@(1)\n\t"
+		"movep.l %1, %%a0@(1)\n\t"
 		"move.w	%%a0@(6), %%a0@(8)\n\t"
 		"clr.w	%%a0@(6)\n\t"
 		"move.w	#0xc8, %%d0\n\t"
 		"trap	#2\n\t"
 		:
-		: "g" (&aespb)
+		: "g" (&aespb), "r" (c)
 		: "d0", "d1", "d2", "a0", "a1", "a2", "cc", "memory"
 	);
 	return aesparblk.intout[0];

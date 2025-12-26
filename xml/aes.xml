@@ -129,7 +129,7 @@
 			<member name="ob_type" type="uint16_t" />
 			<member name="ob_flags" type="uint16_t" />
 			<member name="ob_state" type="uint16_t" />
-			<member name="ob_spec" type="OBSPEC" />
+			<member name="ob_spec" type="OBSPEC*" />
 			<member name="ob_x" type="int16_t" />
 			<member name="ob_y" type="int16_t" />
 			<member name="ob_width" type="int16_t" />
@@ -402,7 +402,7 @@
 		<define name="R_TEPVALID" value="10" />
 		<define name="R_IBPMASK" value="11" />
 		<define name="R_IBPDATA" value="12" />
-		<define name="R_IPBTEXT" value="13" />
+		<define name="R_IBPTEXT" value="13" />
 		<define name="R_BIPDATA" value="14" />
 		<define name="R_FRSTR" value="15" />
 		<define name="R_FRIMG" value="16" />
