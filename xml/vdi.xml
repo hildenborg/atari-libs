@@ -114,7 +114,7 @@
 			<return type="void" />
 			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
 		</function>
-		<function id="100" name="v_opnvwk" >
+		<function id="100" name="v_opnvwk" onlyheader="1" >
 			<return type="void" />
 			<arg name="work_in" dst="intin" words="11" type="int16_t*"/>
 			<arg name="handle" src="contrl" idx="6" type="int16_t*"/>

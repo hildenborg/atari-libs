@@ -48,15 +48,28 @@ INT32_T vq_vgdos(void)
 	return result;
 }
 
+void v_opnvwk(INT16_T* work_in, INT16_T* handle, WS* work_out)
+{
+	VDI_COPY_WORDS(work_in, &vdiparblk.intin[0], 11);
+	vdiparblk.contrl[0] = 100;
+	vdiparblk.contrl[1] = 0;
+	vdiparblk.contrl[3] = 11;
+	vdiparblk.contrl[5] = 0;
+	vdiparblk.contrl[6] = *handle;
+	vdi_call();
+	*handle = vdiparblk.contrl[6];
+	VDI_COPY_WORDS(&vdiparblk.intout[0], work_out, 45);
+	VDI_COPY_LONGS(&vdiparblk.ptsout[0], &((short*)work_out)[45], 6);
+}
+
 void vdi_call(void)
 {
 	__asm__ volatile (
 		"move.l	%0, %%d1\n\t"
-		"clr.w	%%a0@(8)\n\t"
-		"move.w	#0x73, %%d0\n\t"
+		"moveq	#0x73, %%d0\n\t"
 		"trap	#2\n\t"
 		:
-		: "g" (&vdipb)
+		: "i" (&vdipb)
 		: "d0", "d1", "d2", "a0", "a1", "a2", "cc", "memory"
 	);
 }
