@@ -20,7 +20,7 @@ void vdi_bytes_to_words(INT8_T* src, INT16_T* dst, INT16_T len);
 
 #define VDI_COPY_LONG(src, dst) \
 	__asm__ volatile ( \
-		"move.l	%0@+, %1@+\n\t" \
+		"move.l	%0@, %1@\n\t" \
 		: \
 		: "a" (src), "a" (dst) \
 		: "cc", "memory" \
@@ -28,7 +28,7 @@ void vdi_bytes_to_words(INT8_T* src, INT16_T* dst, INT16_T len);
 
 #define VDI_COPY_WORD(src, dst) \
 	__asm__ volatile ( \
-		"move.w	%0@+, %1@+\n\t" \
+		"move.w	%0@, %1@\n\t" \
 		: \
 		: "a" (src), "a" (dst) \
 		: "cc", "memory" \
@@ -36,13 +36,18 @@ void vdi_bytes_to_words(INT8_T* src, INT16_T* dst, INT16_T len);
 
 #define VDI_SET_WORD(value, dst) \
 	__asm__ volatile ( \
-		"move.w	#%0, %1@+\n\t" \
+		"move.w	#%0, %1@\n\t" \
 		: \
-		: "g" (value), "a" (dst) \
+		: "i" (value), "a" (dst) \
 		: "cc", "memory" \
 	);
 
 #define VDI_COPY_LONGS(src, dst, len) \
+	for (short i = len; --len >= 0; ((unsigned int*)dst)[i] = ((unsigned int*)src)[i]) {}
+/*
+	// This doesn't work.
+	// gcc don't know that we alter the registers for src, dst and len,
+	// and might use them after this call assming that they are unchanged. 
 	__asm__ volatile ( \
 		"1:\n\t" \
 		"move.l	%0@+, %1@+\n\t" \
@@ -51,8 +56,11 @@ void vdi_bytes_to_words(INT8_T* src, INT16_T* dst, INT16_T len);
 		: "a" (src), "a" (dst), "d" (len - 1) \
 		: "cc", "memory" \
 	);
+*/
 
 #define VDI_COPY_WORDS(src, dst, len) \
+	for (short i = len; --len >= 0; ((unsigned short*)dst)[i] = ((unsigned short*)src)[i]) {}
+/*
 	__asm__ volatile ( \
 		"1:\n\t" \
 		"move.w	%0@+, %1@+\n\t" \
@@ -61,11 +69,12 @@ void vdi_bytes_to_words(INT8_T* src, INT16_T* dst, INT16_T len);
 		: "a" (src), "a" (dst), "d" (len - 1) \
 		: "cc", "memory" \
 	);
+*/
 
 #define VDI_CAST_FROM_BYTE(src, dst) \
 __asm__ volatile ( \
-	"clr.b	%1@+\n\t" \
-	"move.b	%0@+, %1@+\n\t" \
+	"clr.b	%1@\n\t" \
+	"move.b	%0@, %1@(1)\n\t" \
 	: \
 	: "a" (src), "a" (dst) \
 	: "cc", "memory" \
@@ -73,8 +82,7 @@ __asm__ volatile ( \
 
 #define VDI_CAST_TO_BYTE(src, dst) \
 __asm__ volatile ( \
-	"addq.l	#1, %0@+\n\t" \
-	"move.b	%0@+, %1@+\n\t" \
+	"move.b	%0@(1), %1@\n\t" \
 	: \
 	: "a" (src), "a" (dst) \
 	: "cc", "memory" \
