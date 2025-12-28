@@ -186,10 +186,7 @@ def HeaderStructs(f, dicts):
 		if tagname == "struct" or tagname == "union":
 			name = ss.attrib.get("name")
 			
-			f.write(tagname + " ")
-			if (tagname == "struct"):
-				f.write("__attribute__((packed)) ")
-			f.write(name + "\n{\n")
+			f.write(tagname + " __attribute__((packed)) " + name + "\n{\n")
 			for a in ss.findall('member'):
 				n = a.attrib.get("name")
 				t = a.attrib.get("type")
