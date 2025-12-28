@@ -43,7 +43,7 @@ void vdi_bytes_to_words(INT8_T* src, INT16_T* dst, INT16_T len);
 	);
 
 #define VDI_COPY_LONGS(src, dst, len) \
-	for (short i = len; --len >= 0; ((unsigned int*)dst)[i] = ((unsigned int*)src)[i]) {}
+	for (short i = len; --i >= 0; ((unsigned int*)dst)[i] = ((unsigned int*)src)[i]) {}
 /*
 	// This doesn't work.
 	// gcc don't know that we alter the registers for src, dst and len,
@@ -59,7 +59,7 @@ void vdi_bytes_to_words(INT8_T* src, INT16_T* dst, INT16_T len);
 */
 
 #define VDI_COPY_WORDS(src, dst, len) \
-	for (short i = len; --len >= 0; ((unsigned short*)dst)[i] = ((unsigned short*)src)[i]) {}
+	for (short i = len; --i >= 0; ((unsigned short*)dst)[i] = ((unsigned short*)src)[i]) {}
 /*
 	__asm__ volatile ( \
 		"1:\n\t" \

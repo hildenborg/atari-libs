@@ -29,14 +29,15 @@ INT16_T aes_calli(UINT32_T c)
 {
 	__asm__ volatile (
 		"move.l	%0, %%d1\n\t"
+		"move.l	%1, %%d2\n\t"
 		"move.l	%%d1, %%a0\n\t"
 		"move.l	%%a0@, %%a0\n\t"
-		"movep.l	%1, %%a0@(1)\n\t"
+		"movep.l %%d2, %%a0@(1)\n\t"
 		"clr.w	%%a0@(8)\n\t"
-		"move.w	#0xc8, %%d0\n\t"
+		"move.l	#0xc8, %%d0\n\t"
 		"trap	#2\n\t"
 		:
-		: "g" (&aespb), "r" (c)
+		: "i" (&aespb), "g" (c)
 		: "d0", "d1", "d2", "a0", "a1", "a2", "cc", "memory"
 	);
 	return aesparblk.intout[0];
@@ -53,15 +54,16 @@ INT16_T aes_callo(UINT32_T c)
 {
 	__asm__ volatile (
 		"move.l	%0, %%d1\n\t"
+		"move.l	%1, %%d2\n\t"
 		"move.l	%%d1, %%a0\n\t"
 		"move.l	%%a0@, %%a0\n\t"
-		"movep.l %1, %%a0@(1)\n\t"
+		"movep.l %%d2, %%a0@(1)\n\t"
 		"move.w	%%a0@(6), %%a0@(8)\n\t"
 		"clr.w	%%a0@(6)\n\t"
-		"move.w	#0xc8, %%d0\n\t"
+		"move.l	#0xc8, %%d0\n\t"
 		"trap	#2\n\t"
 		:
-		: "g" (&aespb), "r" (c)
+		: "i" (&aespb), "g" (c)
 		: "d0", "d1", "d2", "a0", "a1", "a2", "cc", "memory"
 	);
 	return aesparblk.intout[0];
