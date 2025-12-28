@@ -13,6 +13,7 @@
 	so it is possible to generate code for a specified version?
 -->
 <vdi>
+	<include name="&quot;aes.h&quot;" />
 	<include name="&quot;vdi_def.h&quot;" />
 	<structs>
 		<typedef typename="fix31" type="int32_t" />
@@ -89,6 +90,7 @@
 			<member name="fd_r2" type="int16_t"/>
 			<member name="fd_r3" type="int16_t"/>
 		</struct>
+		<!--
 		<struct name="MFORM">
 			<member name="mf_xhot" type="int16_t"/>
 			<member name="mf_yhot" type="int16_t"/>
@@ -98,6 +100,7 @@
 			<member name="mf_mask" type="int16_t[16]"/>
 			<member name="mf_data" type="int16_t[16]"/>
 		</struct>
+		-->
 	</structs>
 
 	<functions grpid="2" category="Control">

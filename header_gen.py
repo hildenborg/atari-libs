@@ -185,14 +185,18 @@ def HeaderStructs(f, dicts):
 		tagname = ss.tag
 		if tagname == "struct" or tagname == "union":
 			name = ss.attrib.get("name")
-			f.write(tagname + " " + name + "\n{\n")
+			
+			f.write(tagname + " ")
+			if (tagname == "struct"):
+				f.write("__attribute__((packed)) ")
+			f.write(name + "\n{\n")
 			for a in ss.findall('member'):
 				n = a.attrib.get("name")
 				t = a.attrib.get("type")
 				f.write("\t")
 				WriteType(f, n, t, dicts)
 				f.write(";\n")
-			f.write("};\n\n")
+			f.write("} __attribute__ ((aligned (2)));\n\n")
 	f.write("\n\n")
 
 def HeaderCategories(f, dicts):
