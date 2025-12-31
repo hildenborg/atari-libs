@@ -50,7 +50,13 @@ INT32_T vq_vgdos(void)
 
 void v_opnvwk(INT16_T* work_in, INT16_T* handle, WS* work_out)
 {
-	VDI_COPY_WORDS(work_in, &vdiparblk.intin[0], 11);
+	#ifdef FAST_VDI
+		vdipb.intin = work_in;
+		vdipb.intout = (INT16_T*)work_out;
+		vdipb.ptsout = &((INT16_T*)work_out)[45];
+	#else
+		VDI_COPY_WORDS(work_in, &vdiparblk.intin[0], 11);
+	#endif
 	vdiparblk.contrl[0] = 100;
 	vdiparblk.contrl[1] = 0;
 	vdiparblk.contrl[3] = 11;
@@ -58,8 +64,14 @@ void v_opnvwk(INT16_T* work_in, INT16_T* handle, WS* work_out)
 	vdiparblk.contrl[6] = *handle;
 	vdi_call();
 	*handle = vdiparblk.contrl[6];
-	VDI_COPY_WORDS(&vdiparblk.intout[0], work_out, 45);
-	VDI_COPY_LONGS(&vdiparblk.ptsout[0], &((short*)work_out)[45], 6);
+	#ifdef FAST_VDI
+		vdipb.intin = vdiparblk.intin;
+		vdipb.intout = vdiparblk.intout;
+		vdipb.ptsout = vdiparblk.ptsout;
+	#else
+		VDI_COPY_WORDS(&vdiparblk.intout[0], work_out, 45);
+		VDI_COPY_LONGS(&vdiparblk.ptsout[0], &((INT16_T*)work_out)[45], 6);
+	#endif
 }
 
 void vdi_call(void)

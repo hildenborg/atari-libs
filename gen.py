@@ -141,12 +141,12 @@ def ReadDefenitions(xmlfile, targetname, dicts):
 		target = dicts["targetDict"][targetname]
 		AddToDicts(target, dicts)
 
-def Generate(name, target, impl):
+def Generate(name, options, target, impl):
 	dicts = MakeDicts()
 	ReadGlobals("xml/global.xml", target, dicts)
 	ReadDefenitions("xml/" + name + ".xml", target, dicts)
-	header_gen.WriteHeader(name, dicts)
-	code_gen.WriteCode(name, dicts)
+	header_gen.WriteHeader(name, options, dicts)
+	code_gen.WriteCode(name, options, dicts)
 	code_gen.WriteMakefileInc(name, dicts, impl)
 	for n in impl:
 		shutil.copyfile("impl/" + n, "gen/" + n)
@@ -165,14 +165,15 @@ def GenerateGlobals(name, target):
 
 def main():
 	target = "int_is_32bit"
+	options = "" #"fast_vdi"
 	try:
 		os.mkdir("gen")
 	except FileExistsError:
 		pass
 	GenerateGlobals("def_types", target)
-	Generate("tos", target, [])
-	Generate("aes", target, ["aes.c", "aes_def.h"])
-	Generate("vdi", target, ["vdi.c", "vdi_def.h"])
+	Generate("tos", options, target, [])
+	Generate("aes", options, target, ["aes.c", "aes_def.h"])
+	Generate("vdi", options, target, ["vdi.c", "vdi_def.h"])
 #	Generate("line_a", target, ["line_a.c", "line_a_def.h"])
 
 if __name__ == "__main__":

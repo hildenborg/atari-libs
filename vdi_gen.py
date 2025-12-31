@@ -414,7 +414,7 @@ def MakePtrString(src, dst, idx):
 		tstr = "&vdiparblk." + dst + "[" + str(idx) + "]"
 	return tstr
 
-def CodeVDIFunction(iname, ff, dicts):
+def CodeVDIFunction(iname, ff, dicts, options):
 	name = ff.attrib.get("name")
 	id = ff.attrib.get("id")		# VDI function
 	subid = ff.attrib.get("subid")	# VDI sub function
@@ -532,9 +532,12 @@ def CodeVDIFunction(iname, ff, dicts):
 				prevSeq = s
 			tabs = HandleTestEnd(a, tmpVals, tabs)
 		
-		HandleUntouched(tmpVals, "intin")
-		HandleUntouched(tmpVals, "ptsin")
-		f.write(tmpVals["s_in"])
+		if "fast_vdi" in options:
+			f.write("// FAST_VDI_STUFF!\n")
+		else:
+			HandleUntouched(tmpVals, "intin")
+			HandleUntouched(tmpVals, "ptsin")
+			f.write(tmpVals["s_in"])
 		f.write(tabs + "vdiparblk.contrl[0] = " + str(id) + ";\n")
 
 		ptsins = int(tmpVals["r_ptsin"] / 2)
@@ -549,7 +552,9 @@ def CodeVDIFunction(iname, ff, dicts):
 
 		f.write(tabs + "vdiparblk.contrl[5] = " + str(subid) + ";\n")
 		f.write("\tvdi_call();\n")
-		f.write(tmpVals["s_out"])
+
+		if "fast_vdi" not in options:
+			f.write(tmpVals["s_out"])
 
 		if retIsSrcIdx:
 			f.write("\t")
@@ -562,6 +567,10 @@ def CodeVDIFunction(iname, ff, dicts):
 				# Assume 4 byte size
 				f.write(";\n\t")
 				f.write("VDI_COPY_LONG(&(vdiparblk." + retsrc + "[" + retidx + "]), &result);\n")
+
+		if "fast_vdi" not in options:
+			f.write("// FAST_VDI_STUFF!\n")
+
 		if ret != "void":
 			if retIsCode:
 				f.write("\treturn ")
