@@ -46,6 +46,19 @@ def AddStringToArray(tmpVals, src, str):
 		arr = "in"
 	tmpVals["s_" + arr] = tmpVals["s_" + arr] + str
 
+def AddStringToFastArray(tmpVals, src, dst, addToFast, str):
+	if addToFast:
+		tmpVals["s_fast_start"] = tmpVals["s_fast_start"] + str
+		if src:
+			tmpVals["s_fast_end"] = tmpVals["s_fast_end"] + " " + src
+		else:
+			tmpVals["s_fast_end"] = tmpVals["s_fast_end"] + " " + dst
+	else:
+		if src:
+			tmpVals["s_fast_out"] = tmpVals["s_fast_out"] + str
+		else:
+			tmpVals["s_fast_start"] = tmpVals["s_fast_start"] + str
+
 # size is in words
 def UpdateVDIIndex(tmpVals, src, dst, idx, size):
 	arr = src
@@ -266,7 +279,9 @@ def HandleVDIArg(fncName, name, type, seq, prevSeq, tmpVals, tabs, dicts, seqIdx
 	else:
 		argString = MakeArgString(name, type, isPtr, seqIdx, dicts)
 	ptrString = MakePtrString(src, dst, idx)
+	vdipbString = MakeVDIPBString(src, dst, idx)
 
+	addToFast = False
 	# Determine what to do with the data now when we have the defaults
 	if (isinstance(count, int) or count.isnumeric()) and int(count) > 0:
 		# Copy a compile time known number of data
@@ -279,8 +294,10 @@ def HandleVDIArg(fncName, name, type, seq, prevSeq, tmpVals, tabs, dicts, seqIdx
 
 		if value:
 			seqString = "*" + ptrString + " = " + argString + ";"
+			fastSeqString = seqString
 		else:
 			seqString = MakeCopy(argString, ptrString, src, isLongs, typeSize, count)
+			[fastSeqString, addToFast] = MakeFastCopy(argString, ptrString, vdipbString, src, isLongs, typeSize, count, dicts, tmpVals)
 	
 		seqIdx = seqIdx + count
 		idxupd = count
@@ -301,6 +318,7 @@ def HandleVDIArg(fncName, name, type, seq, prevSeq, tmpVals, tabs, dicts, seqIdx
 			seqString = MakeStrlenCopy(argString, ptrString, dicts)
 			if dst is not None:
 				tmpVals["rl_" + dst] = tmpVals["rl_" + dst] + " + _str_len"
+			fastSeqString = seqString
 		else:
 			# Copy an inlined code number of data
 			# Lets create a local variable to that and use that.
@@ -309,13 +327,18 @@ def HandleVDIArg(fncName, name, type, seq, prevSeq, tmpVals, tabs, dicts, seqIdx
 				varName += "_" + str(idx)
 			lclVar = MakeLocalVar(varName, count, dicts)
 			AddStringToArray(tmpVals, src, tabs + lclVar + "\n")
+			# In fast mode, the string stored here may not be used,
+			#  and will cause a compiler warning if added to source.
+			AddStringToFastArray(tmpVals, src, dst, False, tabs + lclVar + "\n")
 			# Lets use the local variable instead of count
 			if dst is not None:
 				tmpVals["rl_" + dst] = tmpVals["rl_" + dst] + " + " + varName
 			seqString = MakeCopy(argString, ptrString, src, isLongs, typeSize, varName)
+			[fastSeqString, addToFast] = MakeFastCopy(argString, ptrString, vdipbString, src, isLongs, typeSize, varName, dicts, tmpVals)
 		seqIdx = -1
 
 	AddStringToArray(tmpVals, src, tabs + seqString + "\n")
+	AddStringToFastArray(tmpVals, src, dst, addToFast, tabs + fastSeqString + "\n")
 
 	return seqIdx
 
@@ -366,6 +389,52 @@ def MakeCopy(argString, ptrString, isSrc, isLongs, typeSize, count):
 
 	return seqString
 
+def MakeFastCopy(argString, ptrString, vdipbString, isSrc, isLongs, typeSize, count, dicts, tmpVals):
+	if not isinstance(count, int) and count.isnumeric():
+		count = int(count)
+
+	if not isLongs and typeSize == 2 and count == 1:
+		if isSrc:
+			return [MakeNiceWordCopy(argString, ptrString, isSrc), False]
+		else:
+			return [MakeNiceWordCopy(argString, ptrString, isSrc), True]
+
+	if typeSize == 1:
+		if isSrc:
+			seqString = "VDI_CAST_TO_BYTE"
+		else:
+			seqString = "VDI_CAST_FROM_BYTE"
+
+		if not isinstance(count, int) or count > 1:
+			# Multiple values copy
+			seqString += "S"
+
+		if isSrc:
+			# ptrString is source
+			seqString += "(" + ptrString + ", " + argString
+		else:
+			# ptrString is destination
+			seqString += "(" + argString + ", " + ptrString
+
+		if not isinstance(count, int) or count > 1:
+			# Multiple values copy
+			seqString += ", " + str(count)
+
+		seqString += ");"
+		return [seqString, False]
+	else:
+		if isSrc and not isinstance(count, int):
+			# The previously created local variable count is unused.
+			# Remove the last line we added.
+			# It's almost a hack, but it works.
+			tmpVals["s_fast_out"] = tmpVals["s_fast_out"][:-1]	# remove last linefeed
+			lastLineIdx = tmpVals["s_fast_out"].rfind("\n")
+			tmpVals["s_fast_out"] = tmpVals["s_fast_out"][:lastLineIdx + 1]
+		[_, wordType, _, _, _] = header_gen.GetTypeName("int16_t", dicts)
+		seqString = vdipbString + " = (" + wordType + "*)" + argString + ";"
+	return [seqString, True]
+
+
 def MakeNiceWordCopy(argString, ptrString, isSrc):
 	# When only copying one word, we can do a cleaner syntax
 	if argString[0] == '&':
@@ -412,6 +481,15 @@ def MakePtrString(src, dst, idx):
 		tstr = "&vdiparblk." + src + "[" + str(idx) + "]"
 	else:
 		tstr = "&vdiparblk." + dst + "[" + str(idx) + "]"
+	return tstr
+
+def MakeVDIPBString(src, dst, idx):
+	if idx < 0:
+		idx = 0
+	if src:
+		tstr = "vdipb." + src
+	else:
+		tstr = "vdipb." + dst
 	return tstr
 
 def CodeVDIFunction(iname, ff, dicts, options):
@@ -490,6 +568,9 @@ def CodeVDIFunction(iname, ff, dicts, options):
 			"c_ptsout": 0,
 			"s_in": "",
 			"s_out": "",
+			"s_fast_start": "",
+			"s_fast_end": "",
+			"s_fast_out": "",
 			"r_intin": 0,
 			"r_ptsin": 0,
 			"m_intin": "",
@@ -522,7 +603,6 @@ def CodeVDIFunction(iname, ff, dicts, options):
 		for a in ff.findall('arg'):
 			n = a.attrib.get("name")
 			t = a.attrib.get("type")
-			tabs = HandleTestBegin(a, tmpVals, tabs)
 			seqIdx = 0
 			if a.find('sequence') is None:
 				seqIdx = HandleVDIArg(name, n, t, a, None, tmpVals, tabs, dicts, seqIdx)
@@ -530,14 +610,31 @@ def CodeVDIFunction(iname, ff, dicts, options):
 			for s in a.findall('sequence'):
 				seqIdx = HandleVDIArg(name, n, t, s, prevSeq, tmpVals, tabs, dicts, seqIdx)
 				prevSeq = s
-			tabs = HandleTestEnd(a, tmpVals, tabs)
-		
-		if "fast_vdi" in options:
-			f.write("// FAST_VDI_STUFF!\n")
-		else:
-			HandleUntouched(tmpVals, "intin")
-			HandleUntouched(tmpVals, "ptsin")
-			f.write(tmpVals["s_in"])
+
+		ifdefMask = 0
+		if (tmpVals["s_fast_start"] != ""):
+			ifdefMask = 1
+		if (tmpVals["s_in"] != ""):
+			ifdefMask += 2
+
+		if ifdefMask == 2:
+			f.write("#ifndef FAST_VDI\n")
+		elif ifdefMask != 0:
+			f.write("#ifdef FAST_VDI\n")
+
+		if (tmpVals["s_fast_start"] != ""):
+			f.write(tmpVals["s_fast_start"])
+
+		if ifdefMask == 3:
+			f.write("#else\n")
+
+		HandleUntouched(tmpVals, "intin")
+		HandleUntouched(tmpVals, "ptsin")
+		f.write(tmpVals["s_in"])
+
+		if ifdefMask != 0:
+			f.write("#endif\n\n")
+
 		f.write(tabs + "vdiparblk.contrl[0] = " + str(id) + ";\n")
 
 		ptsins = int(tmpVals["r_ptsin"] / 2)
@@ -551,12 +648,36 @@ def CodeVDIFunction(iname, ff, dicts, options):
 		f.write(tabs + "vdiparblk.contrl[3] = " + sintins + ";\n")
 
 		f.write(tabs + "vdiparblk.contrl[5] = " + str(subid) + ";\n")
-		f.write("\tvdi_call();\n")
+		f.write("\tvdi_call();\n\n")
 
-		if "fast_vdi" not in options:
+		ifdefMask = 0
+		if (tmpVals["s_fast_end"] != ""):
+			ifdefMask = 1
+		if (tmpVals["s_fast_out"] != ""):
+			ifdefMask = ifdefMask | 2
+		if (tmpVals["s_out"] != ""):
+			ifdefMask = ifdefMask | 4
+
+		if (ifdefMask & 4) != 0:
+			f.write("#ifndef FAST_VDI\n")
+			ifdefMask = ifdefMask | 8
+		elif (ifdefMask & 2) != 0:
+			f.write("#ifdef FAST_VDI\n")
+			ifdefMask = ifdefMask | 8
+
+		if (tmpVals["s_out"] != ""):
 			f.write(tmpVals["s_out"])
 
+		if (ifdefMask & 6) == 6:
+			f.write("#else\n")
+
+		if (tmpVals["s_fast_out"] != ""):
+			f.write(tmpVals["s_fast_out"])
+
 		if retIsSrcIdx:
+			if (ifdefMask & 6) != 0:
+				f.write("#endif\n")
+				ifdefMask = ifdefMask & 7
 			f.write("\t")
 			header_gen.WriteType(f, "result", ret, dicts)
 			if ret == "int16_t" or ret == "uint16_t":
@@ -568,8 +689,22 @@ def CodeVDIFunction(iname, ff, dicts, options):
 				f.write(";\n\t")
 				f.write("VDI_COPY_LONG(&(vdiparblk." + retsrc + "[" + retidx + "]), &result);\n")
 
-		if "fast_vdi" not in options:
-			f.write("// FAST_VDI_STUFF!\n")
+		if (tmpVals["s_fast_end"] != ""):
+			if (ifdefMask & 15) == 11:
+				f.write("#ifdef FAST_VDI\n")
+				ifdefMask = ifdefMask | 8
+
+			if "intin" in tmpVals["s_fast_end"]:
+				f.write(tabs + "vdipb.intin = vdiparblk.intin;\n")
+			if "ptsin" in tmpVals["s_fast_end"]:
+				f.write(tabs + "vdipb.ptsin = vdiparblk.ptsin;\n")
+			if "intout" in tmpVals["s_fast_end"]:
+				f.write(tabs + "vdipb.intout = vdiparblk.intout;\n")
+			if "ptsout" in tmpVals["s_fast_end"]:
+				f.write(tabs + "vdipb.ptsout = vdiparblk.ptsout;\n")
+
+		if (ifdefMask & 8) != 0:
+			f.write("#endif\n")
 
 		if ret != "void":
 			if retIsCode:
@@ -590,21 +725,3 @@ def HandleUntouched(tmpVals, arr):
 		tstr += "\t" + "vdiparblk." + arr + "[" + str(idx) + "] = 0;\n"
 	AddStringToArray(tmpVals, None, tstr)
 
-def HandleTestBegin(a, tmpVals, tabs):
-	tst = a.attrib.get("test")
-	if tst:
-		src = a.attrib.get("src")
-		code = MakeVDIInlineCode(tst)
-		tstr = tabs + "if (" + code + ")\n" + tabs + "{\n"
-		AddStringToArray(tmpVals, src, tstr)
-		tabs += '\t'
-	return tabs
-
-def HandleTestEnd(a, tmpVals, tabs):
-	tst = a.attrib.get("test")
-	if tst:
-		src = a.attrib.get("src")
-		tstr = tabs + "}\n"
-		AddStringToArray(tmpVals, src, tstr)
-		return tabs[1:]
-	return tabs

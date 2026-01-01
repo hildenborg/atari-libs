@@ -165,7 +165,7 @@ def GenerateGlobals(name, target):
 
 def main():
 	target = "int_is_32bit"
-	options = "" #"fast_vdi"
+	options = "" # "fast_vdi"
 	try:
 		os.mkdir("gen")
 	except FileExistsError:

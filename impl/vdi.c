@@ -74,6 +74,29 @@ void v_opnvwk(INT16_T* work_in, INT16_T* handle, WS* work_out)
 	#endif
 }
 
+void vs_clip(INT16_T handle, INT16_T clip_flag, INT16_T* xyarray)
+{
+	vdiparblk.contrl[6] = handle;
+	vdiparblk.intin[0] = clip_flag;
+	if (clip_flag != 0 && xyarray != 0)
+	{
+	#ifdef FAST_VDI
+		vdipb.ptsin = xyarray;
+	#else
+		VDI_COPY_LONGS(xyarray, &vdiparblk.ptsin[0], 2);
+	#endif
+	}
+	vdiparblk.contrl[0] = 129;
+	vdiparblk.contrl[1] = 2;
+	vdiparblk.contrl[3] = 1;
+	vdiparblk.contrl[5] = 0;
+	vdi_call();
+	#ifdef FAST_VDI
+		vdipb.ptsin = vdiparblk.ptsin;
+	#endif
+}
+
+
 void vdi_call(void)
 {
 	__asm__ volatile (

@@ -148,11 +148,11 @@
 			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
 			<arg name="select" dst="intin" type="int16_t"/>
 		</function>
-		<function id="129" name="vs_clip" >
+		<function id="129" name="vs_clip" onlyheader="1">
 			<return type="void" />
 			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
 			<arg name="clip_flag" dst="intin" type="int16_t"/>
-			<arg name="xyarray" dst="ptsin" longs="2" test="clip_flag != 0 &amp;&amp; xyarray != 0" type="int16_t*"/>
+			<arg name="xyarray" dst="ptsin" longs="2" type="int16_t*"/>
 		</function>
 	</functions>
 
