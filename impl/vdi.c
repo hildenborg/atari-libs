@@ -96,6 +96,17 @@ void vs_clip(INT16_T handle, INT16_T clip_flag, INT16_T* xyarray)
 	#endif
 }
 
+#ifdef DEBUG
+void CheckVdipb(void)
+{
+	if (vdipb.ptsin != vdiparblk.ptsin || vdipb.ptsout != vdiparblk.ptsout ||
+		vdipb.intin != vdiparblk.intin || vdipb.intout != vdiparblk.intout)
+	{
+		// Cause a brakepoint in gdbsrv
+		asm ("trap #0");
+	}
+}
+#endif
 
 void vdi_call(void)
 {

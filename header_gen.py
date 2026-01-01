@@ -207,17 +207,11 @@ def HeaderCategories(f, dicts):
 		if c in functionDict:
 			HeaderFunctions(f, functionDict[c], dicts)
 
-def HeaderOptions(f, name, options):
-	if (name == "vdi"):
-		if ( "fast_vdi" in options):
-			f.write("/*\n\tOptions.\n*/\n\n")
-			f.write("#define FAST_VDI\n\n")
 
-def WriteHeader(name, options, dicts):
+def WriteHeader(name, dicts):
 	with open("gen/" + name + ".h", "w") as f:
 		HeaderBegin(f, name)
 		HeaderIncludes(f, dicts)
-		HeaderOptions(f, name, options)
 		HeaderForwards(f, dicts)
 		HeaderTypedefs(f, dicts)
 		HeaderCallbacks(f, dicts)

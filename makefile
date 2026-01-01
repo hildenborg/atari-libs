@@ -17,12 +17,11 @@ TOOLKIT_LIB	:= $(TOOLKIT)/m68k-atari-elf/lib
 # Use m68k-atari-elf toolchain
 # Toolkit executables, libraries and directories settings
 TOOLKIT_BIN	:= $(TOOLKIT)/bin
-#CPU := 68030
 CC := $(TOOLKIT_BIN)/m68k-atari-elf-gcc
 AR := $(TOOLKIT_BIN)/m68k-atari-elf-gcc-ar
 
 CFLAGS := -Wall -Os -g
-#CFLAGS := -Wall -Os -g -mcpu=$(CPU)
+#CFLAGS := -Wall -Os -g -DDEBUG -DFAST_VDI
 
 # Tos object list
 TOSOBJS := $(foreach source,$(TOS_SOURCES),gen/$(basename $(source)).o)

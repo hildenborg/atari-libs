@@ -18,6 +18,11 @@ void vdi_words_to_bytes(INT16_T* src, INT8_T* dst, INT16_T len);
 void vdi_bytes_to_words(INT8_T* src, INT16_T* dst, INT16_T len);
 //extern void vdi_large_generic_copy(void* src, void* dst, INT16_T len);
 
+// For debugging
+#ifdef DEBUG
+void CheckVdipb(void);
+#endif
+
 #define VDI_COPY_LONG(src, dst) \
 	__asm__ volatile ( \
 		"move.l	%0@, %1@\n\t" \

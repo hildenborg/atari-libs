@@ -492,7 +492,7 @@ def MakeVDIPBString(src, dst, idx):
 		tstr = "vdipb." + dst
 	return tstr
 
-def CodeVDIFunction(iname, ff, dicts, options):
+def CodeVDIFunction(iname, ff, dicts):
 	name = ff.attrib.get("name")
 	id = ff.attrib.get("id")		# VDI function
 	subid = ff.attrib.get("subid")	# VDI sub function
@@ -617,6 +617,9 @@ def CodeVDIFunction(iname, ff, dicts, options):
 		if (tmpVals["s_in"] != ""):
 			ifdefMask += 2
 
+		HandleUntouched(f, tmpVals, "intin")
+		HandleUntouched(f, tmpVals, "ptsin")
+
 		if ifdefMask == 2:
 			f.write("#ifndef FAST_VDI\n")
 		elif ifdefMask != 0:
@@ -628,8 +631,6 @@ def CodeVDIFunction(iname, ff, dicts, options):
 		if ifdefMask == 3:
 			f.write("#else\n")
 
-		HandleUntouched(tmpVals, "intin")
-		HandleUntouched(tmpVals, "ptsin")
 		f.write(tmpVals["s_in"])
 
 		if ifdefMask != 0:
@@ -667,9 +668,8 @@ def CodeVDIFunction(iname, ff, dicts, options):
 
 		if (tmpVals["s_out"] != ""):
 			f.write(tmpVals["s_out"])
-
-		if (ifdefMask & 6) == 6:
-			f.write("#else\n")
+			if (ifdefMask & 3) != 0:
+				f.write("#else\n")
 
 		if (tmpVals["s_fast_out"] != ""):
 			f.write(tmpVals["s_fast_out"])
@@ -706,6 +706,11 @@ def CodeVDIFunction(iname, ff, dicts, options):
 		if (ifdefMask & 8) != 0:
 			f.write("#endif\n")
 
+# Test code for fast vdi
+		f.write("#ifdef DEBUG\n")
+		f.write(tabs + "CheckVdipb();\n")
+		f.write("#endif\n")
+
 		if ret != "void":
 			if retIsCode:
 				f.write("\treturn ")
@@ -716,12 +721,9 @@ def CodeVDIFunction(iname, ff, dicts, options):
 				f.write("\treturn result;\n")
 		f.write("}\n\n")
 
-def HandleUntouched(tmpVals, arr):
+def HandleUntouched(f, tmpVals, arr):
 	indices = [i for i, x in enumerate(tmpVals["m_" + arr]) if x == "_"]
 	
-	tstr = ""
 	for idx in indices:
-		# Position is untouched, so we need to clear it.
-		tstr += "\t" + "vdiparblk." + arr + "[" + str(idx) + "] = 0;\n"
-	AddStringToArray(tmpVals, None, tstr)
+		f.write("\t" + "vdiparblk." + arr + "[" + str(idx) + "] = 0;\n")
 

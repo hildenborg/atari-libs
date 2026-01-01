@@ -6,7 +6,7 @@ import vdi_gen
 import tos_gen
 import aes_gen
 
-def WriteCode(name, options, dicts):
+def WriteCode(name, dicts):
 	functionDict = dicts["functionDict"]
 	for c in functionDict:
 		for _, ff in functionDict[c].items():
@@ -17,7 +17,7 @@ def WriteCode(name, options, dicts):
 				elif name == "aes":
 					aes_gen.CodeAESFunction(name, ff, dicts)
 				elif name == "vdi":
-					vdi_gen.CodeVDIFunction(name, ff, dicts, options)
+					vdi_gen.CodeVDIFunction(name, ff, dicts)
 
 def WriteMakefileInc(name, dicts, impl):
 	functionDict = dicts["functionDict"]

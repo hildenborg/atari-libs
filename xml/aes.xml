@@ -236,6 +236,8 @@
 		<define name="K_LSHIFT" value="0x0002" />
 		<define name="K_CTRL" value="0x0004" />
 		<define name="K_ALT" value="0x0008" />
+		<define name="MO_ENTER" value="0" />
+		<define name="MO_LEAVE" value="1" />
 	</defines>
 	<defines category="Objects">
 		<define name="G_BOX" value="20" />
