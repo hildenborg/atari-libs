@@ -402,8 +402,10 @@ def MakeFastCopy(argString, ptrString, vdipbString, isSrc, isLongs, typeSize, co
 		else:
 			return [MakeNiceWordCopy(argString, ptrString, isSrc), False]
 
-	if typeSize == 1:
-		if isSrc:
+	if typeSize == 1 or (isLongs and count == 1):
+		if isLongs:
+			seqString = "VDI_COPY_LONG"
+		elif isSrc:
 			seqString = "VDI_CAST_TO_BYTE"
 		else:
 			seqString = "VDI_CAST_FROM_BYTE"

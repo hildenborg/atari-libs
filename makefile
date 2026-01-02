@@ -20,8 +20,8 @@ TOOLKIT_BIN	:= $(TOOLKIT)/bin
 CC := $(TOOLKIT_BIN)/m68k-atari-elf-gcc
 AR := $(TOOLKIT_BIN)/m68k-atari-elf-gcc-ar
 
-CFLAGS := -Wall -Os -g
-#CFLAGS := -Wall -Os -g -DDEBUG -DFAST_VDI
+#CFLAGS := -Wall -Os -g
+CFLAGS := -Wall -Os -g -DFAST_VDI #  -DDEBUG
 
 # Tos object list
 TOSOBJS := $(foreach source,$(TOS_SOURCES),gen/$(basename $(source)).o)

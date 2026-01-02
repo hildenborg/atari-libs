@@ -100,7 +100,8 @@ void vs_clip(INT16_T handle, INT16_T clip_flag, INT16_T* xyarray)
 void CheckVdipb(void)
 {
 	if (vdipb.ptsin != vdiparblk.ptsin || vdipb.ptsout != vdiparblk.ptsout ||
-		vdipb.intin != vdiparblk.intin || vdipb.intout != vdiparblk.intout)
+		vdipb.intin != vdiparblk.intin || vdipb.intout != vdiparblk.intout ||
+		vdipb.contrl != vdiparblk.contrl)
 	{
 		// Cause a brakepoint in gdbsrv
 		asm ("trap #0");
