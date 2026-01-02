@@ -13,9 +13,9 @@ extern "C" {
 #include "def_types.h"
 
 void vdi_call(void);
-INT16_T vdi_zero_ended_string_to_words(INT8_T* src, INT16_T* dst);
-void vdi_words_to_bytes(INT16_T* src, INT8_T* dst, INT16_T len);
-void vdi_bytes_to_words(INT8_T* src, INT16_T* dst, INT16_T len);
+INT16_T vdi_zero_ended_string_to_words(const INT8_T* src, INT16_T* dst);
+void vdi_words_to_bytes(const INT16_T* src, INT8_T* dst, INT16_T len);
+void vdi_bytes_to_words(const INT8_T* src, INT16_T* dst, INT16_T len);
 //extern void vdi_large_generic_copy(void* src, void* dst, INT16_T len);
 
 // For debugging
@@ -93,9 +93,9 @@ __asm__ volatile ( \
 	: "cc", "memory" \
 );
 
-#define VDI_CAST_FROM_BYTES(src, dst, len) vdi_bytes_to_words((INT8_T*)(src), (INT16_T*)(dst), (len))
+#define VDI_CAST_FROM_BYTES(src, dst, len) vdi_bytes_to_words((const INT8_T*)(src), (INT16_T*)(dst), (len))
 
-#define VDI_CAST_TO_BYTES(src, dst, len) vdi_words_to_bytes((INT16_T*)(src), (INT8_T*)(dst), (len))
+#define VDI_CAST_TO_BYTES(src, dst, len) vdi_words_to_bytes((const INT16_T*)(src), (INT8_T*)(dst), (len))
 
 #ifdef __cplusplus
 }

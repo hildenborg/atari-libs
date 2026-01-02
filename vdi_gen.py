@@ -293,7 +293,10 @@ def HandleVDIArg(fncName, name, type, seq, prevSeq, tmpVals, tabs, dicts, seqIdx
 			count = int(count / 2)
 
 		if value:
-			seqString = "*" + ptrString + " = " + argString + ";"
+			if typeSize == 2:
+				seqString = ptrString[1:] + " = " + argString + ";"
+			else:
+				seqString = "*" + ptrString + " = " + argString + ";"
 			fastSeqString = seqString
 		else:
 			seqString = MakeCopy(argString, ptrString, src, isLongs, typeSize, count)
@@ -397,7 +400,7 @@ def MakeFastCopy(argString, ptrString, vdipbString, isSrc, isLongs, typeSize, co
 		if isSrc:
 			return [MakeNiceWordCopy(argString, ptrString, isSrc), False]
 		else:
-			return [MakeNiceWordCopy(argString, ptrString, isSrc), True]
+			return [MakeNiceWordCopy(argString, ptrString, isSrc), False]
 
 	if typeSize == 1:
 		if isSrc:
@@ -690,7 +693,7 @@ def CodeVDIFunction(iname, ff, dicts):
 				f.write("VDI_COPY_LONG(&(vdiparblk." + retsrc + "[" + retidx + "]), &result);\n")
 
 		if (tmpVals["s_fast_end"] != ""):
-			if (ifdefMask & 15) == 11:
+			if (ifdefMask & 8) == 0:
 				f.write("#ifdef FAST_VDI\n")
 				ifdefMask = ifdefMask | 8
 

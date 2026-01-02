@@ -174,7 +174,7 @@
 			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
 			<arg name="x" dst="ptsin" type="int16_t"/>
 			<arg name="y" dst="ptsin" type="int16_t"/>
-			<arg name="string" dst="intin" words="strlen" type="int8_t*"/>
+			<arg name="string" dst="intin" words="strlen" type="cint8_t*"/>
 		</function>
 		<function id="9" name="v_fillarea" >
 			<return type="void" />
@@ -281,7 +281,7 @@
 			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
 			<arg name="x" dst="ptsin" type="int16_t"/>
 			<arg name="y" dst="ptsin" type="int16_t"/>
-			<arg name="string" dst="intin" idx="2" words="strlen" type="int8_t*"/>
+			<arg name="string" dst="intin" idx="2" words="strlen" type="cint8_t*"/>
 			<arg name="length" dst="ptsin" type="int16_t"/>
 			<arg name="word_space" dst="intin" idx="0" type="int16_t"/>
 			<arg name="char_space" dst="intin" idx="1" type="int16_t"/>
@@ -352,7 +352,7 @@
 			<return type="void" />
 			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
 			<arg name="index" dst="intin" type="int16_t"/>
-			<arg name="rgb" dst="intin" words="3" type="int16_t*"/>
+			<arg name="rgb" dst="intin" words="3" type="cint16_t*"/>
 		</function>
 		<function id="15" name="vsl_type" >
 			<return src="intout" idx="0" type="int16_t" />
@@ -684,7 +684,7 @@
 		<function id="116" name="vqt_extent" >
 			<return type="void" />
 			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
-			<arg name="string" dst="intin" words="strlen" type="int8_t*"/>
+			<arg name="string" dst="intin" words="strlen" type="cint8_t*"/>
 			<arg name="extent" src="ptsout" longs="4" type="int16_t*"/>
 		</function>
 		<function id="117" name="vqt_width" >
@@ -727,17 +727,17 @@
 		<function id="131" name="vqt_fontinfo" >
 			<return type="void" />
 			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
-			<arg name="minADE" src="intout" type="int16_t*"/>
-			<arg name="maxADE" src="intout" type="int16_t*"/>
-			<arg name="distances" type="int16_t*">
+			<arg name="first" src="intout" type="int16_t*"/>
+			<arg name="last" src="intout" type="int16_t*"/>
+			<arg name="dist" type="int16_t*">
 				<sequence src="ptsout" idx="1"/>
 				<sequence src="ptsout" idx="3"/>
 				<sequence src="ptsout" idx="5"/>
 				<sequence src="ptsout" idx="7"/>
 				<sequence src="ptsout" idx="9"/>
 			</arg>
-			<arg name="maxwidth" type="int16_t*">
-				<sequence src="ptsout" idx="0"/>
+			<arg name="width" src="ptsout" idx="0" type="int16_t*"/>
+			<arg name="effects" type="int16_t*">
 				<sequence src="ptsout" idx="2"/>
 				<sequence src="ptsout" idx="4"/>
 				<sequence src="ptsout" idx="6"/>
@@ -799,10 +799,16 @@
 			<arg name="row" dst="intin" type="int16_t"/>
 			<arg name="column" dst="intin" type="int16_t"/>
 		</function>
+		<function id="5" subid="11" name="vs_curaddress" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="row" dst="intin" type="int16_t"/>
+			<arg name="column" dst="intin" type="int16_t"/>
+		</function>
 		<function id="5" subid="12" name="v_curtext" >
 			<return type="void" />
 			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
-			<arg name="string" dst="intin" words="strlen" type="int8_t*"/>
+			<arg name="string" dst="intin" words="strlen" type="cint8_t*"/>
 		</function>
 		<function id="5" subid="13" name="v_rvon" >
 			<return type="void" />
@@ -852,7 +858,7 @@
 		<function id="5" subid="23" name="v_bit_image" >
 			<return type="void" />
 			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
-			<arg name="filename" dst="intin" idx="5" words="strlen" type="int8_t*"/>
+			<arg name="filename" dst="intin" idx="5" words="strlen" type="cint8_t*"/>
 			<arg name="aspect" dst="intin" idx="0" type="int16_t"/>
 			<arg name="x_scale" dst="intin" idx="1" type="int16_t"/>
 			<arg name="y_scale" dst="intin" idx="2" type="int16_t"/>
@@ -872,10 +878,10 @@
 		<function id="5" subid="25" name="v_alpha_text" >
 			<return type="void" />
 			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
-			<arg name="string" dst="intin" words="strlen" type="int8_t*"/>
+			<arg name="string" dst="intin" words="strlen" type="cint8_t*"/>
 		</function>
 		<function id="5" subid="60" name="vs_palette" >
-			<return type="void" />
+			<return src="intout" idx="0" type="int16_t" />
 			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
 			<arg name="palette" dst="intin" type="int16_t"/>
 		</function>
@@ -968,7 +974,7 @@
 		<function id="5" subid="100" name="vm_filename" >
 			<return type="void" />
 			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
-			<arg name="filename" dst="intin" words="strlen" type="int8_t*"/>
+			<arg name="filename" dst="intin" words="strlen" type="cint8_t*"/>
 		</function>
 		<function id="5" subid="99" name="vm_pagesize" >
 			<return type="void" />
@@ -1112,7 +1118,7 @@
 		<function id="240" name="vqt_f_extent" >
 			<return type="void" />
 			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
-			<arg name="string" dst="intin" words="strlen" type="int8_t*"/>
+			<arg name="string" dst="intin" words="strlen" type="cint8_t*"/>
 			<arg name="extent" src="ptsout" longs="4" type="int16_t*"/>
 		</function>
 		<function id="241" name="v_ftext" >
@@ -1120,23 +1126,23 @@
 			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
 			<arg name="x" dst="ptsin" type="int16_t"/>
 			<arg name="y" dst="ptsin" type="int16_t"/>
-			<arg name="string" dst="intin" words="strlen" type="int8_t*"/>
+			<arg name="string" dst="intin" words="strlen" type="cint8_t*"/>
 		</function>
 		<function id="241" name="v_ftext_offset" >
 			<return type="void" />
 			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
 			<arg name="x" dst="ptsin" type="int16_t"/>
 			<arg name="y" dst="ptsin" type="int16_t"/>
-			<arg name="string" dst="intin" words="strlen" type="int8_t*"/>
-			<arg name="offset" dst="ptsin" longs="_str_len" type="int16_t*"/> <!--_str_len = strlen above -->
+			<arg name="string" dst="intin" words="strlen" type="cint8_t*"/>
+			<arg name="offset" dst="ptsin" longs="_str_len" type="cint16_t*"/> <!--_str_len = strlen above -->
 		</function>
 		<function id="243" name="v_getoutline" >
 			<return type="void" />
 			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
 			<arg name="ch" dst="intin" idx="0" type="int16_t"/>
 			<arg name="xyarray" dst="intin" idx="2" longs="0" type="int16_t*"/>
-			<arg name="maxverts" dst="intin" idx="1" type="int16_t"/>
 			<arg name="bezarray" dst="intin" idx="4" longs="0" type="int8_t*"/>
+			<arg name="maxverts" dst="intin" idx="1" type="int16_t"/>
 			<arg name="numverts" src="intout" type="int16_t*"/>
 		</function>
 		<function id="244" name="vst_scratch" >
@@ -1269,13 +1275,13 @@
 		<function id="250" name="v_loadcache" >
 			<return src="intout" idx="0" type="int16_t" />(
 			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
-			<arg name="filename" dst="intin" idx= "1" words="strlen" type="int8_t*"/>
+			<arg name="filename" dst="intin" idx= "1" words="strlen" type="cint8_t*"/>
 			<arg name="mode" dst="intin" idx="0" type="int16_t"/>
 		</function>
 		<function id="249" name="v_savecache" >
 			<return src="intout" idx="0" type="int16_t" />
 			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
-			<arg name="filename" dst="intin" words="strlen" type="int8_t*"/>
+			<arg name="filename" dst="intin" words="strlen" type="cint8_t*"/>
 		</function>
 		<function id="252" name="vst_setsize" >
 			<return src="intout" idx="0" type="int16_t" />

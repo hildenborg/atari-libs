@@ -443,7 +443,7 @@
 		<function id="18" name="appl_search">
 			<return type="int16_t" />
 			<arg name="mode" type="int16_t" dst="intin" />
-			<arg name="name" type="int16_t*" dst="addrin" />
+			<arg name="name" type="int8_t*" dst="addrin" />
 			<arg name="type" type="int16_t*" dst="addrin" />
 			<arg name="ap_id" type="int16_t*" dst="addrin" />
 		</function>
@@ -710,7 +710,7 @@
 			<arg name="tree" type="OBJECT*" dst="addrin" />
 			<arg name="obj" type="int16_t" dst="intin" />
 			<arg name="clicks" type="int16_t" dst="intin" />
-			<arg name="newobj" type="int16_t" dst="intin" />
+			<arg name="newobj" type="int16_t*" dst="intin" />
 		</function>
 	</functions>
 	<functions grpid="2" category="Graph">
@@ -737,6 +737,15 @@
 			<arg name="endy" type="int16_t*" src="intout" />
 		</function>
 		<function id="72" name="graf_movebox">
+			<return type="int16_t" />
+			<arg name="width" type="int16_t" dst="intin" />
+			<arg name="height" type="int16_t" dst="intin" />
+			<arg name="startx" type="int16_t" dst="intin" />
+			<arg name="starty" type="int16_t" dst="intin" />
+			<arg name="endx" type="int16_t" dst="intin" />
+			<arg name="endy" type="int16_t" dst="intin" />
+		</function>
+		<function id="72" name="graf_mbox">
 			<return type="int16_t" />
 			<arg name="width" type="int16_t" dst="intin" />
 			<arg name="height" type="int16_t" dst="intin" />
@@ -791,7 +800,7 @@
 		<function id="78" name="graf_mouse">
 			<return type="int16_t" />
 			<arg name="mode" type="int16_t" dst="intin" />
-			<arg name="form" type="MFORM*" dst="addrin" />
+			<arg name="form" type="cMFORM*" dst="addrin" />
 		</function>
 		<function id="79" name="graf_mkstate">
 			<return type="int16_t" />
@@ -808,7 +817,7 @@
 		</function>
 		<function id="81" name="scrp_write">
 			<return type="int16_t" />
-			<arg name="path" type="int8_t*" dst="addrin" />
+			<arg name="path" type="cint8_t*" dst="addrin" />
 		</function>
 	</functions>
 	<functions grpid="2" category="File">
@@ -823,7 +832,7 @@
 			<arg name="path" type="int8_t*" dst="addrin" />
 			<arg name="file" type="int8_t*" dst="addrin" />
 			<arg name="button" type="int16_t*" src="intout" />
-			<arg name="title" type="int8_t*" dst="addrin" />
+			<arg name="title" type="cint8_t*" dst="addrin" />
 		</function>
 	</functions>
 	<functions grpid="2" category="Windows">
@@ -936,18 +945,18 @@
 			<arg name="mode" type="int16_t" dst="intin" />
 			<arg name="wisgr" type="int16_t" dst="intin" />
 			<arg name="wiscr" type="int16_t" dst="intin" />
-			<arg name="cmd" type="int8_t*" dst="addrin" />
-			<arg name="tail" type="int8_t*" dst="addrin" />
+			<arg name="cmd" type="cint8_t*" dst="addrin" />
+			<arg name="tail" type="cint8_t*" dst="addrin" />
 		</function>
 		<function id="122" name="shel_get">
 			<return type="int16_t" />
 			<arg name="buf" type="int8_t*" dst="addrin" />
-			<arg name="length" type="int8_t*" dst="addrin" />
+			<arg name="length" type="int16_t" dst="intin" />
 		</function>
 		<function id="123" name="shel_put">
 			<return type="int16_t" />
-			<arg name="buf" type="int8_t*" dst="addrin" />
-			<arg name="length" type="int8_t*" dst="addrin" />
+			<arg name="buf" type="cint8_t*" dst="addrin" />
+			<arg name="length" type="int16_t" dst="intin" />
 		</function>
 		<function id="124" name="shel_find">
 			<return type="int16_t" />
@@ -956,7 +965,7 @@
 		<function id="125" name="shel_envrn">
 			<return type="int16_t" />
 			<arg name="value" type="int8_t**" dst="addrin" />
-			<arg name="name" type="int8_t*" dst="addrin" />
+			<arg name="name" type="cint8_t*" dst="addrin" />
 		</function>
 	</functions>
 	<targets>
