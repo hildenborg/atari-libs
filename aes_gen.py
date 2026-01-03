@@ -8,7 +8,7 @@ import header_gen
 # int16_t pointer inout = intin, intout
 # int16_t pointer out = intout
 # pointer addout = addrout (only rsrc_gaddr!)
-def CodeAESFunction(iname, ff, dicts):
+def CodeAESFunction(iname, build_dir, ff, dicts):
 	name = ff.attrib.get("name")
 	id = ff.attrib.get("id")		# AES function
 	grpid = ff.attrib.get("grpid")	# Trap num (always 2 for aes)
@@ -26,7 +26,7 @@ def CodeAESFunction(iname, ff, dicts):
 		if src == "addrout":
 			usesAddrOut = True
 
-	with open("gen/" + name + ".c", "w") as f:
+	with open(build_dir + name + ".c", "w") as f:
 		f.write('#include "' + iname + '.h"\n\n')
 		header_gen.WriteType(f, "", ret, dicts)
 		f.write(" " + name + "(")

@@ -18,9 +18,11 @@ else
 	MULTILIB_PATH := /$(MULTILIB_PATH)
 endif
 
+GEN_PATH ?= ./gen
+BUILD_PATH := $(GEN_PATH)$(MULTILIB_PATH)
+
 TOOLKIT_INC	:= $(MULTILIB_TOOLKIT)/$(MULTILIB_TARGET)/include
 TOOLKIT_LIB	:= $(MULTILIB_TOOLKIT)/$(MULTILIB_TARGET)/lib$(MULTILIB_PATH)
-BUILD_PATH := gen$(MULTILIB_PATH)
 
 # Toolkit executables, libraries and directories settings
 TOOLKIT_BIN	:= $(MULTILIB_TOOLKIT)/bin
@@ -69,12 +71,12 @@ clean:
 
 install:
 ifdef MULTILIB_PATH
-	$(shell yes | cp -rf ./gen/def_types.h $(TOOLKIT_INC)/def_types.h)
-	$(shell yes | cp -rf ./gen/tos.h $(TOOLKIT_INC)/tos.h)
-	$(shell yes | cp -rf ./gen/aes.h $(TOOLKIT_INC)/aes.h)
-	$(shell yes | cp -rf ./gen/aes_def.h $(TOOLKIT_INC)/aes_def.h)
-	$(shell yes | cp -rf ./gen/vdi.h $(TOOLKIT_INC)/vdi.h)
-	$(shell yes | cp -rf ./gen/vdi_def.h $(TOOLKIT_INC)/vdi_def.h)
+	$(shell yes | cp -rf $(GEN_PATH)/def_types.h $(TOOLKIT_INC)/def_types.h)
+	$(shell yes | cp -rf $(GEN_PATH)/tos.h $(TOOLKIT_INC)/tos.h)
+	$(shell yes | cp -rf $(GEN_PATH)/aes.h $(TOOLKIT_INC)/aes.h)
+	$(shell yes | cp -rf $(GEN_PATH)/aes_def.h $(TOOLKIT_INC)/aes_def.h)
+	$(shell yes | cp -rf $(GEN_PATH)/vdi.h $(TOOLKIT_INC)/vdi.h)
+	$(shell yes | cp -rf $(GEN_PATH)/vdi_def.h $(TOOLKIT_INC)/vdi_def.h)
 endif
 	$(shell yes | cp -rf $(BUILD_PATH)/libtos.a $(TOOLKIT_LIB)/libtos.a)
 	$(shell yes | cp -rf $(BUILD_PATH)/libaes.a $(TOOLKIT_LIB)/libaes.a)

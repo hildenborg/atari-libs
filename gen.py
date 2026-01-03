@@ -3,6 +3,7 @@
 
 import xml.etree.ElementTree as ET
 import os
+import sys
 import shutil
 import header_gen
 import code_gen
@@ -141,20 +142,20 @@ def ReadDefenitions(xmlfile, targetname, dicts):
 		target = dicts["targetDict"][targetname]
 		AddToDicts(target, dicts)
 
-def Generate(name, target, impl):
+def Generate(name, build_dir, target, impl):
 	dicts = MakeDicts()
 	ReadGlobals("xml/global.xml", target, dicts)
 	ReadDefenitions("xml/" + name + ".xml", target, dicts)
-	header_gen.WriteHeader(name, dicts)
-	code_gen.WriteCode(name, dicts)
-	code_gen.WriteMakefileInc(name, dicts, impl)
+	header_gen.WriteHeader(name, build_dir, dicts)
+	code_gen.WriteCode(name, build_dir, dicts)
+	code_gen.WriteMakefileInc(name, build_dir, dicts, impl)
 	for n in impl:
 		shutil.copyfile("impl/" + n, "gen/" + n)
 
-def GenerateGlobals(name, target):
+def GenerateGlobals(name, build_dir, target):
 	dicts = MakeDicts()
 	ReadGlobals("xml/global.xml", target, dicts)
-	with open("gen/" + name + ".h", "w") as f:
+	with open(build_dir + name + ".h", "w") as f:
 		header_gen.HeaderBegin(f, name)
 		f.write("\n")
 		for t, u in dicts["typeDict"].items():
@@ -164,15 +165,18 @@ def GenerateGlobals(name, target):
 		header_gen.HeaderEnd(f, name)
 
 def main():
+	build_dir = sys.argv[1]
+	if not build_dir.endswith("/"):
+		build_dir += "/"
 	target = "int_is_32bit"
-	try:
-		os.mkdir("gen")
-	except FileExistsError:
-		pass
-	GenerateGlobals("def_types", target)
-	Generate("tos", target, [])
-	Generate("aes", target, ["aes.c", "aes_def.h"])
-	Generate("vdi", target, ["vdi.c", "vdi_def.h"])
+#	try:
+#		os.mkdir("gen")
+#	except FileExistsError:
+#		pass
+	GenerateGlobals("def_types", build_dir, target)
+	Generate("tos", build_dir, target, [])
+	Generate("aes", build_dir, target, ["aes.c", "aes_def.h"])
+	Generate("vdi", build_dir, target, ["vdi.c", "vdi_def.h"])
 #	Generate("line_a", target, ["line_a.c", "line_a_def.h"])
 
 if __name__ == "__main__":

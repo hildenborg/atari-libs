@@ -208,8 +208,8 @@ def HeaderCategories(f, dicts):
 			HeaderFunctions(f, functionDict[c], dicts)
 
 
-def WriteHeader(name, dicts):
-	with open("gen/" + name + ".h", "w") as f:
+def WriteHeader(name, build_dir, dicts):
+	with open(build_dir + name + ".h", "w") as f:
 		HeaderBegin(f, name)
 		HeaderIncludes(f, dicts)
 		HeaderForwards(f, dicts)

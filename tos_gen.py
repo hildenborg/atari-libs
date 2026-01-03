@@ -3,7 +3,7 @@
 
 import header_gen
 
-def CodeTosFunction(iname, ff, dicts):
+def CodeTosFunction(iname, build_dir, ff, dicts):
 	name = ff.attrib.get("name")
 	id = ff.attrib.get("id")		# Trap function
 	grpid = ff.attrib.get("grpid")	# Trap num
@@ -25,7 +25,7 @@ def CodeTosFunction(iname, ff, dicts):
 	else:
 		clobbers = '"d0", ' + clobbers
 
-	with open("gen/" + name + ".c", "w") as f:
+	with open(build_dir + name + ".c", "w") as f:
 		f.write('#include "' + iname + '.h"\n\n')
 		header_gen.WriteType(f, "", ret, dicts)
 		if att:

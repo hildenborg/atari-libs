@@ -497,7 +497,7 @@ def MakeVDIPBString(src, dst, idx):
 		tstr = "vdipb." + dst
 	return tstr
 
-def CodeVDIFunction(iname, ff, dicts):
+def CodeVDIFunction(iname, build_dir, ff, dicts):
 	name = ff.attrib.get("name")
 	id = ff.attrib.get("id")		# VDI function
 	subid = ff.attrib.get("subid")	# VDI sub function
@@ -541,7 +541,7 @@ def CodeVDIFunction(iname, ff, dicts):
 			else:
 				retIsSrcIdx = True
 
-	with open("gen/" + name + ".c", "w") as f:
+	with open(build_dir + name + ".c", "w") as f:
 		f.write('#include "' + iname + '.h"\n\n')
 
 		header_gen.WriteType(f, "", ret, dicts)
