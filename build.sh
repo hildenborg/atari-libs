@@ -3,7 +3,7 @@
 #	Copyright (C) 2026 Mikael Hildenborg
 #	SPDX-License-Identifier: MIT
 
-if (( $# == 5 )); then
+if (( $# == 4 )); then
 	export MULTILIB_TOOLKIT=$1
 	export MULTILIB_TARGET=$2
 	export GEN_PATH=$(readlink -f $3)
