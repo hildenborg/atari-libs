@@ -70,7 +70,7 @@ clean:
 	$(shell rm -r gen)
 
 install:
-ifdef MULTILIB_PATH
+ifndef MULTILIB_PATH
 	$(shell yes | cp -rf $(GEN_PATH)/def_types.h $(TOOLKIT_INC)/def_types.h)
 	$(shell yes | cp -rf $(GEN_PATH)/tos.h $(TOOLKIT_INC)/tos.h)
 	$(shell yes | cp -rf $(GEN_PATH)/aes.h $(TOOLKIT_INC)/aes.h)
