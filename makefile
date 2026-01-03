@@ -6,69 +6,77 @@
 include gen/tos.mk
 include gen/aes.mk
 include gen/vdi.mk
-#include gen/line_a.mk
 
-# Project build architecture settings
-TOOLKIT	?= $(HOME)/toolchain/m68k-atari-elf
+MULTILIB_PATH ?= .
+MULTILIB_FLAGS ?=
+MULTILIB_TARGET ?= m68k-atari-elf
+MULTILIB_TOOLKIT ?= $(HOME)/toolchain/m68k-atari-elf
 
-TOOLKIT_INC	:= $(TOOLKIT)/m68k-atari-elf/include
-TOOLKIT_LIB	:= $(TOOLKIT)/m68k-atari-elf/lib
+ifeq ($(MULTILIB_PATH), .)
+	MULTILIB_PATH :=
+else
+	MULTILIB_PATH := /$(MULTILIB_PATH)
+endif
 
-# Use m68k-atari-elf toolchain
+TOOLKIT_INC	:= $(MULTILIB_TOOLKIT)/$(MULTILIB_TARGET)/include
+TOOLKIT_LIB	:= $(MULTILIB_TOOLKIT)/$(MULTILIB_TARGET)/lib$(MULTILIB_PATH)
+BUILD_PATH := gen$(MULTILIB_PATH)
+
 # Toolkit executables, libraries and directories settings
-TOOLKIT_BIN	:= $(TOOLKIT)/bin
-CC := $(TOOLKIT_BIN)/m68k-atari-elf-gcc
-AR := $(TOOLKIT_BIN)/m68k-atari-elf-gcc-ar
+TOOLKIT_BIN	:= $(MULTILIB_TOOLKIT)/bin
+CC := $(TOOLKIT_BIN)/$(MULTILIB_TARGET)-gcc
+AR := $(TOOLKIT_BIN)/$(MULTILIB_TARGET)-gcc-ar
 
 #CFLAGS := -Wall -Os -g
-CFLAGS := -Wall -Os -g -DFAST_VDI #  -DDEBUG
+CFLAGS := $(MULTILIB_FLAGS) -Wall -Wextra -Os -g -DFAST_VDI #  -DDEBUG
 
 # Tos object list
-TOSOBJS := $(foreach source,$(TOS_SOURCES),gen/$(basename $(source)).o)
+TOSOBJS := $(foreach source,$(TOS_SOURCES),$(BUILD_PATH)/$(basename $(source)).o)
 
 # AES object list
-AESOBJS := $(foreach source,$(AES_SOURCES),gen/$(basename $(source)).o)
+AESOBJS := $(foreach source,$(AES_SOURCES),$(BUILD_PATH)/$(basename $(source)).o)
 
 # VDI object list
-VDIOBJS := $(foreach source,$(VDI_SOURCES),gen/$(basename $(source)).o)
+VDIOBJS := $(foreach source,$(VDI_SOURCES),$(BUILD_PATH)/$(basename $(source)).o)
 
-# LINE-A object list
-#LINE_AOBJS := $(foreach source,$(LINE_A_SOURCES),gen/$(basename $(source)).o)
+# Make libs
+TOS_LIB=$(BUILD_PATH)/libtos.a
+AES_LIB=$(BUILD_PATH)/libaes.a
+VDI_LIB=$(BUILD_PATH)/libvdi.a
 
-# Make lib
-gen/libtos.a: $(TOSOBJS)
+$(TOS_LIB): $(TOSOBJS)
 	$(AR) -rcs $@ $^
 
-gen/libaes.a: $(AESOBJS)
+$(AES_LIB): $(AESOBJS)
 	$(AR) -rcs $@ $^
 
-gen/libvdi.a: $(VDIOBJS)
+$(VDI_LIB): $(VDIOBJS)
 	$(AR) -rcs $@ $^
-
-#gen/libline_a.a: $(LINE_AOBJS)
-#	$(AR) -rcs $@ $^
 
 # c source
-%.o: gen/%.c
+$(BUILD_PATH)/%.o: gen/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 .PHONY: clean
 
-all:	gen/libtos.a gen/libaes.a gen/libvdi.a # gen/libline_a.a
+# Create build directory
+$(BUILD_PATH): $(shell mkdir -p $(BUILD_PATH))
+
+all: $(BUILD_PATH) $(TOS_LIB) $(AES_LIB) $(VDI_LIB)
 
 clean:
 	$(shell rm -r gen)
 
 install:
-	$(shell yes | cp -rf gen/tos.h $(TOOLKIT_INC)/tos.h)
-	$(shell yes | cp -rf gen/aes.h $(TOOLKIT_INC)/aes.h)
-	$(shell yes | cp -rf gen/aes_def.h $(TOOLKIT_INC)/aes_def.h)
-	$(shell yes | cp -rf gen/vdi.h $(TOOLKIT_INC)/vdi.h)
-	$(shell yes | cp -rf gen/vdi_def.h $(TOOLKIT_INC)/vdi_def.h)
-#	$(shell yes | cp -rf gen/line_a.h $(TOOLKIT_INC)/line_a.h)
-#	$(shell yes | cp -rf gen/line_a_def.h $(TOOLKIT_INC)/line_a_def.h)
-	$(shell yes | cp -rf gen/libtos.a $(TOOLKIT_INC)/libtos.a)
-	$(shell yes | cp -rf gen/libaes.a $(TOOLKIT_INC)/libaes.a)
-	$(shell yes | cp -rf gen/libvdi.a $(TOOLKIT_INC)/libvdi.a)
-#	$(shell yes | cp -rf gen/libline_a.a $(TOOLKIT_INC)/libline_a.a)
+ifdef MULTILIB_PATH
+	$(shell yes | cp -rf ./gen/def_types.h $(TOOLKIT_INC)/def_types.h)
+	$(shell yes | cp -rf ./gen/tos.h $(TOOLKIT_INC)/tos.h)
+	$(shell yes | cp -rf ./gen/aes.h $(TOOLKIT_INC)/aes.h)
+	$(shell yes | cp -rf ./gen/aes_def.h $(TOOLKIT_INC)/aes_def.h)
+	$(shell yes | cp -rf ./gen/vdi.h $(TOOLKIT_INC)/vdi.h)
+	$(shell yes | cp -rf ./gen/vdi_def.h $(TOOLKIT_INC)/vdi_def.h)
+endif
+	$(shell yes | cp -rf $(BUILD_PATH)/libtos.a $(TOOLKIT_LIB)/libtos.a)
+	$(shell yes | cp -rf $(BUILD_PATH)/libaes.a $(TOOLKIT_LIB)/libaes.a)
+	$(shell yes | cp -rf $(BUILD_PATH)/libvdi.a $(TOOLKIT_LIB)/libvdi.a)
 	

@@ -128,7 +128,7 @@ INT16_T vdi_zero_ended_string_to_words(const INT8_T* src, INT16_T* dst)
 		"move.l	%1, %%a0\n\t"
 		"move.l	%2, %%a1\n\t"
 		"move.l	%%a0, %0\n\t"
-		"moveq	#0, d1\n\t"
+		"moveq	#0, %%d1\n\t"
 		"bra.s	2f\n\t"
 		"1:\n\t"
 		"move.w	%%d1, %%a1@+\n\t"
@@ -147,6 +147,8 @@ INT16_T vdi_zero_ended_string_to_words(const INT8_T* src, INT16_T* dst)
 
 void vdi_words_to_bytes(const INT16_T* src, INT8_T* dst, INT16_T len)
 {
+	for (INT16_T i = len; --i >= 0; *dst++ = (INT8_T)*src++) {}
+	/*
 	__asm__ volatile (
 		"move.l	%0, %%a0\n\t"
 		"move.l	%1, %%a1\n\t"
@@ -161,10 +163,13 @@ void vdi_words_to_bytes(const INT16_T* src, INT8_T* dst, INT16_T len)
 		: "g" (src), "g" (dst), "g" (len)
 		: "d0", "a0", "a1", "cc", "memory"
 	);
+	*/
 }
 
 void vdi_bytes_to_words(const INT8_T* src, INT16_T* dst, INT16_T len)
 {
+	for (INT16_T i = len; --i >= 0; *dst++ = (INT16_T)*src++) {}
+	/*
 	__asm__ volatile (
 		"move.l	%0, %%a0\n\t"
 		"move.l	%1, %%a1\n\t"
@@ -179,4 +184,5 @@ void vdi_bytes_to_words(const INT8_T* src, INT16_T* dst, INT16_T len)
 		: "g" (src), "g" (dst), "g" (len)
 		: "d0", "a0", "a1", "cc", "memory"
 	);
+	*/
 }
