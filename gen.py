@@ -150,7 +150,7 @@ def Generate(name, build_dir, target, impl):
 	code_gen.WriteCode(name, build_dir, dicts)
 	code_gen.WriteMakefileInc(name, build_dir, dicts, impl)
 	for n in impl:
-		shutil.copyfile("impl/" + n, "gen/" + n)
+		shutil.copyfile("impl/" + n, build_dir + n)
 
 def GenerateGlobals(name, build_dir, target):
 	dicts = MakeDicts()

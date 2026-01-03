@@ -3,10 +3,6 @@
 
 .DEFAULT_GOAL := all
 
-include gen/tos.mk
-include gen/aes.mk
-include gen/vdi.mk
-
 MULTILIB_PATH ?= .
 MULTILIB_FLAGS ?=
 MULTILIB_TARGET ?= m68k-atari-elf
@@ -20,6 +16,10 @@ endif
 
 GEN_PATH ?= ./gen
 BUILD_PATH := $(GEN_PATH)$(MULTILIB_PATH)
+
+include $(GEN_PATH)/tos.mk
+include $(GEN_PATH)/aes.mk
+include $(GEN_PATH)/vdi.mk
 
 TOOLKIT_INC	:= $(MULTILIB_TOOLKIT)/$(MULTILIB_TARGET)/include
 TOOLKIT_LIB	:= $(MULTILIB_TOOLKIT)/$(MULTILIB_TARGET)/lib$(MULTILIB_PATH)
@@ -56,7 +56,7 @@ $(VDI_LIB): $(VDIOBJS)
 	$(AR) -rcs $@ $^
 
 # c source
-$(BUILD_PATH)/%.o: gen/%.c
+$(BUILD_PATH)/%.o: $(GEN_PATH)/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 .PHONY: clean
