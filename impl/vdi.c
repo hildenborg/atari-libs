@@ -103,8 +103,8 @@ void CheckVdipb(void)
 		vdipb.intin != vdiparblk.intin || vdipb.intout != vdiparblk.intout ||
 		vdipb.contrl != vdiparblk.contrl)
 	{
-		// Cause a brakepoint in gdbsrv
-		asm ("trap #0");
+		// Stop execution so we can debug.
+		asm ("illegal");
 	}
 }
 #endif
@@ -148,41 +148,9 @@ INT16_T vdi_zero_ended_string_to_words(const INT8_T* src, INT16_T* dst)
 void vdi_words_to_bytes(const INT16_T* src, INT8_T* dst, INT16_T len)
 {
 	for (INT16_T i = len; --i >= 0; *dst++ = (INT8_T)*src++) {}
-	/*
-	__asm__ volatile (
-		"move.l	%0, %%a0\n\t"
-		"move.l	%1, %%a1\n\t"
-		"move.w	%2, %%d0\n\t"
-		"bra.s	2f\n\t"
-		"1:\n\t"
-		"addq.l	#1, %%a0\n\t"
-		"move.b	%a0@+, %a1@+\n\t"
-		"2:\n\t"
-		"dbra	%%d0, 1b\n\t"
-		:
-		: "g" (src), "g" (dst), "g" (len)
-		: "d0", "a0", "a1", "cc", "memory"
-	);
-	*/
 }
 
 void vdi_bytes_to_words(const INT8_T* src, INT16_T* dst, INT16_T len)
 {
 	for (INT16_T i = len; --i >= 0; *dst++ = (INT16_T)*src++) {}
-	/*
-	__asm__ volatile (
-		"move.l	%0, %%a0\n\t"
-		"move.l	%1, %%a1\n\t"
-		"move.w	%2, %%d0\n\t"
-		"bra.s	2f\n\t"
-		"1:\n\t"
-		"clr.b	%%a1@+\n\t"
-		"move.b	%%a0@+, %%a1@+\n\t"
-		"2:\n\t"
-		"dbra	%%d0, 1b\n\t"
-		:
-		: "g" (src), "g" (dst), "g" (len)
-		: "d0", "a0", "a1", "cc", "memory"
-	);
-	*/
 }
