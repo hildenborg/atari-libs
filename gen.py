@@ -168,7 +168,7 @@ def main():
 	build_dir = sys.argv[1]
 	if not build_dir.endswith("/"):
 		build_dir += "/"
-	target = "int_is_32bit"
+	target = sys.argv[2]
 #	try:
 #		os.mkdir("gen")
 #	except FileExistsError:

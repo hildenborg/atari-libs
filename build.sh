@@ -15,7 +15,11 @@ else
 	BUILD_THREADS=1
 fi
 
-python3 ./gen.py $GEN_PATH
+if [ ! -d $GEN_PATH ]; then
+	mkdir -p $GEN_PATH
+fi
+
+python3 ./gen.py $GEN_PATH $MULTILIB_TARGET
 
 multiliblist="$($MULTILIB_TOOLKIT/bin/$MULTILIB_TARGET-gcc -print-multi-lib)"
 while IFS= read -r line 

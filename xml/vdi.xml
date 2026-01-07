@@ -78,7 +78,6 @@
 			<member name="ws_pts10" type="int16_t"/>
 			<member name="ws_mkmaxw" type="int16_t"/>
 		</struct>
-
 		<struct name="MFDB">
 			<member name="fd_addr" type="void*"/>
 			<member name="fd_w" type="int16_t"/>
@@ -90,17 +89,6 @@
 			<member name="fd_r2" type="int16_t"/>
 			<member name="fd_r3" type="int16_t"/>
 		</struct>
-		<!--
-		<struct name="MFORM">
-			<member name="mf_xhot" type="int16_t"/>
-			<member name="mf_yhot" type="int16_t"/>
-			<member name="mf_nplanes" type="int16_t"/>
-			<member name="mf_fg" type="int16_t"/>
-			<member name="mf_bg" type="int16_t"/>
-			<member name="mf_mask" type="int16_t[16]"/>
-			<member name="mf_data" type="int16_t[16]"/>
-		</struct>
-		-->
 	</structs>
 
 	<functions grpid="2" category="Control">
@@ -1244,6 +1232,14 @@
 			<arg name="cellwd" src="ptsout" type="int16_t*"/>
 			<arg name="cellht" src="ptsout" type="int16_t*"/>
 		</function>
+		<function id="248" name="vq_devinfo" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+			<arg name="devnum" dst="intin" type="int16_t"/>
+			<arg name="devexists" src="ptsout" type="int16_t*"/>
+			<arg name="filename" src="ptsout" words="contrl[2]" type="int8_t*"/> <!-- copy all of ptsout -->
+			<arg name="devstr" src="intout" words="contrl[4]" type="int8_t*"/> <!-- copy all of intout -->
+		</function>
 		<function id="248" name="vqt_devinfo" >
 			<return type="void" />
 			<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
@@ -1300,9 +1296,27 @@
 	</functions>
 
 	<targets>
-		<target name="int_is_16bit">
+		<target name="m68k-atari-mintelf">
+			<renames>
+				<rename name="v_curaddress" newname="vs_curaddress" />
+			</renames>
+			<overrides>
+				<override name="v_fontinit" >
+					<return type="void" />
+					<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+					<arg name="font_header" dst="intin" idx="0" longs="0" type="cvoid*"/>
+				</override>
+				<override id="248" name="vqt_devinfo" >
+					<return type="void" />
+					<arg name="handle" dst="contrl" idx="6" type="int16_t"/>
+					<arg name="devnum" dst="intin" type="int16_t"/>
+					<arg name="devexists" src="ptsout" type="int16_t*"/>
+					<arg name="filename" src="ptsout" words="contrl[2]" type="int8_t*"/> <!-- this is not according to public specs. -->
+					<arg name="devstr" src="intout" words="contrl[4]" type="int8_t*"/>
+				</override>
+			</overrides>
 		</target>
-		<target name="int_is_32bit">
+		<target name="m68k-atari-elf">
 		</target>
 		<target name="stdint">
 		</target>

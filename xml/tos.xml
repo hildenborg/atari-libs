@@ -1325,9 +1325,9 @@
 		</function>
 	</functions>
 	<targets>
-		<target name="int_is_16bit">
+		<target name="m68k-atari-mintelf">
 		</target>
-		<target name="int_is_32bit">
+		<target name="m68k-atari-elf">
 		</target>
 		<target name="stdint">
 		</target>

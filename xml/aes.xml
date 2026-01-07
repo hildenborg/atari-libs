@@ -32,13 +32,6 @@
 			<member name="m_w" type="int16_t" />
 			<member name="m_h" type="int16_t" />
 		</struct>
-		<struct name="ORECT">
-			<member name="o_link" type="ORECT*" />
-			<member name="o_x" type="int16_t" />
-			<member name="o_y" type="int16_t" />
-			<member name="o_w" type="int16_t" />
-			<member name="o_h" type="int16_t" />
-		</struct>
 		<struct name="GRECT">
 			<member name="g_x" type="int16_t" />
 			<member name="g_y" type="int16_t" />
@@ -50,10 +43,10 @@
 			<member name="te_ptmplt" type="int8_t*" />
 			<member name="te_pvalid" type="int8_t*" />
 			<member name="te_font" type="int16_t" />
-			<member name="te_junk1" type="int16_t" />
+			<member name="te_fontid" type="int16_t" />
 			<member name="te_just" type="int16_t" />
 			<member name="te_color" type="int16_t" />
-			<member name="te_junk2" type="int16_t" />
+			<member name="te_fontsize" type="int16_t" />
 			<member name="te_thickness" type="int16_t" />
 			<member name="te_txtlen" type="int16_t" />
 			<member name="te_tmplen" type="int16_t" />
@@ -95,7 +88,7 @@
 			<member name="bi_color" type="int16_t" />
 		</struct>
 		<struct name="EVNTREC">
-			<member name="ap_event" type="int16_t" />
+			<member name="ap_event" type="int32_t" />
 			<member name="ap_value" type="int32_t" />
 		</struct>
 		<struct name="USERBLK">
@@ -113,13 +106,16 @@
 		</struct>
 		<union name="OBSPEC">
 			<member name="integer" type="int32_t" />
-			<member name="bitfield" type="BFOBSPEC" />
+			<member name="index" type="int32_t" />
+			<member name="indirect" type="BFOBSPEC*" />
+			<member name="obspec" type="BFOBSPEC" />
 			<member name="tedinfo" type="TEDINFO*" />
 			<member name="iconblk" type="ICONBLK*" />
 			<member name="ciconblk" type="CICONBLK*" />
 			<member name="bitblk" type="BITBLK*" />
 			<member name="userblk" type="USERBLK*" />
 			<member name="string" type="int8_t*" />
+			<member name="free_string" type="int8_t*" />
 		</union>
 		<struct name="OBJECT">
 			<member name="ob_next" type="int16_t" />
@@ -157,11 +153,11 @@
 			<member name="mn_keystate" type="int16_t" />
 		</struct>
 		<struct name="MN_SET">
-			<member name="Display" type="int32_t" />
-			<member name="Drag" type="int32_t" />
-			<member name="Delay" type="int32_t" />
-			<member name="Speed" type="int32_t" />
-			<member name="Height" type="int16_t" />
+			<member name="display" type="int32_t" />
+			<member name="drag" type="int32_t" />
+			<member name="delay" type="int32_t" />
+			<member name="speed" type="int32_t" />
+			<member name="height" type="int16_t" />
 		</struct>
 		<struct name="MFORM">
 			<member name="mf_xhot" type="int16_t" />
@@ -968,9 +964,43 @@
 		</function>
 	</functions>
 	<targets>
-		<target name="int_is_16bit">
+		<target name="m68k-atari-mintelf">
+			<renames>
+				<rename name="graf_movebox" newname="graf_mbox" />
+			</renames>
+			<overrides>
+				<override name="evnt_timer">
+					<return type="int16_t" />
+					<arg name="interval" type="uint32_t" dst="intin" />
+				</override>
+				<override name="evnt_multi">
+					<return type="int16_t" />
+					<arg name="events" type="int16_t" dst="intin" />
+					<arg name="bclicks" type="int16_t" dst="intin" />
+					<arg name="bmask" type="int16_t" dst="intin" />
+					<arg name="bstate" type="int16_t" dst="intin" />
+					<arg name="m1flag" type="int16_t" dst="intin" />
+					<arg name="m1x" type="int16_t" dst="intin" />
+					<arg name="m1y" type="int16_t" dst="intin" />
+					<arg name="m1w" type="int16_t" dst="intin" />
+					<arg name="m1h" type="int16_t" dst="intin" />
+					<arg name="m2flag" type="int16_t" dst="intin" />
+					<arg name="m2x" type="int16_t" dst="intin" />
+					<arg name="m2y" type="int16_t" dst="intin" />
+					<arg name="m2w" type="int16_t" dst="intin" />
+					<arg name="m2h" type="int16_t" dst="intin" />
+					<arg name="msg" type="int16_t*" dst="addrin" />
+					<arg name="interval" type="uint32_t" dst="intin" />
+					<arg name="mx" type="int16_t*" src="intout" />
+					<arg name="my" type="int16_t*" src="intout" />
+					<arg name="button" type="int16_t*" src="intout" />
+					<arg name="kstate" type="int16_t*" src="intout" />
+					<arg name="kreturn" type="int16_t*" src="intout" />
+					<arg name="breturn" type="int16_t*" src="intout" />
+				</override>
+			</overrides>
 		</target>
-		<target name="int_is_32bit">
+		<target name="m68k-atari-elf">
 		</target>
 		<target name="stdint">
 		</target>
