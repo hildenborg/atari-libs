@@ -86,9 +86,9 @@
 			<return type="void" />
 			<arg name="work_in" dst="intin" words="11" type="int16_t*" />
 			<arg name="handle" src="contrl" idx="6" type="int16_t*" />
-			<arg name="work_out" type="int16_t*">
+			<arg name="work_out" type="WS*">
 				<sequence src="intout" words="45" />
-				<sequence src="ptsout" words="11" />
+				<sequence src="ptsout" words="12" />
 			</arg>
 		</function>
 		<function id="2" name="v_clswk">
@@ -1294,6 +1294,24 @@
 					<arg name="devexists" src="ptsout" type="int16_t*" />
 					<arg name="filename" src="ptsout" words="contrl[2]" type="int8_t*" /> <!-- this is not according to public specs. -->
 					<arg name="devstr" src="intout" words="contrl[4]" type="int8_t*" />
+				</override>
+				<override name="v_opnwk">
+					<return type="void" />
+					<arg name="work_in" dst="intin" words="11" type="int16_t*" />
+					<arg name="handle" src="contrl" idx="6" type="int16_t*" />
+					<arg name="work_out" type="int16_t*">
+						<sequence src="intout" words="45" />
+						<sequence src="ptsout" words="12" />
+					</arg>
+				</override>
+				<override name="v_opnvwk">
+					<return type="void" />
+					<arg name="work_in" dst="intin" words="11" type="int16_t*" />
+					<arg name="handle" src="contrl" idx="6" type="int16_t*" />
+					<arg name="work_out" type="int16_t*">
+						<sequence src="intout" words="45" />
+						<sequence src="ptsout" words="12" />
+					</arg>
 				</override>
 			</overrides>
 		</target>

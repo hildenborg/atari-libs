@@ -48,15 +48,15 @@ INT32_T vq_vgdos(void)
 	return result;
 }
 
+#ifdef TARGET_M68K_ATARI_MINTELF
+void v_opnvwk(INT16_T* work_in, INT16_T* handle, INT16_T* work_out)
+#else
 void v_opnvwk(INT16_T* work_in, INT16_T* handle, WS* work_out)
+#endif // TARGET_M68K_ATARI_ELF
 {
-	#ifdef FAST_VDI
-		vdipb.intin = work_in;
-		vdipb.intout = (INT16_T*)work_out;
-		vdipb.ptsout = &((INT16_T*)work_out)[45];
-	#else
-		VDI_COPY_WORDS(work_in, &vdiparblk.intin[0], 11);
-	#endif
+	vdipb.intin = work_in;
+	vdipb.intout = (INT16_T*)work_out;
+	vdipb.ptsout = &((INT16_T*)work_out)[45];
 	vdiparblk.contrl[0] = 100;
 	vdiparblk.contrl[1] = 0;
 	vdiparblk.contrl[3] = 11;
@@ -64,14 +64,9 @@ void v_opnvwk(INT16_T* work_in, INT16_T* handle, WS* work_out)
 	vdiparblk.contrl[6] = *handle;
 	vdi_call();
 	*handle = vdiparblk.contrl[6];
-	#ifdef FAST_VDI
-		vdipb.intin = vdiparblk.intin;
-		vdipb.intout = vdiparblk.intout;
-		vdipb.ptsout = vdiparblk.ptsout;
-	#else
-		VDI_COPY_WORDS(&vdiparblk.intout[0], work_out, 45);
-		VDI_COPY_LONGS(&vdiparblk.ptsout[0], &((INT16_T*)work_out)[45], 6);
-	#endif
+	vdipb.intin = vdiparblk.intin;
+	vdipb.intout = vdiparblk.intout;
+	vdipb.ptsout = vdiparblk.ptsout;
 }
 
 void vs_clip(INT16_T handle, INT16_T clip_flag, INT16_T* xyarray)
@@ -80,20 +75,14 @@ void vs_clip(INT16_T handle, INT16_T clip_flag, INT16_T* xyarray)
 	vdiparblk.intin[0] = clip_flag;
 	if (clip_flag != 0 && xyarray != 0)
 	{
-	#ifdef FAST_VDI
 		vdipb.ptsin = xyarray;
-	#else
-		VDI_COPY_LONGS(xyarray, &vdiparblk.ptsin[0], 2);
-	#endif
 	}
 	vdiparblk.contrl[0] = 129;
 	vdiparblk.contrl[1] = 2;
 	vdiparblk.contrl[3] = 1;
 	vdiparblk.contrl[5] = 0;
 	vdi_call();
-	#ifdef FAST_VDI
-		vdipb.ptsin = vdiparblk.ptsin;
-	#endif
+	vdipb.ptsin = vdiparblk.ptsin;
 }
 
 #ifdef DEBUG

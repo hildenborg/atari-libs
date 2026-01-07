@@ -159,6 +159,8 @@ def GenerateGlobals(name, build_dir, target):
 	with open(build_dir + name + ".h", "w") as f:
 		header_gen.HeaderBegin(f, name)
 		f.write("\n")
+		deftarget = target.replace("-", "_")
+		f.write("#define TARGET_" + deftarget.upper() + "\n\n")
 		for t, u in dicts["typeDict"].items():
 			f.write("typedef " + u + " " + t.upper() + ";\n")
 
