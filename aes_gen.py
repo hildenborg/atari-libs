@@ -57,8 +57,13 @@ def CodeAESFunction(iname, build_dir, ff, dicts):
 				s_addrout = s_addrout + "\t*" + n + " = aesparblk.addrout[" + str(addrout) + "];\n"
 				addrout = addrout + 1
 			if dst == "intin":
-				s_intin = s_intin + "\taesparblk.intin[" + str(intin) + "] = " + isPtr + n + ";\n"
-				intin = intin + 1
+				if (t == "int32_t" or t == "uint32_t") and not isPtr:
+					[_, longType, _, _, _] = header_gen.GetTypeName("int32_t", dicts)
+					s_intin = s_intin + "\t*(" + longType + "*)(&aesparblk.intin[" + str(intin) + "]) = " + isPtr + n + ";\n"
+					intin = intin + 2
+				else:
+					s_intin = s_intin + "\taesparblk.intin[" + str(intin) + "] = " + isPtr + n + ";\n"
+					intin = intin + 1
 			elif dst == "addrin":
 				s_addrin = s_addrin + "\taesparblk.addrin[" + str(addrin) + "] = (void*)" + n + ";\n"
 				addrin = addrin + 1

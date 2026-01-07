@@ -114,6 +114,7 @@ def AddToDicts(el, dicts):
 		for t in el.findall('targets/target'):
 			n = t.attrib.get("name")
 			targetDict[n] = t
+	else:
 		for o in el.findall('overrides'):
 			for oo in o.findall('override'):
 				OverrideFunction(oo, dicts)
@@ -165,14 +166,20 @@ def GenerateGlobals(name, build_dir, target):
 		header_gen.HeaderEnd(f, name)
 
 def main():
-	build_dir = sys.argv[1]
-	if not build_dir.endswith("/"):
-		build_dir += "/"
-	target = sys.argv[2]
-#	try:
-#		os.mkdir("gen")
-#	except FileExistsError:
-#		pass
+	if len(sys.argv) >=2:
+		build_dir = sys.argv[1]
+		if not build_dir.endswith("/"):
+			build_dir += "/"
+		target = sys.argv[2]
+	else:
+		build_dir = "gen/"
+		target = "m68k-atari-elf"
+
+	try:
+		os.mkdir(build_dir)
+	except FileExistsError:
+		pass
+
 	GenerateGlobals("def_types", build_dir, target)
 	Generate("tos", build_dir, target, [])
 	Generate("aes", build_dir, target, ["aes.c", "aes_def.h"])

@@ -19,7 +19,7 @@ Library and include paths are already set.
 
 ## Generate source files:
 1. Open a terminal.
-2. Enter: `python3 gen.py gen`
+2. Enter: `python3 gen.py gen m68k-atari-elf`
 
 This will generate a lot of source files in a folder called "gen".  
 Some files that stand out:  
