@@ -3,6 +3,9 @@
 
 import header_gen
 
+# If False, generate c sources with ifdef'ed code.
+flagOnlyFastVDI = True
+
 # size in bytes for argument types
 def GetTypeSize(t, dicts):
 	callbackDict = dicts["callbackDict"]
@@ -622,6 +625,12 @@ def CodeVDIFunction(iname, build_dir, ff, dicts):
 		if (tmpVals["s_in"] != ""):
 			ifdefMask += 2
 
+		if flagOnlyFastVDI:
+			# Nasty solution, just zero out the non fast vdi stuff
+			tmpVals["s_in"] = ""
+			tmpVals["s_out"] = ""
+			ifdefMask = 0
+
 		HandleUntouched(f, tmpVals, "intin")
 		HandleUntouched(f, tmpVals, "ptsin")
 
@@ -663,6 +672,9 @@ def CodeVDIFunction(iname, build_dir, ff, dicts):
 			ifdefMask = ifdefMask | 2
 		if (tmpVals["s_out"] != ""):
 			ifdefMask = ifdefMask | 4
+
+		if flagOnlyFastVDI:
+			ifdefMask = 0
 
 		if (ifdefMask & 4) != 0:
 			f.write("#ifndef FAST_VDI\n")
