@@ -15,7 +15,6 @@
 		</types>
 		<settings>
 			<set name="flagOnlyFastVDI" value="True"/>
-			<set name="flagNoVDIDebug" value="True"/>
 			<set name="flagTreadSafe" value="False"/>
 		</settings>
 	</target>
@@ -32,7 +31,6 @@
 		</types>
 		<settings>
 			<set name="flagOnlyFastVDI" value="True"/>
-			<set name="flagNoVDIDebug" value="True"/>
 			<set name="flagTreadSafe" value="True"/>
 		</settings>
 	</target>

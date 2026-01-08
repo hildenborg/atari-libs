@@ -8,7 +8,7 @@
 			<return type="int16_t" />
 			<arg name="arg1" type="PARMBLK*" />
 		</callback>
-		<struct name="AESPARBLK" extern="aesparblk">
+		<struct name="AESPARBLK">
 			<member name="contrl" type="int16_t[5]" />
 			<member name="global" type="int16_t[16]" />
 			<member name="intin" type="int16_t[16]" />
@@ -16,7 +16,7 @@
 			<member name="addrin" type="void*[8]" />
 			<member name="addrout" type="void*[1]" />
 		</struct>
-		<struct name="AESPB" extern="aespb">
+		<struct name="AESPB">
 			<member name="contrl" type="int16_t*" />
 			<member name="global" type="int16_t*" />
 			<member name="intin" type="int16_t*" />

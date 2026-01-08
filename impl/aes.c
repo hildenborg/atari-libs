@@ -7,7 +7,7 @@
 
 AESPARBLK aesparblk;
 
-AESPB aespb = 
+AESPB global_aespb = 
 {
 	aesparblk.contrl,
 	aesparblk.global,

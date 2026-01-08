@@ -96,7 +96,7 @@ def CodeAESFunction(iname, build_dir, ff, dicts):
 
 		f.write(")\n{\n")
 
-		aespb = "aespb"
+		aespb = "global_aespb"
 		if flagTreadSafe:
 			aespb = "lcl_aespb"
 			lcl_aespb = "\tAESPB lcl_aespb =\n\t{\n"

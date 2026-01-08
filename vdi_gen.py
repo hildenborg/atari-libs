@@ -724,11 +724,6 @@ def CodeVDIFunction(iname, build_dir, ff, dicts):
 		if (ifdefMask & 8) != 0:
 			f.write("#endif\n")
 
-		if not flagNoVDIDebug:
-			f.write("#ifdef DEBUG\n")
-			f.write(tabs + "CheckVdipb();\n")
-			f.write("#endif\n")
-
 		if ret != "void":
 			if retIsCode:
 				f.write("\treturn ")

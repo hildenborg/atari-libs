@@ -16,19 +16,6 @@ VDIPB vdipb =
 	vdiparblk.ptsout
 };
 
-#ifndef flagNoVDIDebug
-void CheckVdipb(void)
-{
-	if (vdipb.ptsin != vdiparblk.ptsin || vdipb.ptsout != vdiparblk.ptsout ||
-		vdipb.intin != vdiparblk.intin || vdipb.intout != vdiparblk.intout ||
-		vdipb.contrl != vdiparblk.contrl)
-	{
-		// Stop execution so we can debug.
-		asm ("illegal");
-	}
-}
-#endif
-
 void vdi_call(void)
 {
 	__asm__ volatile (

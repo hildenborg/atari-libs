@@ -19,7 +19,7 @@ INT16_T wind_get(INT16_T handle, INT16_T mode, INT16_T* parm1, INT16_T* parm2, I
 		aesparblk.intin[2] = *parm1;
 		call = (104 << 24) | (3 << 16) | (5 << 8) | 0;
 	}
-	INT16_T result = aes_calli(call, &aespb);
+	INT16_T result = aes_calli(call, &global_aespb);
 	*parm1 = aesparblk.intout[1];
 	*parm2 = aesparblk.intout[2];
 	*parm3 = aesparblk.intout[3];
@@ -49,7 +49,7 @@ INT16_T mt_wind_get(INT16_T handle, INT16_T mode, INT16_T* parm1, INT16_T* parm2
 		intin[2] = *parm1;
 		call = (104 << 24) | (3 << 16) | (5 << 8) | 0;
 	}
-	INT16_T result = aes_calli(call, &aespb);
+	INT16_T result = aes_calli(call, &lcl_aespb);
 	*parm1 = intout[1];
 	*parm2 = intout[2];
 	*parm3 = intout[3];

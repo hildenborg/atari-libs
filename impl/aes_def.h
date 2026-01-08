@@ -13,6 +13,9 @@ extern "C" {
 #include "def_types.h"
 #include "aes.h"
 
+extern AESPARBLK aesparblk;
+extern AESPB global_aespb; 
+
 INT16_T aes_calli(UINT32_T c, AESPB* aespb);
 INT16_T aes_callo(UINT32_T c, AESPB* aespb);
 
