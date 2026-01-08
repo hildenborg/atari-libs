@@ -13,6 +13,11 @@
 			<type name="int32_t" use="int"/>
 			<type name="uint32_t" use="unsigned int"/>
 		</types>
+		<settings>
+			<set name="flagOnlyFastVDI" value="True"/>
+			<set name="flagNoVDIDebug" value="True"/>
+			<set name="flagTreadSafe" value="False"/>
+		</settings>
 	</target>
 
 	<target name="m68k-atari-mintelf">
@@ -25,6 +30,11 @@
 			<type name="int32_t" use="long"/>
 			<type name="uint32_t" use="unsigned long"/>
 		</types>
+		<settings>
+			<set name="flagOnlyFastVDI" value="True"/>
+			<set name="flagNoVDIDebug" value="True"/>
+			<set name="flagTreadSafe" value="True"/>
+		</settings>
 	</target>
 
 	<target name="stdint">
@@ -37,6 +47,10 @@
 			<type name="int32_t" use="int32_t"/>
 			<type name="uint32_t" use="uint32_t"/>
 		</types>
+		<settings>
+			<set name="flagOnlyFastVDI" value="True"/>
+			<set name="flagTreadSafe" value="True"/>
+		</settings>
 	</target>
 
 </global>

@@ -1,6 +1,21 @@
 #	Copyright (C) 2025 Mikael Hildenborg
 #	SPDX-License-Identifier: MIT
 
+def GetSetting(dicts, name):
+	settingsDict = dicts["settingsDict"]
+	if name in settingsDict.keys():
+		value = settingsDict[name]
+		if value == "True":
+			return True
+		if value == "False":
+			return False
+		if isinstance(value, int):
+			return value
+		elif value.isnumeric():
+			return int(value)
+		return value
+	return False
+
 def HeaderBegin(f, name):
 	f.write("#ifndef " + name.upper() + "_DEFINED\n")
 	f.write("#define " + name.upper() + "_DEFINED\n\n")
@@ -70,6 +85,11 @@ def GetTypeName(t: str, dicts):
 
 
 def WriteType(f, name: str, t: str, dicts):
+	[isPtr,tstr] = GetTypeString(name, t, dicts)
+	f.write(tstr)
+	return isPtr
+
+def GetTypeString(name: str, t: str, dicts):
 	[isConst, typename, isPtr, isArray, isBitfield] = GetTypeName(t, dicts)
 	if isConst:
 		isConst += " "
@@ -77,8 +97,7 @@ def WriteType(f, name: str, t: str, dicts):
 		tstr = isConst + typename + isPtr + " " + name + isArray + isBitfield
 	else:
 		tstr = isConst + typename + isPtr + isArray + isBitfield
-	f.write(tstr)
-	return isPtr
+	return [isPtr,tstr]
 
 def HeaderCallback(f, cc, dicts):
 	name = cc.attrib.get("name")
@@ -104,8 +123,8 @@ def HeaderCallbacks(f, dicts):
 		HeaderCallback(f, cc, dicts)
 	f.write("\n\n")
 
-def HeaderFunction(f, ff, dicts):
-	name = ff.attrib.get("name")
+
+def HeaderFunction(f, ff, name, extraArg, dicts):
 	att = ""
 	ret = "void"
 	r = ff.find("return")
@@ -128,13 +147,26 @@ def HeaderFunction(f, ff, dicts):
 				f.write(", ")
 			first = False
 			WriteType(f, n, t, dicts)
+	if extraArg:
+		[n, t] = extraArg
+		if not first:
+			f.write(", ")
+		first = False
+		WriteType(f, n, t, dicts)
+
 	if first:
 		f.write("void")
 	f.write(");\n")
 
 def HeaderFunctions(f, functions, dicts):
+	flagTreadSafe = GetSetting(dicts, "flagTreadSafe")
 	for _, ff in functions.items():
-		HeaderFunction(f, ff, dicts)
+		name = ff.attrib.get("name")
+		threaded = ff.attrib.get("threaded")
+		HeaderFunction(f, ff, name, None, dicts)
+		if threaded and flagTreadSafe:
+			HeaderFunction(f, ff, "mt_" + name, ["aes_global","int16_t*"], dicts)
+
 	f.write("\n\n")
 
 def HeaderForwards(f, dicts):

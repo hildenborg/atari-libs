@@ -85,7 +85,7 @@ void vs_clip(INT16_T handle, INT16_T clip_flag, INT16_T* xyarray)
 	vdipb.ptsin = vdiparblk.ptsin;
 }
 
-#ifdef DEBUG
+#ifndef flagNoVDIDebug
 void CheckVdipb(void)
 {
 	if (vdipb.ptsin != vdiparblk.ptsin || vdipb.ptsout != vdiparblk.ptsout ||

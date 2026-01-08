@@ -3,14 +3,13 @@
 	SPDX-License-Identifier: MIT
 -->
 <aes>
-	<include name="&quot;aes_def.h&quot;" />
 	<structs>
 		<callback name="INT16_AES_CB_PARMBLK">
 			<return type="int16_t" />
 			<arg name="arg1" type="PARMBLK*" />
 		</callback>
 		<struct name="AESPARBLK" extern="aesparblk">
-			<member name="contrl" type="int16_t[16]" />
+			<member name="contrl" type="int16_t[5]" />
 			<member name="global" type="int16_t[16]" />
 			<member name="intin" type="int16_t[16]" />
 			<member name="intout" type="int16_t[16]" />

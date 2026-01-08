@@ -11,6 +11,7 @@ import code_gen
 def MakeDicts():
 	dicts = {
 		"typeDict": {},
+		"settingsDict": {},
 		"callbackDict": {},
 		"defineDict": {},
 		"structDict": {},
@@ -34,6 +35,11 @@ def ReadGlobals(xmlfile, target, dicts):
 				n = tp.attrib.get("name")
 				u = tp.attrib.get("use")
 				dicts["typeDict"][n] = u
+			# Setup settings dict.
+			for tp in t.findall('settings/set'):
+				n = tp.attrib.get("name")
+				v = tp.attrib.get("value")
+				dicts["settingsDict"][n] = v
 			break
 
 def FindFunctionCategory(name, dicts):
@@ -160,7 +166,11 @@ def GenerateGlobals(name, build_dir, target):
 		header_gen.HeaderBegin(f, name)
 		f.write("\n")
 		deftarget = target.replace("-", "_")
-		f.write("#define TARGET_" + deftarget.upper() + "\n\n")
+		f.write("#define TARGET_" + deftarget.upper() + "\n")
+		for s, v in dicts["settingsDict"].items():
+			if (v != "False"):
+				f.write("#define " + s + " " + v + "\n")
+		f.write("\n")
 		for t, u in dicts["typeDict"].items():
 			f.write("typedef " + u + " " + t.upper() + ";\n")
 

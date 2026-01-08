@@ -3,9 +3,6 @@
 
 import header_gen
 
-# If False, generate c sources with ifdef'ed code.
-flagOnlyFastVDI = True
-
 # size in bytes for argument types
 def GetTypeSize(t, dicts):
 	callbackDict = dicts["callbackDict"]
@@ -510,7 +507,11 @@ def CodeVDIFunction(iname, build_dir, ff, dicts):
 	if grpid != "2":
 		print ("group id: " + grpid + "\n")
 		raise ValueError
-	
+
+	flagOnlyFastVDI = header_gen.GetSetting(dicts, "flagOnlyFastVDI")
+	flagNoVDIDebug = header_gen.GetSetting(dicts, "flagNoVDIDebug")
+	flagTreadSafe = header_gen.GetSetting(dicts, "flagTreadSafe")
+
 	ret = "void"
 	retidx = ""
 	retsrc = ""
@@ -723,10 +724,10 @@ def CodeVDIFunction(iname, build_dir, ff, dicts):
 		if (ifdefMask & 8) != 0:
 			f.write("#endif\n")
 
-# Test code for fast vdi
-		f.write("#ifdef DEBUG\n")
-		f.write(tabs + "CheckVdipb();\n")
-		f.write("#endif\n")
+		if not flagNoVDIDebug:
+			f.write("#ifdef DEBUG\n")
+			f.write(tabs + "CheckVdipb();\n")
+			f.write("#endif\n")
 
 		if ret != "void":
 			if retIsCode:
