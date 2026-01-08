@@ -11,6 +11,7 @@ extern "C" {
 #endif
 
 #include "def_types.h"
+#include "vdi.h"
 
 void vdi_call(void);
 INT16_T vdi_zero_ended_string_to_words(const INT8_T* src, INT16_T* dst);

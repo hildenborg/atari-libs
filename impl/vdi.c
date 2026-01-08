@@ -3,8 +3,7 @@
 	SPDX-License-Identifier: MIT
 */
 
-#include "def_types.h"
-#include "vdi.h"
+#include "vdi_def.h"
 
 VDIPARBLK vdiparblk;
 
@@ -16,74 +15,6 @@ VDIPB vdipb =
 	vdiparblk.intout,
 	vdiparblk.ptsout
 };
-
-INT16_T vq_gdos(void)
-{
-	// Shouldn't we do an add #2 after the trap?
-	register INT16_T result asm ("d0");
-	__asm__ volatile (
-		"move.w	#-2, %%a7@-\n\t"
-		"trap	#2\n\t"
-		"cmp.w	#-2, %%d0\n\t"
-		"sne	%%d0\n\t"
-		"ext.w	%%d0\n\t"
-		: "=r" (result)
-		:
-		: "d1", "d2", "a0", "a1", "a2", "cc"
-	);
-	return result;
-}
-
-INT32_T vq_vgdos(void)
-{
-	// Shouldn't we do an add #2 after the trap?
-	register INT32_T result asm ("d0");
-	__asm__ volatile (
-		"move.w	#-2, %%a7@-\n\t"
-		"trap	#2\n\t"
-		: "=r" (result)
-		:
-		: "d1", "d2", "a0", "a1", "a2", "cc"
-	);
-	return result;
-}
-
-#ifdef TARGET_M68K_ATARI_MINTELF
-void v_opnvwk(INT16_T* work_in, INT16_T* handle, INT16_T* work_out)
-#else
-void v_opnvwk(INT16_T* work_in, INT16_T* handle, WS* work_out)
-#endif // TARGET_M68K_ATARI_ELF
-{
-	vdipb.intin = work_in;
-	vdipb.intout = (INT16_T*)work_out;
-	vdipb.ptsout = &((INT16_T*)work_out)[45];
-	vdiparblk.contrl[0] = 100;
-	vdiparblk.contrl[1] = 0;
-	vdiparblk.contrl[3] = 11;
-	vdiparblk.contrl[5] = 0;
-	vdiparblk.contrl[6] = *handle;
-	vdi_call();
-	*handle = vdiparblk.contrl[6];
-	vdipb.intin = vdiparblk.intin;
-	vdipb.intout = vdiparblk.intout;
-	vdipb.ptsout = vdiparblk.ptsout;
-}
-
-void vs_clip(INT16_T handle, INT16_T clip_flag, INT16_T* xyarray)
-{
-	vdiparblk.contrl[6] = handle;
-	vdiparblk.intin[0] = clip_flag;
-	if (clip_flag != 0 && xyarray != 0)
-	{
-		vdipb.ptsin = xyarray;
-	}
-	vdiparblk.contrl[0] = 129;
-	vdiparblk.contrl[1] = 2;
-	vdiparblk.contrl[3] = 1;
-	vdiparblk.contrl[5] = 0;
-	vdi_call();
-	vdipb.ptsin = vdiparblk.ptsin;
-}
 
 #ifndef flagNoVDIDebug
 void CheckVdipb(void)
