@@ -28,6 +28,26 @@ void vdi_call(VDIPB* vdipb)
 	);
 }
 
+short vdi_strlen(const void* src)
+{
+	register INT16_T len asm ("d0");
+	__asm__ volatile (
+		"move.l	%1, %%a0\n\t"
+		"moveq	#0, %%d0\n\t"
+		"bra.s	2f\n\t"
+		"1:\n\t"
+		"addq.w #1, %%d0\n\t"
+		"2:\n\t"
+		"move.b	%%a0@+, %%d1\n\t"
+		"bne.s	1b\n\t"
+		: "=r" (len)
+		: "g" (src)
+		: "d0", "d1", "a0", "cc"
+	);
+	return len;
+}
+
+
 INT16_T vdi_zero_ended_string_to_words(const INT8_T* src, INT16_T* dst)
 {
 	register INT16_T len asm ("d0");

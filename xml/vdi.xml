@@ -519,7 +519,7 @@
 			<arg name="vin" dst="intin" type="int16_t" />
 			<arg name="vout" src="intout" type="int16_t*" />
 			<arg name="term" src="intout" type="int16_t*" />
-			<arg name="status" src="contrl" idx="4" words="1" type="int16_t*" />
+			<arg name="status" src="contrl" idx="4" type="int16_t*" />
 		</function>
 		<function id="30" name="vrq_choice">
 			<return type="void" />
@@ -538,7 +538,7 @@
 			<arg name="maxlen" dst="intin" type="int16_t" />
 			<arg name="echo" dst="intin" type="int16_t" />
 			<arg name="echo_xy" dst="ptsin" longs="1" type="int16_t*" />
-			<arg name="string" src="intout" words="all" type="int8_t*" />
+			<arg name="string" src="intout" words="maxlen + 1" type="int8_t*" />
 		</function>
 		<function id="31" name="vsm_string">
 			<return type="int16_t" src="contrl" idx="4" />
@@ -546,7 +546,7 @@
 			<arg name="maxlen" dst="intin" type="int16_t" />
 			<arg name="echo" dst="intin" type="int16_t" />
 			<arg name="echo_xy" dst="ptsin" longs="1" type="int16_t*" />
-			<arg name="string" src="intout" words="all" type="int8_t*" />
+			<arg name="string" src="intout" words="maxlen + 1" type="int8_t*" />
 		</function>
 		<function id="111" name="vsc_form">
 			<return type="void" />
@@ -1192,8 +1192,8 @@
 		<function id="232" name="vqt_fontheader">
 			<return type="void" />
 			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
-			<arg name="buffer" dst="intin" longs="0" type="int8_t*" />
-			<arg name="pathname" src="intout" words="contrl[4]" type="int8_t*" /> 
+			<arg name="buffer" dst="intin" longs="0" type="int8_t*"/>
+			<arg name="pathname" src="intout" words="contrl[4]" type="int8_t*" estimate="256"/> 
 		</function>
 		<function id="237" name="vst_kern">
 			<return type="void" />
@@ -1217,15 +1217,15 @@
 			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
 			<arg name="devnum" dst="intin" type="int16_t" />
 			<arg name="devexists" src="ptsout" type="int16_t*" />
-			<arg name="filename" src="ptsout" words="contrl[2]" type="int8_t*" /> 
-			<arg name="devstr" src="intout" words="contrl[4]" type="int8_t*" /> 
+			<arg name="filename" src="ptsout" words="contrl[2]" type="int8_t*" estimate="16" /> 
+			<arg name="devstr" src="intout" words="contrl[4]" type="int8_t*" estimate="16" /> 
 		</function>
 		<function id="248" name="vqt_devinfo">
 			<return type="void" />
 			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
 			<arg name="devnum" dst="intin" type="int16_t" />
 			<arg name="devexists" src="ptsout" type="int16_t*" />
-			<arg name="devstr" src="intout" words="contrl[4]" type="int8_t*" /> 
+			<arg name="devstr" src="intout" words="contrl[4]" type="int8_t*" estimate="16" /> 
 		</function>
 		<function id="251" name="v_flushcache">
 			<return src="intout" idx="0" type="int16_t" />

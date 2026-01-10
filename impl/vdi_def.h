@@ -19,6 +19,7 @@ void vdi_call(VDIPB* vdipb);
 INT16_T vdi_zero_ended_string_to_words(const INT8_T* src, INT16_T* dst);
 void vdi_words_to_bytes(const INT16_T* src, INT8_T* dst, INT16_T len);
 void vdi_bytes_to_words(const INT8_T* src, INT16_T* dst, INT16_T len);
+short vdi_strlen(const void* src);
 
 #define VDI_COPY_LONG(src, dst) \
 	__asm__ volatile ( \
