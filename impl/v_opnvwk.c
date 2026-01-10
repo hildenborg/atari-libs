@@ -11,17 +11,20 @@ void v_opnvwk(INT16_T* work_in, INT16_T* handle, INT16_T* work_out)
 void v_opnvwk(INT16_T* work_in, INT16_T* handle, WS* work_out)
 #endif // TARGET_M68K_ATARI_ELF
 {
-	vdipb.intin = work_in;
-	vdipb.intout = (INT16_T*)work_out;
-	vdipb.ptsout = &((INT16_T*)work_out)[45];
-	vdiparblk.contrl[0] = 100;
-	vdiparblk.contrl[1] = 0;
-	vdiparblk.contrl[3] = 11;
-	vdiparblk.contrl[5] = 0;
-	vdiparblk.contrl[6] = *handle;
-	vdi_call();
+	INT16_T contrl[16];
+	VDIPB lcl_vdipb =
+	{
+		contrl,
+		work_in,
+		vdiparblk.ptsin,	// Unused.
+		(INT16_T*)work_out,
+		&((INT16_T*)work_out)[45]
+	};
+	contrl[0] = 100;
+	contrl[1] = 0;
+	contrl[3] = 11;
+	contrl[5] = 0;
+	contrl[6] = *handle;
+	vdi_call(&lcl_vdipb);
 	*handle = vdiparblk.contrl[6];
-	vdipb.intin = vdiparblk.intin;
-	vdipb.intout = vdiparblk.intout;
-	vdipb.ptsout = vdiparblk.ptsout;
 }

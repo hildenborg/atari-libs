@@ -4,9 +4,9 @@
 */
 
 #include "vdi_def.h"
-
 VDIPARBLK vdiparblk;
 
+/*
 VDIPB vdipb = 
 {
 	vdiparblk.contrl,
@@ -15,15 +15,15 @@ VDIPB vdipb =
 	vdiparblk.intout,
 	vdiparblk.ptsout
 };
-
-void vdi_call(void)
+*/
+void vdi_call(VDIPB* vdipb)
 {
 	__asm__ volatile (
 		"move.l	%0, %%d1\n\t"
 		"moveq	#0x73, %%d0\n\t"
 		"trap	#2\n\t"
 		:
-		: "i" (&vdipb)
+		: "g" (vdipb)
 		: "d0", "d1", "d2", "a0", "a1", "a2", "cc", "memory"
 	);
 }

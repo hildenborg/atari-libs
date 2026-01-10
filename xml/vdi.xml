@@ -11,7 +11,7 @@
 			<return type="int16_t" />
 		</callback>
 
-		<struct name="VDIPARBLK" extern="vdiparblk">
+		<struct name="VDIPARBLK">
 			<member name="contrl" type="int16_t[16]" />
 			<member name="intin" type="int16_t[256]" />
 			<member name="ptsin" type="int16_t[256]" />
@@ -19,7 +19,7 @@
 			<member name="ptsout" type="int16_t[256]" />
 		</struct>
 
-		<struct name="VDIPB" extern="vdipb">
+		<struct name="VDIPB">
 			<member name="contrl" type="int16_t*" />
 			<member name="intin" type="int16_t*" />
 			<member name="ptsin" type="int16_t*" />

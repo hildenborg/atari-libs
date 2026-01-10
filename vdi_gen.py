@@ -1,7 +1,31 @@
 #	Copyright (C) 2025 Mikael Hildenborg
 #	SPDX-License-Identifier: MIT
 
+from dataclasses import dataclass, field
 import header_gen
+
+
+
+@dataclass
+class ArrayUse:
+	staticSize: int = None
+	dynamicSize: list = None
+	values: int = 0
+	pointers: int = 0
+	chars: int = 0
+	ret: int = 0						# a return that uses this array
+	needLocalArray: bool = False		# We need a local array on the stack.
+	dynamicLocalArray: bool = False		# The local array size is known only at runtime.
+	estimatedLocalArray: bool = False	# The local array size is known after it has been used. We need to estimate a size that is enough.
+	directPointer: bool = False			# One argument only and it is a pointer we directly can use as work.
+	usedIndexes: list[int] = field(default_factory=list)
+
+@dataclass
+class FuncUse:
+	intin: ArrayUse = field(default_factory=ArrayUse)
+	intout: ArrayUse = field(default_factory=ArrayUse)
+	ptsin: ArrayUse = field(default_factory=ArrayUse)
+	ptsout: ArrayUse = field(default_factory=ArrayUse)
 
 # size in bytes for argument types
 def GetTypeSize(t, dicts):
@@ -32,11 +56,11 @@ def GetTypeSize(t, dicts):
 	return 0	# void
 
 def MakeVDIInlineCode(code):
-	code = code.replace("contrl", "vdiparblk.contrl")
-	code = code.replace("intin", "vdiparblk.intin")
-	code = code.replace("ptsin", "vdiparblk.ptsin")
-	code = code.replace("intout", "vdiparblk.intout")
-	code = code.replace("ptsout", "vdiparblk.ptsout")
+#	code = code.replace("contrl", "vdiparblk.contrl")
+#	code = code.replace("intin", "vdiparblk.intin")
+#	code = code.replace("ptsin", "vdiparblk.ptsin")
+#	code = code.replace("intout", "vdiparblk.intout")
+#	code = code.replace("ptsout", "vdiparblk.ptsout")
 	return code
 
 def AddStringToArray(tmpVals, src, str):
@@ -169,7 +193,7 @@ def HandleVDIArg(fncName, name, type, seq, prevSeq, tmpVals, tabs, dicts, seqIdx
 					count = longs
 			elif longs == "all":
 				# Copy all of the remaining data. Make it into an inline code.
-				count = "vdiparblk.contrl[2]"	# ptsout
+				count = "contrl[2]"	# ptsout
 				if idx >= 0:
 					if (idx & 1) != 0:
 						# Cannot use longs for an uneven number of words...
@@ -187,7 +211,7 @@ def HandleVDIArg(fncName, name, type, seq, prevSeq, tmpVals, tabs, dicts, seqIdx
 				count = words
 			elif words == "all":
 				# Copy all of the remaining data. Make it into an inline code.
-				count = "vdiparblk.contrl[4]"	# intout
+				count = "contrl[4]"	# intout
 				if idx >= 0:
 					count += " - " + str(idx)
 			else:
@@ -436,7 +460,7 @@ def MakeFastCopy(argString, ptrString, vdipbString, isSrc, isLongs, typeSize, co
 			lastLineIdx = tmpVals["s_fast_out"].rfind("\n")
 			tmpVals["s_fast_out"] = tmpVals["s_fast_out"][:lastLineIdx + 1]
 		[_, wordType, _, _, _] = header_gen.GetTypeName("int16_t", dicts)
-		seqString = vdipbString + " = (" + wordType + "*)" + argString + ";"
+		seqString = "lcl_vdipb." + vdipbString + " = (" + wordType + "*)" + argString + ";"
 	return [seqString, True]
 
 
@@ -483,19 +507,336 @@ def MakePtrString(src, dst, idx):
 	if idx < 0:
 		idx = 0
 	if src:
-		tstr = "&vdiparblk." + src + "[" + str(idx) + "]"
+		tstr = "&" + src + "[" + str(idx) + "]"
 	else:
-		tstr = "&vdiparblk." + dst + "[" + str(idx) + "]"
+		tstr = "&" + dst + "[" + str(idx) + "]"
 	return tstr
 
 def MakeVDIPBString(src, dst, idx):
 	if idx < 0:
 		idx = 0
 	if src:
-		tstr = "vdipb." + src
+		tstr = src
 	else:
-		tstr = "vdipb." + dst
+		tstr = dst
 	return tstr
+
+def CheckArgType(a, t, dicts):
+	[_, _, isPtr, _, _] = header_gen.GetTypeName(t, dicts)
+	longs = a.attrib.get("longs")
+	if longs and longs == "0":
+		# Special case when we don't use the pointer as a pointer.
+		isPtr = False
+
+	p = 0
+	v = 0
+	ch = 0
+	if isPtr:
+		# Arg is a pointer, count it.
+		p = 1
+	else:
+		# Arg is a const value, count it.
+		v = 1
+	if "int8_t" in t:
+		# Arg is a char, count it.
+		ch = 1
+	return [v, p, ch]
+
+def GetCountInWords(arg):
+	mult = 1
+	count = arg.attrib.get("words")
+	if not count:
+		count = arg.attrib.get("longs")
+		if count:
+			mult = 2
+			if count == "0":
+				count = 1	# size of a pointer * 2
+		else:
+			count = 1	# default count if none given.
+	if isinstance(count, int) or count.isnumeric():
+		return int(count * mult)
+	return None
+
+def GetStaticArraySize(ff, chkarr, dir):
+	lclArraySize = 0
+	for a in ff.findall('arg'):
+		if a.find('sequence') is None:
+			arr = a.attrib.get(dir)
+			if arr and arr == chkarr:
+				words = GetCountInWords(a)
+				if words is None:
+					return None	# array size is not compile time known.
+				lclArraySize += words
+		for s in a.findall('sequence'):
+			arr = s.attrib.get(dir)
+			if arr and arr == chkarr:
+				words = GetCountInWords(s)
+				if words is None:
+					return None	# array size is not compile time known.
+				lclArraySize += words
+	return int(lclArraySize)
+
+def IsNotRuntimeKnown(count):
+	keywords = ["strlen", "_str_len", "all", "contrl[4]", "contrl[2]"]
+	for word in keywords:
+		if count == word:
+			return True
+	return False
+
+def GetCountInWordsOrCode(arg, arr):
+	count = GetCountInWords(arg)
+	if count is not None:
+		return count
+
+	mult = ""
+	count = arg.attrib.get("words")
+	if not count:
+		mult = " * 2"
+		count = arg.attrib.get("longs")
+
+	if arr == "src" and IsNotRuntimeKnown(count):
+		return None
+	return count + mult
+
+def GetDynamicArraySize(ff, chkarr, dir):
+	lclArraySize = 0
+	lclArrayCode = []
+	for a in ff.findall('arg'):
+		if a.find('sequence') is None:
+			arr = a.attrib.get(dir)
+			if arr and arr == chkarr:
+				words = GetCountInWordsOrCode(a, chkarr)
+				if words is None:
+					return None	# array size is not runtime known. Have to guess...
+				if isinstance(words, int) or words.isnumeric():
+					lclArraySize += words
+				else:
+					lclArrayCode.append(words)
+		for s in a.findall('sequence'):
+			arr = s.attrib.get(dir)
+			if arr and arr == chkarr:
+				words = GetCountInWordsOrCode(a, chkarr)
+				if words is None:
+					return None	# array size is not runtime known. Have to guess...
+				if isinstance(words, int) or words.isnumeric():
+					lclArraySize += words
+				else:
+					lclArrayCode.append(words)
+	lclArrayCode.insert(0, int(lclArraySize))
+	return lclArrayCode
+
+def GetTypeUsage(ff, arr, dir, dicts):
+	v = 0
+	p = 0
+	ch = 0
+	ret = 0
+	for a in ff.findall('arg'):
+		t = a.attrib.get("type")
+		if a.find('sequence') is None:
+			srcdst = a.attrib.get(dir)
+			if srcdst and srcdst == arr:
+				[tv, tp, tch] = CheckArgType(a, t, dicts)
+				v += tv
+				p += tp
+				ch += tch
+		for s in a.findall('sequence'):
+			srcdst = s.attrib.get(dir)
+			if srcdst and srcdst == arr:
+				[tv, tp, tch] = CheckArgType(s, t, dicts)
+				v += tv
+				p += tp
+				ch += tch
+	
+	r = ff.find("return")
+	if r is not None:
+		retsrc = r.attrib.get("src")
+		if retsrc == arr:
+			ret = 1		# Only set ret if it uses the array.
+
+	return [v, p, ch, ret]
+
+def SetDefaultSizeAndIdx(arg, idx, arrUse: ArrayUse):
+	arg_idx = arg.attrib.get("idx")
+	if idx is None:
+		if not arg_idx:
+			print ("Error: Trying to use automatic indexing on multiple dynamoc arrays.")
+		return None
+	haveSize = True
+	mult = 1
+	count = arg.attrib.get("words")
+	if not count:
+		count = arg.attrib.get("longs")
+		if count:
+			mult = 2
+			if count == "0":
+				count = 1	# size of a pointer * 2
+		else:
+			haveSize = False
+			count = 1	# default count if none given.
+
+	if arg_idx:
+		if int(arg_idx) != idx:
+			idx = int(arg_idx)
+	else:
+		arg.set("idx", idx)
+
+	next_idx = None
+	if isinstance(count, int) or count.isnumeric():
+		count = int(count) * mult
+		next_idx = idx + count
+		if not haveSize:
+			arg.set("words", count)
+		for i in range(count):
+			arrUse.usedIndexes.append(idx + i)
+
+	return next_idx
+
+def IsSrcOrdst(arg, arr):
+	src = arg.attrib.get("src")
+	if src and src == arr:
+		return True
+	dst = arg.attrib.get("dst")
+	if dst and dst == arr:
+		return True
+	return False
+
+# Fill in idx and size where missing and applicable
+def PreprocessSizeAndIdx(ff, arr, arrUse: ArrayUse):
+	idx = 0
+	for a in ff.findall('arg'):
+		if a.find('sequence') is None:
+			if IsSrcOrdst(a, arr):
+				idx = SetDefaultSizeAndIdx(a, idx, arrUse)
+		for s in a.findall('sequence'):
+			if IsSrcOrdst(s, arr):
+				idx = SetDefaultSizeAndIdx(s, idx, arrUse)
+
+# Sets deafult values and determines the type of code we need to build for this array.
+def PreprocessInArray(ff, chkarr, arrUse: ArrayUse, dicts):
+	PreprocessSizeAndIdx(ff, chkarr, arrUse)
+	arrUse.staticSize = GetStaticArraySize(ff, chkarr, "dst")
+	arrUse.dynamicSize = GetDynamicArraySize(ff, chkarr, "dst")
+	[vals, ptrs, chars, ret] = GetTypeUsage(ff, chkarr, "dst", dicts)
+	arrUse.values = vals
+	arrUse.pointers = ptrs
+	arrUse.chars = chars
+	arrUse.ret = ret
+	if vals >= 0 and ptrs == 0 and chars == 0:
+		# Simple case with just const values set into array list.
+		# We need a local array and we know the size.
+		arrUse.needLocalArray = True
+	elif vals == 0 and ptrs == 1 and chars == 0:
+		# Simple case where we can use the ptr directly.
+		arrUse.directPointer = True
+	else:
+		# Multiple pointers or combination of values and pointers
+		# is the size static or dynamic?
+		# do we need char conversion?
+		if arrUse.staticSize is not None:
+			# We known the size so a normal local array will do  
+			arrUse.needLocalArray = True
+		elif arrUse.dynamicSize is not None:
+			# We need to dynamically allocate memory for work data
+			# We can runtime calculate the size of the array.
+			# VLA is the solution.
+			arrUse.dynamicLocalArray = True
+			arrUse.needLocalArray = True
+		else:
+			print("Error: dst arrays must be known either compile time or runtime before the vdi call.")
+
+def PreprocessOutArray(ff, chkarr, arrUse: ArrayUse, dicts):
+	name = ff.attrib.get("name")
+	PreprocessSizeAndIdx(ff, chkarr, arrUse)
+	arrUse.staticSize = GetStaticArraySize(ff, chkarr, "src")
+	arrUse.dynamicSize = GetDynamicArraySize(ff, chkarr, "src")
+	[vals, ptrs, chars, ret] = GetTypeUsage(ff, chkarr, "src", dicts)
+	arrUse.values = vals
+	arrUse.pointers = ptrs
+	arrUse.chars = chars
+	arrUse.ret = ret
+	if vals != 0 and ptrs == 0 and chars == 0:
+		print ("Error: " + name + " - No values in output, must be pointers")
+	elif vals == 0 and ptrs == 1 and chars == 0:
+		# Simple case where we can use the ptr directly.
+		arrUse.directPointer = True
+	else:
+		# Multiple pointers or combination of values and pointers
+		# is the size static or dynamic?
+		# do we need char conversion?
+		if arrUse.staticSize is not None:
+			# We known the size so a normal local array will do  
+			arrUse.needLocalArray = True
+		elif arrUse.dynamicSize is not None:
+			# We need to dynamically allocate memory for work data
+			# VLA is the solution.
+			arrUse.dynamicLocalArray = True
+			arrUse.needLocalArray = True
+		else:
+			# Nothing is known about the size of the array until after the vdi call.
+			# We need to make an estimate...
+			arrUse.estimatedLocalArray = True
+			arrUse.needLocalArray = True
+
+def	PreprocessFunction(ff, dicts):
+	funcUse = FuncUse()
+	PreprocessInArray(ff, "intin", funcUse.intin, dicts)
+	PreprocessInArray(ff, "ptsin", funcUse.ptsin, dicts)
+	PreprocessOutArray(ff, "intout", funcUse.intout, dicts)
+	PreprocessOutArray(ff, "ptsout", funcUse.ptsout, dicts)
+	return funcUse
+
+	# no longs or words = words="1"
+	# words and longs can be c code
+	# words can be strlen
+	# longs can be 0 when dst and ptr, for storing the pointer.
+	# reserve
+	# no src or dst means arg is only used locally.
+	# sort idx access
+
+
+def SetupTmpVals():
+	# c_ = current index
+	# s_ = generated code string
+	# r_ = number of reserved words
+	# m_ = _ or * used as word mask for unused/used. Unused should be set to 0. Only for input
+	# s_contrl is not used and instead stored in s_intin and s_intout depending on src or dst.
+	# rl_ = number of reserved words (intin) and longs (pstin) stated in local variables added together.
+	tmpVals = {
+		"c_intin": 0,
+		"c_intout": 0,
+		"c_ptsin": 0,
+		"c_ptsout": 0,
+		"s_in": "",
+		"s_out": "",
+		"s_fast_start": "",
+		"s_fast_end": "",
+		"s_fast_out": "",
+		"r_intin": 0,
+		"r_ptsin": 0,
+		"m_intin": "",
+		"m_ptsin": "",
+		"rl_intin": "",
+		"rl_ptsin": "",
+	}
+	return tmpVals
+
+def ReserveMemory(ff, name, tmpVals):
+	# Some functions use only some positions in an array but expects a specific size of array.
+	for a in ff.findall('reserve'):
+		dst = a.attrib.get("dst")
+		if dst is None:
+			print ("Reserve can unly be dst: " + name + "\n")
+			raise ValueError
+
+		words = a.attrib.get("words")
+		longs = a.attrib.get("longs")
+		size = 0
+		if words is not None:
+			size = int(words)
+		elif longs is not None:
+			size = int(longs) * 2
+		tmpVals["r_" + dst] = size
+		tmpVals["m_" + dst] = "_" * size
 
 def CodeVDIFunction(iname, build_dir, ff, dicts):
 	name = ff.attrib.get("name")
@@ -508,9 +849,8 @@ def CodeVDIFunction(iname, build_dir, ff, dicts):
 		print ("group id: " + grpid + "\n")
 		raise ValueError
 
-	flagOnlyFastVDI = header_gen.GetSetting(dicts, "flagOnlyFastVDI")
-	flagNoVDIDebug = header_gen.GetSetting(dicts, "flagNoVDIDebug")
 	flagTreadSafe = header_gen.GetSetting(dicts, "flagTreadSafe")
+	[_, wordType, _, _, _] = header_gen.GetTypeName("int16_t", dicts)
 
 	ret = "void"
 	retidx = ""
@@ -563,50 +903,32 @@ def CodeVDIFunction(iname, build_dir, ff, dicts):
 		if first:
 			f.write("void")
 		f.write(")\n{\n")
+		f.write("\t" + wordType + " contrl[16];\n")
 
-		# c_ = current index
-		# s_ = generated code string
-		# r_ = number of reserved words
-		# m_ = _ or * used as word mask for unused/used. Unused should be set to 0. Only for input
-		# s_contrl is not used and instead stored in s_intin and s_intout depending on src or dst.
-		# rl_ = number of reserved words (intin) and longs (pstin) stated in local variables added together.
-		tmpVals = {
-			"c_intin": 0,
-			"c_intout": 0,
-			"c_ptsin": 0,
-			"c_ptsout": 0,
-			"s_in": "",
-			"s_out": "",
-			"s_fast_start": "",
-			"s_fast_end": "",
-			"s_fast_out": "",
-			"r_intin": 0,
-			"r_ptsin": 0,
-			"m_intin": "",
-			"m_ptsin": "",
-			"rl_intin": "",
-			"rl_ptsin": "",
-		}
+		tmpVals = SetupTmpVals()
+
+		# If return is an intout, then update the automatic index.
 		if retIsSrcIdx:
 			if retsrc == "intout" and retidx == "0":
 				ts = GetTypeSize(ret, dicts)
 				tmpVals["c_intout"] = (ts + 1) >> 1	# even words
 
-		for a in ff.findall('reserve'):
-			dst = a.attrib.get("dst")
-			if dst is None:
-				print ("Reserve can unly be dst: " + name + "\n")
-				raise ValueError
+		ReserveMemory(ff, name, tmpVals)
 
-			words = a.attrib.get("words")
-			longs = a.attrib.get("longs")
-			size = 0
-			if words is not None:
-				size = int(words)
-			elif longs is not None:
-				size = int(longs) * 2
-			tmpVals["r_" + dst] = size
-			tmpVals["m_" + dst] = "_" * size
+		PreprocessFunction(ff, dicts)	# Insert default and automatic attributes.
+		# for debug
+#		[v, p, ch] = tmpVals["chk_intin"]
+#		f.write("// intin v: " + str(v) + ", p: " + str(p) + ", ch: " + str(ch) +"\n")
+#		[v, p, ch] = tmpVals["chk_intout"]
+#		f.write("// intout v: " + str(v) + ", p: " + str(p) + ", ch: " + str(ch) +"\n")
+#		[v, p, ch] = tmpVals["chk_ptsin"]
+#		f.write("// ptsin v: " + str(v) + ", p: " + str(p) + ", ch: " + str(ch) +"\n")
+#		[v, p, ch] = tmpVals["chk_ptsout"]
+#		f.write("// ptsout v: " + str(v) + ", p: " + str(p) + ", ch: " + str(ch) +"\n")
+		# end for debug
+		#void* mupp = alloca(tabs); when we dynamically knows the length.
+		# char -> short, reverse convert in same buffer.
+		# short -> char, needs estimate for max buffer.
 
 		tabs = '\t'
 		for a in ff.findall('arg'):
@@ -620,109 +942,70 @@ def CodeVDIFunction(iname, build_dir, ff, dicts):
 				seqIdx = HandleVDIArg(name, n, t, s, prevSeq, tmpVals, tabs, dicts, seqIdx)
 				prevSeq = s
 
-		ifdefMask = 0
-		if (tmpVals["s_fast_start"] != ""):
-			ifdefMask = 1
-		if (tmpVals["s_in"] != ""):
-			ifdefMask += 2
-
-		if flagOnlyFastVDI:
-			# Nasty solution, just zero out the non fast vdi stuff
-			tmpVals["s_in"] = ""
-			tmpVals["s_out"] = ""
-			ifdefMask = 0
-
-		HandleUntouched(f, tmpVals, "intin")
-		HandleUntouched(f, tmpVals, "ptsin")
-
-		if ifdefMask == 2:
-			f.write("#ifndef FAST_VDI\n")
-		elif ifdefMask != 0:
-			f.write("#ifdef FAST_VDI\n")
-
-		if (tmpVals["s_fast_start"] != ""):
-			f.write(tmpVals["s_fast_start"])
-
-		if ifdefMask == 3:
-			f.write("#else\n")
-
-		f.write(tmpVals["s_in"])
-
-		if ifdefMask != 0:
-			f.write("#endif\n\n")
-
-		f.write(tabs + "vdiparblk.contrl[0] = " + str(id) + ";\n")
-
 		ptsins = int(tmpVals["r_ptsin"] / 2)
 		sptsins = str(ptsins) + tmpVals["rl_ptsin"]
 		sptsins = sptsins.replace("0 + ", "")
-		f.write(tabs + "vdiparblk.contrl[1] = " + sptsins + ";\n")
+		if sptsins != "0":
+			f.write("\t" + wordType + " ptsin[" + sptsins +"];\n")
 
 		intins = int(tmpVals["r_intin"])
 		sintins = str(intins) + tmpVals["rl_intin"]
 		sintins = sintins.replace("0 + ", "")
-		f.write(tabs + "vdiparblk.contrl[3] = " + sintins + ";\n")
+		if sintins != "0":
+			f.write("\t" + wordType + " intin[" + sintins +"];\n")
 
-		f.write(tabs + "vdiparblk.contrl[5] = " + str(subid) + ";\n")
-		f.write("\tvdi_call();\n\n")
+		gotIntout = "c_intout" in tmpVals and tmpVals["c_intout"] > 0
+		if gotIntout:
+			f.write("\t" + wordType + " intout[" + str(tmpVals["c_intout"]) +"];\n")
 
-		ifdefMask = 0
-		if (tmpVals["s_fast_end"] != ""):
-			ifdefMask = 1
-		if (tmpVals["s_fast_out"] != ""):
-			ifdefMask = ifdefMask | 2
-		if (tmpVals["s_out"] != ""):
-			ifdefMask = ifdefMask | 4
+		f.write("\tVDIPB lcl_vdipb = \n")
+		f.write("\t{\n")
+		f.write("\t\tcontrl,\n")
+		if sintins != "0":
+			f.write("\t\tintin,\n")
+		else:
+			f.write("\t\tvdiparblk.intin,\t// Unused.\n")
+		if sptsins != "0":
+			f.write("\t\tptsin,\n")
+		else:
+			f.write("\t\tvdiparblk.ptsin,\t// Unused.\n")
+		if gotIntout:
+			f.write("\t\tintout,\n")
+		else:
+			f.write("\t\tvdiparblk.intout,\t// Unused.\n")
+		f.write("\t\tvdiparblk.ptsout\t// Unused.\n")
+		f.write("\t};\n")
 
-		if flagOnlyFastVDI:
-			ifdefMask = 0
+		HandleUntouched(f, tmpVals, "intin")
+		HandleUntouched(f, tmpVals, "ptsin")
 
-		if (ifdefMask & 4) != 0:
-			f.write("#ifndef FAST_VDI\n")
-			ifdefMask = ifdefMask | 8
-		elif (ifdefMask & 2) != 0:
-			f.write("#ifdef FAST_VDI\n")
-			ifdefMask = ifdefMask | 8
+		if (tmpVals["s_fast_start"] != ""):
+			f.write(tmpVals["s_fast_start"])
 
-		if (tmpVals["s_out"] != ""):
-			f.write(tmpVals["s_out"])
-			if (ifdefMask & 3) != 0:
-				f.write("#else\n")
+		f.write(tabs + "contrl[0] = " + str(id) + ";\n")
+
+		f.write(tabs + "contrl[1] = " + sptsins + ";\n")
+
+		f.write(tabs + "contrl[3] = " + sintins + ";\n")
+
+		f.write(tabs + "contrl[5] = " + str(subid) + ";\n")
+		
+		f.write("\tvdi_call(&lcl_vdipb);\n\n")
 
 		if (tmpVals["s_fast_out"] != ""):
 			f.write(tmpVals["s_fast_out"])
 
 		if retIsSrcIdx:
-			if (ifdefMask & 6) != 0:
-				f.write("#endif\n")
-				ifdefMask = ifdefMask & 7
 			f.write("\t")
 			header_gen.WriteType(f, "result", ret, dicts)
 			if ret == "int16_t" or ret == "uint16_t":
-				f.write(" = vdiparblk." + retsrc + "[" + retidx + "];\n")
+				f.write(" = " + retsrc + "[" + retidx + "];\n")
 			elif ret == "int8_t" or ret == "uint8_t":
-				f.write(" = (" + ret + ")vdiparblk." + retsrc + "[" + retidx + "];\n")
+				f.write(" = (" + ret + ")" + retsrc + "[" + retidx + "];\n")
 			else:
 				# Assume 4 byte size
 				f.write(";\n\t")
-				f.write("VDI_COPY_LONG(&(vdiparblk." + retsrc + "[" + retidx + "]), &result);\n")
-
-		if (tmpVals["s_fast_end"] != ""):
-			if (ifdefMask & 8) == 0:
-				f.write("#ifdef FAST_VDI\n")
-				ifdefMask = ifdefMask | 8
-
-			if "intin" in tmpVals["s_fast_end"]:
-				f.write(tabs + "vdipb.intin = vdiparblk.intin;\n")
-			if "ptsin" in tmpVals["s_fast_end"]:
-				f.write(tabs + "vdipb.ptsin = vdiparblk.ptsin;\n")
-			if "intout" in tmpVals["s_fast_end"]:
-				f.write(tabs + "vdipb.intout = vdiparblk.intout;\n")
-			if "ptsout" in tmpVals["s_fast_end"]:
-				f.write(tabs + "vdipb.ptsout = vdiparblk.ptsout;\n")
-
-		if (ifdefMask & 8) != 0:
-			f.write("#endif\n")
+				f.write("VDI_COPY_LONG(&(" + retsrc + "[" + retidx + "]), &result);\n")
 
 		if ret != "void":
 			if retIsCode:
@@ -738,5 +1021,5 @@ def HandleUntouched(f, tmpVals, arr):
 	indices = [i for i, x in enumerate(tmpVals["m_" + arr]) if x == "_"]
 	
 	for idx in indices:
-		f.write("\t" + "vdiparblk." + arr + "[" + str(idx) + "] = 0;\n")
+		f.write("\t" + arr + "[" + str(idx) + "] = 0;\n")
 
