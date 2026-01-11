@@ -26,6 +26,7 @@ class ArrayUse:
 	xmlArgs: list[ET.Element] = field(default_factory=list)
 	usesStrlen: ET.Element = None		# An argument that uses strlen
 	ff: ET.Element = None				# Function element
+	contrl_count: str = None			# the count to set in control
 
 @dataclass
 class FuncUse:
@@ -117,6 +118,75 @@ def GetDynamicArraySize(arrUse: ArrayUse):
 			lclArrayCode.append(words)
 	lclArrayCode.insert(0, int(lclArraySize))
 	return lclArrayCode
+
+def GetControlCount(arrUse: ArrayUse):
+	res = arrUse.ff.find("reserve")
+	if res is not None:
+		dst = res.attrib.get("dst")
+		if dst and dst == arrUse.name:
+			cnt = res.attrib.get("words")
+			if cnt:
+				return str(cnt)
+			else:
+				cnt = res.attrib.get("longs")
+				if cnt:
+					return str(cnt)
+	siw = 0
+	sil = 0
+	ssw = ""
+	ssl = ""
+	for a in arrUse.xmlArgs:
+		words = a.attrib.get("words")
+		longs = a.attrib.get("longs")
+		if words:
+			if isinstance(words, int) or words.isnumeric():
+				siw += int(words)
+			else:
+				ssw += " + " + str(words)
+		else:
+			if isinstance(longs, int) or longs.isnumeric():
+				if int(longs) == 0:
+					longs = 1
+				sil += int(longs)
+			else:
+				ssl += " + " + str(longs)
+	w = CombineIntWithStr(siw, ssw)
+	l = CombineIntWithStr(sil, ssl)
+	if "pts" in arrUse.name:
+		# count is in longs
+		if w != "0":
+			if isinstance(w, int) or w.isnumeric():
+				if (int(w) & 1) != 0:
+					# Only one function gets here and it expects an extra word
+					w = int(w) + 1
+				w = str(int(w) >> 1)
+			else:
+				# Only one function uses this and it expects words number of longs
+				pass
+			if l != "0":
+				return l + " + " + w
+			else:
+				return w
+		else:
+			return l
+	else:
+		# count is in words
+		if l != "0":
+			c = "(" + l + ") * 2"
+			if w != "0":
+				c = "(" + c + ") + " + w
+			return c
+		else:
+			return w
+	
+def CombineIntWithStr(i, s):
+	if s != "":
+		if i != 0:
+			return str(i) + s
+		else:
+			return s[3:]	# skip " + "
+	else:
+		return str(i)
 
 def SetTypeUsage(ff, arrUse: ArrayUse, dicts):
 	v = 0
@@ -249,6 +319,7 @@ def PreprocessInArray(ff, chkarr, arrUse: ArrayUse, dicts):
 		arrUse.staticSize = GetStaticArraySize(arrUse)
 		arrUse.dynamicSize = GetDynamicArraySize(arrUse)
 
+	arrUse.contrl_count = GetControlCount(arrUse)
 	SetTypeUsage(ff, arrUse, dicts)
 
 	if arrUse.values >= 0 and arrUse.pointers == 0 and arrUse.chars == 0:
@@ -283,6 +354,7 @@ def PreprocessOutArray(ff, chkarr, arrUse: ArrayUse, dicts):
 	SetTypeUsage(ff, arrUse, dicts)
 	arrUse.staticSize = GetStaticArraySize(arrUse)
 	arrUse.dynamicSize = GetDynamicArraySize(arrUse)
+	arrUse.contrl_count = None
 
 	if arrUse.values != 0:
 		print ("Error: " + name + " - No values in output, must be pointers")
@@ -577,9 +649,9 @@ def WriteWorkContrlSetup(f, ff, funcUse : FuncUse, dicts):
 	subid = ff.attrib.get("subid")
 	if subid:
 		contrlIn.append(MakeContrlArg(subid, 5))
-	intinLen = funcUse.intin.contrl
+	intinLen = funcUse.intin.contrl_count
 	contrlIn.append(MakeContrlArg(intinLen, 3))
-	ptsinLen = funcUse.ptsin.contrl
+	ptsinLen = funcUse.ptsin.contrl_count
 	contrlIn.append(MakeContrlArg(ptsinLen, 1))
 
 	contrlIn.sort(key=SortOnIndex)
