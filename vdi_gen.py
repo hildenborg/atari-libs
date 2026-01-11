@@ -6,27 +6,23 @@ from dataclasses import dataclass, field
 import header_gen
 
 
-
 @dataclass
 class ArrayUse:
 	name: str = ""						# intin etc.
 	vdipb: str = ""						# name of local array or direct pointer (or dummy pointer if unused)
-	contrl: str = "0"					# contrl array count as a c string
-	staticSize: int = None
-	dynamicSize: list = None
 	values: int = 0
 	pointers: int = 0
 	chars: int = 0
 	ret: int = 0						# a return that uses this array
 	needLocalArray: bool = False		# We need a local array on the stack.
 	dynamicLocalArray: bool = False		# The local array size is known only at runtime.
-	estimatedLocalArray: bool = False	# The local array size is known after it has been used. We need to estimate a size that is enough.
 	directPointer: bool = False			# One argument only and it is a pointer we directly can use as work.
 	usedIndexes: list[int] = field(default_factory=list)
 	xmlArgs: list[ET.Element] = field(default_factory=list)
 	usesStrlen: ET.Element = None		# An argument that uses strlen
 	ff: ET.Element = None				# Function element
-	contrl_count: str = None			# the count to set in control
+	arraySize: str = ""					# array size in words needed
+	ctrlCount: str = ""					# Size to put in contrl array
 
 @dataclass
 class FuncUse:
@@ -56,128 +52,67 @@ def CheckArgType(a, t, dicts):
 		ch = 1
 	return [v, p, ch]
 
-def GetCountInWords(arg):
-	mult = 1
-	count = arg.attrib.get("words")
-	if not count:
-		count = arg.attrib.get("longs")
-		if count:
-			mult = 2
-			if count == "0":
-				count = 1	# size of a pointer * 2
-		else:
-			count = 1	# default count if none given.
-	if isinstance(count, int) or count.isnumeric():
-		return int(count * mult)
-	return None
-
-def GetStaticArraySize(arrUse: ArrayUse):
-	lclArraySize = arrUse.ret
-	for a in arrUse.xmlArgs:
-		words = GetCountInWords(a)
-		if words is None:
-			return None	# array size is not compile time known.
-		lclArraySize += words
-	return int(lclArraySize)
-
-def IsNotRuntimeKnown(count):
-	keywords = ["strlen", "_str_len", "contrl[4]", "contrl[2]"]
-	for word in keywords:
-		if count == word:
-			return True
-	return False
-
-def GetCountInWordsOrCode(arg, arr):
-	count = GetCountInWords(arg)
-	if count is not None:
-		return count
-
-	mult = ""
-	count = arg.attrib.get("words")
-	if not count:
-		mult = " * 2"
-		count = arg.attrib.get("longs")
-
-	if "out" in arr and IsNotRuntimeKnown(count):
-		count = arg.attrib.get("estimate")
-		if count:
-			return count
-		return None
-	return count + mult
-
-def GetDynamicArraySize(arrUse: ArrayUse):
-	lclArraySize = arrUse.ret
-	lclArrayCode = []
-	for a in arrUse.xmlArgs:
-		words = GetCountInWordsOrCode(a, arrUse.name)
-		if words is None:
-			return None	# array size is not runtime known. Have to guess...
-		if isinstance(words, int) or words.isnumeric():
-			lclArraySize += int(words)
-		else:
-			lclArrayCode.append(words)
-	lclArrayCode.insert(0, int(lclArraySize))
-	return lclArrayCode
-
-def GetControlCount(arrUse: ArrayUse):
+def GetArraySize(arrUse: ArrayUse):
 	res = arrUse.ff.find("reserve")
 	if res is not None:
 		dst = res.attrib.get("dst")
 		if dst and dst == arrUse.name:
 			cnt = res.attrib.get("words")
 			if cnt:
-				return str(cnt)
+				arrUse.ctrlCount = str(cnt)
+				arrUse.arraySize = str(cnt)
+				return
 			else:
 				cnt = res.attrib.get("longs")
 				if cnt:
-					return str(cnt)
-	siw = 0
-	sil = 0
-	ssw = ""
-	ssl = ""
+					arrUse.ctrlCount = str(cnt)
+					arrUse.arraySize = str(int(cnt) * 2)
+					return
+
+	topIdx = 0
+	lastSize = ""
+	mul = 1
+	if "out" in arrUse.name:
+		topIdx = arrUse.ret
 	for a in arrUse.xmlArgs:
-		words = a.attrib.get("words")
-		longs = a.attrib.get("longs")
-		if words:
-			if isinstance(words, int) or words.isnumeric():
-				siw += int(words)
+		idx = a.attrib.get("idx")
+		seqIdx = a.attrib.get("seqIdx")
+		if seqIdx and "src" in arrUse.name:
+			idx = seqIdx
+		if int(idx) >= int(topIdx):
+			topIdx = idx
+			est = a.attrib.get("estimate")
+			words = a.attrib.get("words")
+			longs = a.attrib.get("longs")
+			if est:
+				lastSize = est
+				mul = 1
+			elif words:		
+				lastSize = words
+				mul = 1
 			else:
-				ssw += " + " + str(words)
-		else:
-			if isinstance(longs, int) or longs.isnumeric():
-				if int(longs) == 0:
-					longs = 1
-				sil += int(longs)
-			else:
-				ssl += " + " + str(longs)
-	w = CombineIntWithStr(siw, ssw)
-	l = CombineIntWithStr(sil, ssl)
+				if isinstance(longs, int) or longs.isnumeric():
+					if int(longs) == 0:
+						longs = 1
+				lastSize = longs
+				mul = 2
+
+	if isinstance(lastSize, int) or lastSize.isnumeric():
+		topIdx = int(topIdx) + (int(lastSize) * int(mul))
+		lastSize = ""
+	topIdxW = topIdx	
 	if "pts" in arrUse.name:
-		# count is in longs
-		if w != "0":
-			if isinstance(w, int) or w.isnumeric():
-				if (int(w) & 1) != 0:
-					# Only one function gets here and it expects an extra word
-					w = int(w) + 1
-				w = str(int(w) >> 1)
-			else:
-				# Only one function uses this and it expects words number of longs
-				pass
-			if l != "0":
-				return l + " + " + w
-			else:
-				return w
+		topIdx = (int(topIdx) + 1) >> 1
+	if lastSize != "":
+		if int(topIdx) != 0:
+			arrUse.ctrlCount = str(topIdx) + " + " + str(lastSize)
+			arrUse.arraySize = str(topIdxW) + " + " + str(lastSize)
 		else:
-			return l
+			arrUse.ctrlCount = str(lastSize)
+			arrUse.arraySize = str(lastSize)
 	else:
-		# count is in words
-		if l != "0":
-			c = "(" + l + ") * 2"
-			if w != "0":
-				c = "(" + c + ") + " + w
-			return c
-		else:
-			return w
+		arrUse.ctrlCount = str(topIdx)
+		arrUse.arraySize = str(topIdxW)
 	
 def CombineIntWithStr(i, s):
 	if s != "":
@@ -299,27 +234,13 @@ def PreprocessSequences(ff):
 def PreprocessInArray(ff, chkarr, arrUse: ArrayUse, dicts):
 	arrUse.name = chkarr
 	arrUse.ff = ff
-#	fncname = ff.attrib.get("name")
-#	if fncname == "v_bit_image":
-#		pass
+	fncname = ff.attrib.get("name")
+	if fncname == "v_cellarray":
+		pass
 	SetRetUsage(ff, arrUse)
 	PreprocessSizeAndIdx(ff, arrUse)
-	res = ff.find("reserve")
-	if res is not None:
-		dst = res.attrib.get("dst")
-		if dst and dst == arrUse.name:
-			cnt = res.attrib.get("words")
-			if cnt:
-				arrUse.staticSize = int(cnt)
-			else:
-				cnt = res.attrib.get("longs")
-				if cnt:
-					arrUse.staticSize = int(cnt) << 1
-	if arrUse.staticSize is None:
-		arrUse.staticSize = GetStaticArraySize(arrUse)
-		arrUse.dynamicSize = GetDynamicArraySize(arrUse)
+	GetArraySize(arrUse)
 
-	arrUse.contrl_count = GetControlCount(arrUse)
 	SetTypeUsage(ff, arrUse, dicts)
 
 	if arrUse.values >= 0 and arrUse.pointers == 0 and arrUse.chars == 0:
@@ -333,17 +254,15 @@ def PreprocessInArray(ff, chkarr, arrUse: ArrayUse, dicts):
 		# Multiple pointers or combination of values and pointers
 		# is the size static or dynamic?
 		# do we need char conversion?
-		if arrUse.staticSize is not None:
+		if isinstance(arrUse.arraySize, int) or arrUse.arraySize.isnumeric():
 			# We known the size so a normal local array will do  
 			arrUse.needLocalArray = True
-		elif arrUse.dynamicSize is not None:
+		else:
 			# We need to dynamically allocate memory for work data
 			# We can runtime calculate the size of the array.
 			# VLA is the solution.
 			arrUse.dynamicLocalArray = True
 			arrUse.needLocalArray = True
-		else:
-			print("Error: dst arrays must be known either compile time or runtime before the vdi call.")
 
 def PreprocessOutArray(ff, chkarr, arrUse: ArrayUse, dicts):
 	name = ff.attrib.get("name")
@@ -352,9 +271,7 @@ def PreprocessOutArray(ff, chkarr, arrUse: ArrayUse, dicts):
 	SetRetUsage(ff, arrUse)
 	PreprocessSizeAndIdx(ff, arrUse)
 	SetTypeUsage(ff, arrUse, dicts)
-	arrUse.staticSize = GetStaticArraySize(arrUse)
-	arrUse.dynamicSize = GetDynamicArraySize(arrUse)
-	arrUse.contrl_count = None
+	GetArraySize(arrUse)
 
 	if arrUse.values != 0:
 		print ("Error: " + name + " - No values in output, must be pointers")
@@ -365,20 +282,14 @@ def PreprocessOutArray(ff, chkarr, arrUse: ArrayUse, dicts):
 		# Multiple pointers or combination of values and pointers
 		# is the size static or dynamic?
 		# do we need char conversion?
-		if arrUse.staticSize is not None:
+		if isinstance(arrUse.arraySize, int) or arrUse.arraySize.isnumeric():
 			# We known the size so a normal local array will do  
 			arrUse.needLocalArray = True
-		elif arrUse.dynamicSize is not None:
+		else:
 			# We need to dynamically allocate memory for work data
 			# VLA is the solution.
 			arrUse.dynamicLocalArray = True
 			arrUse.needLocalArray = True
-		else:
-			# Nothing is known about the size of the array until after the vdi call.
-			# We need to make an estimate...
-			arrUse.estimatedLocalArray = True
-			arrUse.needLocalArray = True
-			print(name + " needs estimate")
 
 def	PreprocessFunction(ff, dicts):
 	funcUse = FuncUse()
@@ -388,26 +299,6 @@ def	PreprocessFunction(ff, dicts):
 	PreprocessOutArray(ff, "intout", funcUse.intout, dicts)
 	PreprocessOutArray(ff, "ptsout", funcUse.ptsout, dicts)
 	return funcUse
-
-def GetArraySizeString(arrUse : ArrayUse):
-	count = ""
-	num = 0
-	first = True
-	if arrUse.dynamicSize is not None:
-		for c in arrUse.dynamicSize:
-			sc =str(c)
-			if sc !="0":
-				sc = sc.replace("contrl", "lcl_contrl")
-				if not first:
-					count += " + "
-				first = False
-				count += "(" + str(sc) + ")"
-				num = num + 1
-		if num == 1:
-			count = count[1:-1]	# Skip parantheses if not needed
-	else:
-		count = str(arrUse.staticSize)
-	return count
 
 def SortOnIndex(n):
 	idx = n.attrib.get("idx")
@@ -563,11 +454,12 @@ def WriteWorkInSetup(f, ff, arrUse : ArrayUse, dicts):
 	if arrUse.values == 0 and arrUse.pointers == 0:
 		# Not used, use dummy pointer.
 		arrUse.vdipb = "unused_dummy_array"
-		arrUse.contrl = "0"
+		#arrUse.contrl = "0"
 		return
 
 	[_, wordType, _, _, _] = header_gen.GetTypeName("int16_t", dicts)
-	count = GetArraySizeString(arrUse)
+#	count = GetArraySizeString(arrUse)
+	count = arrUse.arraySize
 	if arrUse.needLocalArray:
 		if not (isinstance(count, int) or count.isnumeric()):
 			# create a variable to hold the size
@@ -575,7 +467,7 @@ def WriteWorkInSetup(f, ff, arrUse : ArrayUse, dicts):
 				lcl_var_name = "lcl_" + arrUse.name + "_num"
 				f.write("\t" + wordType + " " + lcl_var_name + " = " + count + ";\n")
 				count = lcl_var_name	# use local variable as count from now on.
-		arrUse.contrl = count
+		arrUse.ctrlCount = count
 		# Create array
 		arrUse.vdipb = "lcl_" + arrUse.name
 		f.write("\t" + wordType + " " + arrUse.vdipb + "[" + count + "];\n")
@@ -587,7 +479,7 @@ def WriteWorkInSetup(f, ff, arrUse : ArrayUse, dicts):
 			arrUse.vdipb = "(" + wordType + "*)" + argname
 		else:
 			arrUse.vdipb = "&((" + wordType + "*)" + argname + ")[" + str(idx) + "]"
-		arrUse.contrl = count
+		#arrUse.ctrlCount = count
 	else:
 		print ("Error: Nope, don't understand.")
 	# Check if we need to zero some data.
@@ -607,13 +499,14 @@ def WriteWorkOutSetup(f, arrUse : ArrayUse, dicts):
 	if arrUse.values == 0 and arrUse.pointers == 0 and arrUse.ret == 0:
 		# Not used, use dummy pointer.
 		arrUse.vdipb = "unused_dummy_array"
-		arrUse.contrl = "0"
+		#arrUse.contrl = "0"
 		return
 
 	[_, wordType, _, _, _] = header_gen.GetTypeName("int16_t", dicts)
-	count = GetArraySizeString(arrUse)
+#	count = GetArraySizeString(arrUse)
+	count = arrUse.arraySize
 	if arrUse.needLocalArray:
-		arrUse.contrl = count
+		#arrUse.contrl = count
 		# Create array
 		arrUse.vdipb = "lcl_" + arrUse.name
 		f.write("\t" + wordType + " " + arrUse.vdipb + "[" + count + "];\n")
@@ -625,7 +518,7 @@ def WriteWorkOutSetup(f, arrUse : ArrayUse, dicts):
 			arrUse.vdipb = "(" + wordType + "*)" + argname
 		else:
 			arrUse.vdipb = "&((" + wordType + "*)" + argname + ")[" + str(idx) + "]"
-		arrUse.contrl = count
+		#arrUse.contrl = count
 	else:
 		print ("Error: Nope, don't understand.")
 
@@ -649,9 +542,9 @@ def WriteWorkContrlSetup(f, ff, funcUse : FuncUse, dicts):
 	subid = ff.attrib.get("subid")
 	if subid:
 		contrlIn.append(MakeContrlArg(subid, 5))
-	intinLen = funcUse.intin.contrl_count
+	intinLen = funcUse.intin.ctrlCount
 	contrlIn.append(MakeContrlArg(intinLen, 3))
-	ptsinLen = funcUse.ptsin.contrl_count
+	ptsinLen = funcUse.ptsin.ctrlCount
 	contrlIn.append(MakeContrlArg(ptsinLen, 1))
 
 	contrlIn.sort(key=SortOnIndex)
