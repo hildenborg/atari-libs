@@ -195,7 +195,7 @@ def main():
 	GenerateGlobals("def_types", build_dir, target)
 	Generate("tos", build_dir, target, [])
 	Generate("aes", build_dir, target, ["aes.c", "aes_def.h", "wind_get.c"])
-	Generate("vdi", build_dir, target, ["vdi.c", "vdi_def.h", "v_opnvwk.c", "vq_vgdos.c", "vq_gdos.c", "vs_clip.c"])
+	Generate("vdi", build_dir, target, ["vdi.c", "vdi_def.h", "v_opnvwk.c", "vq_vgdos.c", "vq_gdos.c", "vs_clip.c", "vsm_locator.c"])
 #	Generate("line_a", target, ["line_a.c", "line_a_def.h"])
 
 if __name__ == "__main__":

@@ -13,9 +13,9 @@ void vs_clip(INT16_T handle, INT16_T clip_flag, INT16_T* xyarray)
 	{
 		contrl,
 		intin,
-		vdiparblk.ptsin,	// Unused.
-		vdiparblk.intout,	// Unused.
-		vdiparblk.ptsout	// Unused.
+		unused_dummy_array,
+		unused_dummy_array,
+		unused_dummy_array
 	};
 	contrl[6] = handle;
 	intin[0] = clip_flag;

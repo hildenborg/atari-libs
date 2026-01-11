@@ -16,7 +16,7 @@ void v_opnvwk(INT16_T* work_in, INT16_T* handle, WS* work_out)
 	{
 		contrl,
 		work_in,
-		vdiparblk.ptsin,	// Unused.
+		unused_dummy_array,
 		(INT16_T*)work_out,
 		&((INT16_T*)work_out)[45]
 	};
@@ -26,5 +26,5 @@ void v_opnvwk(INT16_T* work_in, INT16_T* handle, WS* work_out)
 	contrl[5] = 0;
 	contrl[6] = *handle;
 	vdi_call(&lcl_vdipb);
-	*handle = vdiparblk.contrl[6];
+	*handle = contrl[6];
 }

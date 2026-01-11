@@ -496,7 +496,7 @@
 			<arg name="yout" src="ptsout" type="int16_t*" />
 			<arg name="term" src="intout" type="int16_t*" />
 		</function>
-		<function id="28" name="vsm_locator">
+		<function id="28" name="vsm_locator" onlyheader="1">
 			<return type="int16_t" code="(contrl[4] &lt;&lt; 1) | contrl[2]" />
 			<reserve dst="ptsin" longs="1" />
 			<arg name="handle" dst="contrl" idx="6" type="int16_t" />

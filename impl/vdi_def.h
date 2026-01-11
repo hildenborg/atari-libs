@@ -13,7 +13,7 @@ extern "C" {
 #include "def_types.h"
 #include "vdi.h"
 
-extern VDIPARBLK vdiparblk;
+extern INT16_T unused_dummy_array[16];	// Should never be used.
 
 void vdi_call(VDIPB* vdipb);
 INT16_T vdi_zero_ended_string_to_words(const INT8_T* src, INT16_T* dst);

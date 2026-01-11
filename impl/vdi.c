@@ -4,18 +4,8 @@
 */
 
 #include "vdi_def.h"
-VDIPARBLK vdiparblk;
+INT16_T unused_dummy_array[16];	// Should never be used.
 
-/*
-VDIPB vdipb = 
-{
-	vdiparblk.contrl,
-	vdiparblk.intin,
-	vdiparblk.ptsin,
-	vdiparblk.intout,
-	vdiparblk.ptsout
-};
-*/
 void vdi_call(VDIPB* vdipb)
 {
 	__asm__ volatile (
