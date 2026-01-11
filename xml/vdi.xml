@@ -4,7 +4,6 @@
 -->
 <vdi>
 	<include name="&quot;aes.h&quot;" />
-	<include name="&quot;vdi_def.h&quot;" />
 	<structs>
 		<typedef typename="fix31" type="int32_t" />
 		<callback name="INT16_VDI_CB">

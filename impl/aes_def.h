@@ -13,11 +13,11 @@ extern "C" {
 #include "def_types.h"
 #include "aes.h"
 
-extern AESPARBLK aesparblk;
-extern AESPB global_aespb; 
+extern INT16_T aes_global[16];
+extern void* aes_unused_dummy_addr[16];
+extern INT16_T aes_unused_dummy_int[16];
 
-INT16_T aes_calli(UINT32_T c, AESPB* aespb);
-INT16_T aes_callo(UINT32_T c, AESPB* aespb);
+INT16_T aes_call(AESPB* aespb);
 
 #ifdef __cplusplus
 }

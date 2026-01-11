@@ -13,11 +13,7 @@ def CodeAESFunction(iname, build_dir, ff, dicts):
 	id = ff.attrib.get("id")		# AES function
 	grpid = ff.attrib.get("grpid")	# Trap num (always 2 for aes)
 
-	flagTreadSafe = header_gen.GetSetting(dicts, "flagTreadSafe")
 	threaded = ff.attrib.get("threaded")
-	if not threaded:
-		# only for functions that ask for it.
-		flagTreadSafe = False
 
 	if grpid != "2":
 		print ("group id: " + grpid + "\n")
@@ -27,22 +23,12 @@ def CodeAESFunction(iname, build_dir, ff, dicts):
 	if r is not None:
 		ret = r.attrib.get("type")
 
-	usesAddrOut = False
-	for a in ff.findall('arg'):
-		src = a.attrib.get("src")
-		if src == "addrout":
-			usesAddrOut = True
-
-	aesparblk = ""
-	if not flagTreadSafe:
-		aesparblk = "aesparblk."
-
 	with open(build_dir + name + ".c", "w") as f:
 		f.write('#include "aes_def.h"\n\n')
 
 		[isPtr, retType] = header_gen.GetTypeString("", ret, dicts)
 		funcDecl = retType
-		if flagTreadSafe:
+		if threaded:
 			funcDecl += " mt_" + name + "("
 		else:
 			funcDecl += " " + name + "("
@@ -69,25 +55,25 @@ def CodeAESFunction(iname, build_dir, ff, dicts):
 			[isPtr, argType] = header_gen.GetTypeString(n, t, dicts)
 			funcDecl += argType
 			if src == "intout":
-				s_intout = s_intout + "\t*" + n + " = " + aesparblk + "intout[" + str(intout) + "];\n"
+				s_intout = s_intout + "\t*" + n + " = " + "intout[" + str(intout) + "];\n"
 				intout = intout + 1
 			elif src == "addrout":
-				s_addrout = s_addrout + "\t*" + n + " = " + aesparblk + "addrout[" + str(addrout) + "];\n"
+				s_addrout = s_addrout + "\t*" + n + " = " + "addrout[" + str(addrout) + "];\n"
 				addrout = addrout + 1
 			if dst == "intin":
 				if (t == "int32_t" or t == "uint32_t") and not isPtr:
 					[_, longType, _, _, _] = header_gen.GetTypeName("int32_t", dicts)
-					s_intin = s_intin + "\t*(" + longType + "*)(&" + aesparblk + "intin[" + str(intin) + "]) = " + isPtr + n + ";\n"
+					s_intin = s_intin + "\t*(" + longType + "*)(&" + "intin[" + str(intin) + "]) = " + isPtr + n + ";\n"
 					intin = intin + 2
 				else:
-					s_intin = s_intin + "\t" + aesparblk + "intin[" + str(intin) + "] = " + isPtr + n + ";\n"
+					s_intin = s_intin + "\t" + "intin[" + str(intin) + "] = " + isPtr + n + ";\n"
 					intin = intin + 1
 			elif dst == "addrin":
-				s_addrin = s_addrin + "\t" + aesparblk + "addrin[" + str(addrin) + "] = (void*)" + n + ";\n"
+				s_addrin = s_addrin + "\t" + "addrin[" + str(addrin) + "] = (void*)" + n + ";\n"
 				addrin = addrin + 1
 
 		f.write(funcDecl)
-		if flagTreadSafe:
+		if threaded:
 			if not first:
 				f.write(", ")
 			f.write(wordType + "* aes_global")
@@ -96,63 +82,53 @@ def CodeAESFunction(iname, build_dir, ff, dicts):
 
 		f.write(")\n{\n")
 
-		aespb = "global_aespb"
-		if flagTreadSafe:
-			aespb = "lcl_aespb"
-			lcl_aespb = "\tAESPB lcl_aespb =\n\t{\n"
+		lcl_aespb = "\tAESPB lcl_aespb =\n\t{\n"
 
-			f.write("\t" + wordType + " control[5];\n")
-			lcl_aespb += "\t\tcontrol,\n"
-			lcl_aespb += "\t\taes_global,\n"
-			if intin > 0:
-				f.write("\t" + wordType + " intin[" + str(intin) + "];\n")
-				lcl_aespb += "\t\tintin,\n"
-			else:
-				lcl_aespb += "\t\taesparblk.intin,\t// Unused.\n"
-			if intout > 0:
-				f.write("\t" + wordType + " intout[" + str(intout) + "];\n")
-				lcl_aespb += "\t\tintout,\n"
-			else:
-				lcl_aespb += "\t\taesparblk.intout,\t// Unused.\n"
-			if addrin > 0:
-				f.write("\tvoid* addrin[" + str(addrin) + "];\n")
-				lcl_aespb += "\t\taddrin,\n"
-			else:
-				lcl_aespb += "\t\taesparblk.addrin,\t// Unused.\n"
-			if addrout > 0:
-				f.write("\tvoid* addrout[" + str(addrout) + "];\n")
-				lcl_aespb += "\t\taddrout\n"
-			else:
-				lcl_aespb += "\t\taesparblk.addrout\t// Unused.\n"
-			lcl_aespb += "\t};\n"
-			f.write(lcl_aespb)
+		f.write("\t" + wordType + " control[5] = {")
+		f.write(str(id) + ", ")
+		f.write(str(intin) + ", ")
+		f.write(str(intout) + ", ")
+		f.write(str(addrin) + ", ")
+		f.write(str(addrout))
+		f.write("};\n")
+		lcl_aespb += "\t\tcontrol,\n"
+		lcl_aespb += "\t\taes_global,\n"
+		if intin > 0:
+			f.write("\t" + wordType + " intin[" + str(intin) + "];\n")
+			lcl_aespb += "\t\tintin,\n"
+		else:
+			lcl_aespb += "\t\taes_unused_dummy_int,\n"
+		if intout > 0:
+			f.write("\t" + wordType + " intout[" + str(intout) + "];\n")
+			lcl_aespb += "\t\tintout,\n"
+		else:
+			lcl_aespb += "\t\taes_unused_dummy_int,\n"
+		if addrin > 0:
+			f.write("\tvoid* addrin[" + str(addrin) + "];\n")
+			lcl_aespb += "\t\taddrin,\n"
+		else:
+			lcl_aespb += "\t\taes_unused_dummy_addr,\n"
+		if addrout > 0:
+			f.write("\tvoid* addrout[" + str(addrout) + "];\n")
+			lcl_aespb += "\t\taddrout\n"
+		else:
+			lcl_aespb += "\t\taes_unused_dummy_addr\n"
+		lcl_aespb += "\t};\n"
+		f.write(lcl_aespb)
 			
 		f.write(s_intin)
 		f.write(s_addrin)
 		f.write("\t")
 		if ret != "void":
 			f.write(retType + " result = ")
-		# There are no calls that use addrin and addrout at the same time
-		if usesAddrOut:
-			f.write("aes_callo(")
-			f.write("(" + str(id) + " << 24) | ")
-			f.write("(" + str(intin) + " << 16) | ")
-			f.write("(" + str(intout) + " << 8) | ")
-			f.write(str(addrout))
-		else:
-			f.write("aes_calli(")
-			f.write("(" + str(id) + " << 24) | ")
-			f.write("(" + str(intin) + " << 16) | ")
-			f.write("(" + str(intout) + " << 8) | ")
-			f.write(str(addrin))
-		f.write(", &" + aespb + ");\n")
+			f.write("aes_call(&lcl_aespb);\n")
 		f.write(s_intout)
 		f.write(s_addrout)
 		if ret != "void":
 			f.write("\treturn result;\n")
 		f.write("}\n\n")
-		if flagTreadSafe:
-			f.write("\n\n")
+
+		if threaded:
 			f.write(funcDecl.replace("mt_" + name, name))
 			f.write(")\n{\n\t")
 			if ret != "void":
@@ -168,6 +144,6 @@ def CodeAESFunction(iname, build_dir, ff, dicts):
 				f.write(n)
 			if not first:
 				f.write(", ")
-			f.write("aesparblk.global")
+			f.write("aes_global")
 			f.write(");\n}\n\n")
 
