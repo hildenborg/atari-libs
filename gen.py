@@ -149,6 +149,19 @@ def ReadDefenitions(xmlfile, targetname, dicts):
 		target = dicts["targetDict"][targetname]
 		AddToDicts(target, dicts)
 
+def WriteDebug(name, build_dir, dicts):
+	root = ET.Element(name)
+	tree = ET.ElementTree(root)
+	categories = dicts["categories"]
+	functionDict = dicts["functionDict"]
+	for c in categories:
+		if c in functionDict:
+			for _, ff in functionDict[c].items():
+				root.append(ff)
+	ET.indent(tree, space="\t", level=0)
+	with open(build_dir + name + ".xml", 'wb') as f:
+		tree.write(f)
+
 def Generate(name, build_dir, target, impl):
 	dicts = MakeDicts()
 	ReadGlobals("xml/global.xml", target, dicts)
@@ -158,6 +171,8 @@ def Generate(name, build_dir, target, impl):
 	code_gen.WriteMakefileInc(name, build_dir, dicts, impl)
 	for n in impl:
 		shutil.copyfile("impl/" + n, build_dir + n)
+	# Debug
+	#WriteDebug(name, build_dir, dicts)
 
 def GenerateGlobals(name, build_dir, target):
 	dicts = MakeDicts()

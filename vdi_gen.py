@@ -143,9 +143,13 @@ def SetRetUsage(ff, arrUse: ArrayUse):
 	arrUse.ret = 0
 	r = ff.find("return")
 	if r is not None:
+		retlongs = r.attrib.get("longs")
 		retsrc = r.attrib.get("src")
 		if retsrc == arrUse.name:
-			arrUse.ret = 1
+			if retlongs:
+				arrUse.ret = 2
+			else:
+				arrUse.ret = 1
 
 def SetDefaultSizeAndIdx(arg, idx, arrUse: ArrayUse):
 	arg_idx = arg.attrib.get("idx")
@@ -170,14 +174,14 @@ def SetDefaultSizeAndIdx(arg, idx, arrUse: ArrayUse):
 		if int(arg_idx) != idx:
 			idx = int(arg_idx)
 	else:
-		arg.set("idx", idx)
+		arg.set("idx", str(idx))
 
 	next_idx = None
 	if isinstance(count, int) or count.isnumeric():
 		count = int(count) * mult
 		next_idx = idx + count
 		if not haveSize:
-			arg.set("words", count)
+			arg.set("words", str(count))
 		if arrUse is not None:
 			for i in range(count):
 				arrUse.usedIndexes.append(idx + i)
@@ -234,9 +238,6 @@ def PreprocessSequences(ff):
 def PreprocessInArray(ff, chkarr, arrUse: ArrayUse, dicts):
 	arrUse.name = chkarr
 	arrUse.ff = ff
-	fncname = ff.attrib.get("name")
-	if fncname == "v_cellarray":
-		pass
 	SetRetUsage(ff, arrUse)
 	PreprocessSizeAndIdx(ff, arrUse)
 	GetArraySize(arrUse)
@@ -321,7 +322,7 @@ def WriteInString(f, a, arrUse : ArrayUse, words, dicts):
 			f.write(name)
 			return
 	strWords = str(words).replace("contrl", "lcl_contrl")
-	f.write("VDI_CAST_FROM_BYTES(" + name + ", &" + arrUse.vdipb + "[" + str(idx) + "], " + strWords + ")")
+	f.write("\tVDI_CAST_FROM_BYTES(" + name + ", &" + arrUse.vdipb + "[" + str(idx) + "], " + strWords + ");\n")
 
 def WriteInWords(f, a, arrUse : ArrayUse, words, dicts):
 	type = a.attrib.get("type")
@@ -340,7 +341,7 @@ def WriteInWords(f, a, arrUse : ArrayUse, words, dicts):
 		# Compile time known length
 		words = int(words)
 		if words == 1:
-			f.write(arrUse.vdipb + "[" + str(idx) + "] = ")
+			f.write("\t" + arrUse.vdipb + "[" + str(idx) + "] = ")
 			# Just a single value.
 			if value:
 				f.write(str(value))
@@ -349,10 +350,11 @@ def WriteInWords(f, a, arrUse : ArrayUse, words, dicts):
 				if isPtr:
 					f.write("*")
 				f.write(name)
+			f.write(";\n")
 			return
 	strWords = str(words).replace("contrl", "lcl_contrl")
 	# Runtime known length or multiple values.
-	f.write("VDI_COPY_WORDS(" + name + ", &" + arrUse.vdipb + "[" + str(idx) + "], " + strWords + ")")
+	f.write("\tVDI_COPY_WORDS(" + name + ", &" + arrUse.vdipb + "[" + str(idx) + "], " + strWords + ");\n")
 
 def WriteInLongs(f, a, arrUse : ArrayUse, longs, dicts):
 	name = a.attrib.get("name")
@@ -371,19 +373,17 @@ def WriteInLongs(f, a, arrUse : ArrayUse, longs, dicts):
 			return
 	# Runtime known length or multiple values.
 	strLongs = str(longs).replace("contrl", "lcl_contrl")
-	f.write("VDI_COPY_LONGS(" + name + ", &" + arrUse.vdipb + "[" + str(idx) + "], " + strLongs + ")")
+	f.write("\tVDI_COPY_LONGS(" + name + ", &" + arrUse.vdipb + "[" + str(idx) + "], " + strLongs + ")\n")
 
 def WriteWorkInArgSetup(f, arrUse : ArrayUse, dicts):
 	arrUse.xmlArgs.sort(key=SortOnIndex)
 	for a in arrUse.xmlArgs:
 		words = a.attrib.get("words")
 		longs = a.attrib.get("longs")
-		f.write("\t")
 		if words is not None:
 			WriteInWords(f, a, arrUse, words, dicts)
 		elif longs is not None:
 			WriteInLongs(f, a, arrUse, longs, dicts)
-		f.write(";\n")
 
 def WriteOutString(f, a, arrUse : ArrayUse, words, dicts):
 	name = a.attrib.get("name")
@@ -391,10 +391,10 @@ def WriteOutString(f, a, arrUse : ArrayUse, words, dicts):
 	if isinstance(words, int) or words.isnumeric():
 		if int(words) == 1:
 			# Simple typecast
-			f.write("*" + name + " = " + arrUse.vdipb + "[" + str(idx) + "]")
+			f.write("\t*" + name + " = " + arrUse.vdipb + "[" + str(idx) + "];\n")
 			return
 	strWords = str(words).replace("contrl", "lcl_contrl")
-	f.write("VDI_CAST_TO_BYTES(&" + arrUse.vdipb + "[" + str(idx) + "], " + name + ", " + strWords + ")")
+	f.write("\tVDI_CAST_TO_BYTES(&" + arrUse.vdipb + "[" + str(idx) + "], " + name + ", " + strWords + ");\n")
 
 def WriteOutWords(f, a, arrUse : ArrayUse, words, dicts):
 	type = a.attrib.get("type")
@@ -414,13 +414,13 @@ def WriteOutWords(f, a, arrUse : ArrayUse, words, dicts):
 		words = int(words)
 		if words == 1:
 			if seqIdx:
-				f.write(name + "[" + str(seqIdx) + "] = " + arrUse.vdipb + "[" + str(idx) + "]")
+				f.write("\t" + name + "[" + str(seqIdx) + "] = " + arrUse.vdipb + "[" + str(idx) + "];\n")
 			else:
-				f.write("*" + name + " = " + arrUse.vdipb + "[" + str(idx) + "]")
+				f.write("\t*" + name + " = " + arrUse.vdipb + "[" + str(idx) + "];\n")
 			return
 	# Runtime known length or multiple values.
 	strWords = str(words).replace("contrl", "lcl_contrl")
-	f.write("VDI_COPY_WORDS(&" + arrUse.vdipb + "[" + str(idx) + "], " + name + ", " + strWords + ")")
+	f.write("\tVDI_COPY_WORDS(&" + arrUse.vdipb + "[" + str(idx) + "], " + name + ", " + strWords + ");\n")
 
 def WriteOutLongs(f, a, arrUse : ArrayUse, longs, dicts):
 	name = a.attrib.get("name")
@@ -435,19 +435,17 @@ def WriteOutLongs(f, a, arrUse : ArrayUse, longs, dicts):
 			return
 	# Runtime known length or multiple values.
 	strLongs = str(longs).replace("contrl", "lcl_contrl")
-	f.write("VDI_COPY_LONGS(&" + arrUse.vdipb + "[" + str(idx) + "], " + name + ", " + strLongs + ")")
+	f.write("\tVDI_COPY_LONGS(&" + arrUse.vdipb + "[" + str(idx) + "], " + name + ", " + strLongs + ");\n")
 
 def WriteWorkOutArgSetup(f, arrUse : ArrayUse, dicts):
 	arrUse.xmlArgs.sort(key=SortOnIndex)
 	for a in arrUse.xmlArgs:
 		words = a.attrib.get("words")
 		longs = a.attrib.get("longs")
-		f.write("\t")
 		if words is not None:
 			WriteOutWords(f, a, arrUse, words, dicts)
 		elif longs is not None:
 			WriteOutLongs(f, a, arrUse, longs, dicts)
-		f.write(";\n")
 
 def WriteWorkInSetup(f, ff, arrUse : ArrayUse, dicts):
 	# Need to set in arrUse, what pointer vdipb should use.
@@ -456,7 +454,6 @@ def WriteWorkInSetup(f, ff, arrUse : ArrayUse, dicts):
 		arrUse.vdipb = "unused_dummy_array"
 		#arrUse.contrl = "0"
 		return
-
 	[_, wordType, _, _, _] = header_gen.GetTypeName("int16_t", dicts)
 #	count = GetArraySizeString(arrUse)
 	count = arrUse.arraySize
@@ -467,7 +464,7 @@ def WriteWorkInSetup(f, ff, arrUse : ArrayUse, dicts):
 				lcl_var_name = "lcl_" + arrUse.name + "_num"
 				f.write("\t" + wordType + " " + lcl_var_name + " = " + count + ";\n")
 				count = lcl_var_name	# use local variable as count from now on.
-		arrUse.ctrlCount = count
+		#arrUse.ctrlCount = count
 		# Create array
 		arrUse.vdipb = "lcl_" + arrUse.name
 		f.write("\t" + wordType + " " + arrUse.vdipb + "[" + count + "];\n")
@@ -524,8 +521,8 @@ def WriteWorkOutSetup(f, arrUse : ArrayUse, dicts):
 
 def MakeContrlArg(value, idx):
 	newElement = ET.Element("arg")
-	newElement.set("value", value)
-	newElement.set("idx", idx)
+	newElement.set("value", str(value))
+	newElement.set("idx", str(idx))
 	newElement.set("type", "int16_t")
 	return newElement
 
@@ -638,10 +635,17 @@ def WriteReturn(f, ff, dicts):
 	r = ff.find("return")
 	if r is not None:
 		type = r.attrib.get("type")
+		longs = r.attrib.get("longs")
 		if type and type != "void":
 			src = r.attrib.get("src")
 			idx = r.attrib.get("idx")
-			f.write("\treturn lcl_" + src + "[" + str(idx) +"];\n")
+			if longs:
+				f.write("#pragma GCC diagnostic push\n")
+				f.write("#pragma GCC diagnostic ignored \"-Wstrict-aliasing\"\n")
+				f.write("\treturn *(" + type + "*)(&lcl_" + src + "[" + str(idx) +"]);\n")
+				f.write("#pragma GCC diagnostic pop\n")
+			else:
+				f.write("\treturn lcl_" + src + "[" + str(idx) +"];\n")
 
 def WriteFunction(f, ff, funcUse : FuncUse, dicts):
 	# Write begin function
@@ -653,6 +657,20 @@ def WriteFunction(f, ff, funcUse : FuncUse, dicts):
 	WriteWorkExit(f, ff, funcUse, dicts)
 	# Write return if return
 	WriteReturn(f, ff, dicts)
+
+def AppendDebugArray(dbg, arrUse : ArrayUse):
+	arr = ET.Element(arrUse.name)
+	dbg.append(arr)
+	arr.set("arraySize", str(arrUse.arraySize))
+	arr.set("ctrlCount", str(arrUse.ctrlCount))
+
+def AppendDebug(ff, funcUse : FuncUse):
+	dbg = ff.find("debug")
+	if dbg is not None:
+		AppendDebugArray(dbg, funcUse.intin)
+		AppendDebugArray(dbg, funcUse.ptsin)
+		AppendDebugArray(dbg, funcUse.intout)
+		AppendDebugArray(dbg, funcUse.ptsout)
 
 def CodeVDIFunction(iname, build_dir, ff, dicts):
 	name = ff.attrib.get("name")
@@ -668,6 +686,11 @@ def CodeVDIFunction(iname, build_dir, ff, dicts):
 	r = ff.find("return")
 	if r is not None:
 		retType = r.attrib.get("type")
+
+	# Create a debug element we can add information to.
+	# This can be useful if we later save out the xml for analyzing.
+	dbgElement = ET.Element("debug")
+	ff.append(dbgElement)
 
 	with open(build_dir + name + ".c", "w") as f:
 		f.write('#include "vdi_def.h"\n\n')
@@ -691,5 +714,7 @@ def CodeVDIFunction(iname, build_dir, ff, dicts):
 		funcUse = PreprocessFunction(ff, dicts)	# Insert default and automatic attributes.
 		WriteFunction(f, ff, funcUse, dicts)
 		f.write("}\n")
+
+		AppendDebug(ff, funcUse)
 
 

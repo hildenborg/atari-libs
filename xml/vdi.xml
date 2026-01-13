@@ -1040,6 +1040,7 @@
 		<function id="11" subid="13" name="v_bez_on">
 			<return src="intout" idx="0" type="int16_t" />
 			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg value="0" dst="ptsin" type="int16_t" />
 		</function>
 		<function id="11" subid="13" name="v_bez_off">
 			<return type="void" />
@@ -1055,7 +1056,7 @@
 			<return type="void" />
 			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
 			<arg name="count" type="int16_t" />
-			<arg name="xyarray" dst="ptsin" longs="count" type="int16_t*" />
+			<arg name="xyarray" dst="ptsin" longs="(count + 1) >> 1" type="int16_t*" />
 			<arg name="bezarray" dst="intin" words="count" type="int8_t*" />
 			<arg name="extent" src="ptsout" words="4" type="int16_t*" />
 			<arg name="totpts" src="intout" type="int16_t*" />
@@ -1065,7 +1066,7 @@
 			<return type="void" />
 			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
 			<arg name="count" type="int16_t" />
-			<arg name="xyarray" dst="ptsin" longs="count" type="int16_t*" />
+			<arg name="xyarray" dst="ptsin" longs="(count + 1) >> 1" type="int16_t*" />
 			<arg name="bezarray" dst="intin" words="count" type="int8_t*" />
 			<arg name="extent" src="ptsout" words="4" type="int16_t*" />
 			<arg name="totpts" src="intout" type="int16_t*" />
@@ -1149,9 +1150,9 @@
 			<arg name="cellht" src="ptsout" type="int16_t*" />
 		</function>
 		<function id="246" name="vst_arbpt32">
-			<return src="intout" idx="0" type="fix31" />
+			<return src="intout" idx="0" type="fix31" longs="1" />
 			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
-			<arg name="point" dst="intin" type="fix31" />
+			<arg name="point" dst="intin" type="fix31" longs="1"/>
 			<arg name="chwd" src="ptsout" type="int16_t*" />
 			<arg name="chht" src="ptsout" type="int16_t*" />
 			<arg name="cellwd" src="ptsout" type="int16_t*" />
@@ -1203,9 +1204,9 @@
 			<arg name="pairs" src="intout" type="int16_t*" />
 		</function>
 		<function id="252" name="vst_setsize32">
-			<return src="intout" idx="0" type="fix31" />
+			<return src="intout" idx="0" type="fix31" longs="1" />
 			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
-			<arg name="point" dst="intin" type="fix31" />
+			<arg name="point" dst="intin" type="fix31" longs="1" />
 			<arg name="chwd" src="ptsout" type="int16_t*" />
 			<arg name="chht" src="ptsout" type="int16_t*" />
 			<arg name="cellwd" src="ptsout" type="int16_t*" />

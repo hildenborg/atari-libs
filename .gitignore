@@ -3,5 +3,5 @@ build
 gen
 test
 *.pyc
-
+verify.py
 
