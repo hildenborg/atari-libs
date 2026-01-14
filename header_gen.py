@@ -158,14 +158,40 @@ def HeaderFunction(f, ff, name, extraArg, dicts):
 		f.write("void")
 	f.write(");\n")
 
+def MT_styleDefine(f, ff, name, dicts):
+	HeaderFunction(f, ff, "mt_" + name, ["aes_global","int16_t*"], dicts)
+	f.write("#define MT_" + name + "(")
+	first = True
+	for a in ff.findall('arg'):
+		n = a.attrib.get("name")
+		if n:
+			if not first:
+				f.write(", ")
+			first = False
+			f.write(n)
+			
+	if not first:
+		f.write(", ")
+	f.write("aes_global) mt_" + name + "(")
+	first = True
+	for a in ff.findall('arg'):
+		n = a.attrib.get("name")
+		if n:
+			if not first:
+				f.write(", ")
+			first = False
+			f.write(n)
+	if not first:
+		f.write(", ")
+	f.write("aes_global)\n\n")
+
 def HeaderFunctions(f, functions, dicts):
-	flagTreadSafe = GetSetting(dicts, "flagTreadSafe")
 	for _, ff in functions.items():
 		name = ff.attrib.get("name")
-		threaded = ff.attrib.get("threaded")
+		nvdi_style = ff.attrib.get("nvdi_style")
 		HeaderFunction(f, ff, name, None, dicts)
-		if threaded and flagTreadSafe:
-			HeaderFunction(f, ff, "mt_" + name, ["aes_global","int16_t*"], dicts)
+		if nvdi_style:
+			MT_styleDefine(f, ff, name, dicts)
 
 	f.write("\n\n")
 

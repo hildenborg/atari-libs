@@ -13,7 +13,7 @@ def CodeAESFunction(iname, build_dir, ff, dicts):
 	id = ff.attrib.get("id")		# AES function
 	grpid = ff.attrib.get("grpid")	# Trap num (always 2 for aes)
 
-	threaded = ff.attrib.get("threaded")
+	nvdi_style = ff.attrib.get("nvdi_style")
 
 	if grpid != "2":
 		print ("group id: " + grpid + "\n")
@@ -28,7 +28,7 @@ def CodeAESFunction(iname, build_dir, ff, dicts):
 
 		[isPtr, retType] = header_gen.GetTypeString("", ret, dicts)
 		funcDecl = retType
-		if threaded:
+		if nvdi_style:
 			funcDecl += " mt_" + name + "("
 		else:
 			funcDecl += " " + name + "("
@@ -73,7 +73,7 @@ def CodeAESFunction(iname, build_dir, ff, dicts):
 				addrin = addrin + 1
 
 		f.write(funcDecl)
-		if threaded:
+		if nvdi_style:
 			if not first:
 				f.write(", ")
 			f.write(wordType + "* aes_global")
@@ -128,7 +128,7 @@ def CodeAESFunction(iname, build_dir, ff, dicts):
 			f.write("\treturn result;\n")
 		f.write("}\n\n")
 
-		if threaded:
+		if nvdi_style:
 			f.write(funcDecl.replace("mt_" + name, name))
 			f.write(")\n{\n\t")
 			if ret != "void":

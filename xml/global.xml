@@ -14,7 +14,6 @@
 			<type name="uint32_t" use="unsigned int"/>
 		</types>
 		<settings>
-			<set name="flagTreadSafe" value="True"/>
 		</settings>
 	</target>
 
@@ -29,7 +28,6 @@
 			<type name="uint32_t" use="unsigned long"/>
 		</types>
 		<settings>
-			<set name="flagTreadSafe" value="True"/>
 		</settings>
 	</target>
 
@@ -44,7 +42,6 @@
 			<type name="uint32_t" use="uint32_t"/>
 		</types>
 		<settings>
-			<set name="flagTreadSafe" value="True"/>
 		</settings>
 	</target>
 
