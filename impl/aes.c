@@ -18,6 +18,10 @@ INT16_T aes_unused_dummy_int[16];
 */
 INT16_T aes_call(AESPB* aespb)
 {
+	if (aespb->global == 0)
+	{
+		aespb->global = aes_global;
+	}
 	__asm__ volatile (
 		"move.l	%0, %%d1\n\t"
 		"move.l	#0xc8, %%d0\n\t"

@@ -144,6 +144,6 @@ def CodeAESFunction(iname, build_dir, ff, dicts):
 				f.write(n)
 			if not first:
 				f.write(", ")
-			f.write("aes_global")
+			f.write("0")
 			f.write(");\n}\n\n")
 
