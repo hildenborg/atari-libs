@@ -9,13 +9,6 @@ INT16_T aes_global[16];
 void* aes_unused_dummy_addr[16];
 INT16_T aes_unused_dummy_int[16];
 
-/*
-	Call AES with four bytes in c:
-	id,
-	intin,
-	intout,
-	addrin
-*/
 INT16_T aes_call(AESPB* aespb)
 {
 	if (aespb->global == 0)
