@@ -537,7 +537,7 @@
 			<arg name="maxlen" dst="intin" type="int16_t" />
 			<arg name="echo" dst="intin" type="int16_t" />
 			<arg name="echo_xy" dst="ptsin" longs="1" type="int16_t*" />
-			<arg name="string" src="intout" words="maxlen + 1" type="int8_t*" />
+			<arg name="string" src="intout" words="contrl[4]" type="int8_t*" estimate="maxlen + 1"/>
 		</function>
 		<function id="31" name="vsm_string">
 			<return type="int16_t" src="contrl" idx="4" />
@@ -545,7 +545,7 @@
 			<arg name="maxlen" dst="intin" type="int16_t" />
 			<arg name="echo" dst="intin" type="int16_t" />
 			<arg name="echo_xy" dst="ptsin" longs="1" type="int16_t*" />
-			<arg name="string" src="intout" words="maxlen + 1" type="int8_t*" />
+			<arg name="string" src="intout" words="contrl[4]" type="int8_t*" estimate="maxlen + 1"/>
 		</function>
 		<function id="111" name="vsc_form">
 			<return type="void" />
