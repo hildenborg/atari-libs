@@ -634,8 +634,8 @@
 			<return type="int16_t" />
 			<arg name="mode" type="int16_t" dst="intin" />
 			<arg name="name" type="int8_t*" dst="addrin" />
-			<arg name="type" type="int16_t*" dst="addrin" />
-			<arg name="ap_id" type="int16_t*" dst="addrin" />
+			<arg name="type" type="int16_t*" src="intout" />
+			<arg name="ap_id" type="int16_t*" src="intout" />
 		</function>
 		<function id="19" name="appl_exit" nvdi_style="1">
 			<return type="int16_t" />
@@ -900,11 +900,11 @@
 			<arg name="tree" type="OBJECT*" dst="addrin" />
 			<arg name="obj" type="int16_t" dst="intin" />
 			<arg name="clicks" type="int16_t" dst="intin" />
-			<arg name="newobj" type="int16_t*" dst="intin" />
+			<arg name="newobj" type="int16_t*" src="intout" />
 		</function>
 	</functions>
 	<functions grpid="2" category="Graph">
-		<function id="79" name="graf_rubberbox" nvdi_style="1">
+		<function id="70" name="graf_rubberbox" nvdi_style="1">
 			<return type="int16_t" />
 			<arg name="bx" type="int16_t" dst="intin" />
 			<arg name="by" type="int16_t" dst="intin" />
@@ -969,6 +969,7 @@
 		<function id="75" name="graf_watchbox" nvdi_style="1">
 			<return type="int16_t" />
 			<arg name="tree" type="OBJECT*" dst="addrin" />
+			<arg value="0" type="int16_t" dst="intin" />
 			<arg name="obj" type="int16_t" dst="intin" />
 			<arg name="instate" type="int16_t" dst="intin" />
 			<arg name="outstate" type="int16_t" dst="intin" />
