@@ -46,17 +46,19 @@ def CodeAESFunction(iname, build_dir, ff, dicts):
 		[_, wordType, _, _, _] = header_gen.GetTypeName("int16_t", dicts)
 		for a in ff.findall('arg'):
 			n = a.attrib.get("name")
-			if not n:
-				n = a.attrib.get("value")
 			src = a.attrib.get("src")
 			dst = a.attrib.get("dst")
 			t = a.attrib.get("type")
 			nc = a.attrib.get("nullchk")
-			if not first:
-				funcDecl += ", "
-			first = False
-			[isPtr, argType] = header_gen.GetTypeString(n, t, dicts)
-			funcDecl += argType
+			if not n:
+				n = a.attrib.get("value")
+				isPtr = ""
+			else:
+				if not first:
+					funcDecl += ", "
+				first = False
+				[isPtr, argType] = header_gen.GetTypeString(n, t, dicts)
+				funcDecl += argType
 			beginnc = ""
 			endnc = ""
 			if nc:

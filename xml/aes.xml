@@ -4,9 +4,48 @@
 -->
 <aes>
 	<structs>
+		<typedef typename="fix31" type="int32_t" />
+		<typedef typename="*DIALOG" type="void" />
+		<callback name="UTXT_FN">
+			<return type="void" />
+			<arg name="x" type="int16_t" />
+			<arg name="y" type="int16_t" />
+			<arg name="clip_rect" type="int16_t*" />
+			<arg name="id" type="int32_t" />
+			<arg name="pt" type="int32_t" />
+			<arg name="ratio" type="int32_t" />
+			<arg name="string" type="int8_t*" />
+		</callback>
 		<callback name="INT16_AES_CB_PARMBLK">
 			<return type="int16_t" />
 			<arg name="arg1" type="PARMBLK*" />
+		</callback>
+		<callback name="PRN_SWITCH">
+			<return type="int32_t" />
+			<arg type="DRV_ENTRY*" name="drivers" />
+			<arg type="PRN_SETTINGS*" name="settings" /> 
+			<arg type="PRN_ENTRY*" name="old_printer" />
+			<arg type="PRN_ENTRY*" name="new_printer" />
+		</callback>
+		<callback name="PDLG_INIT">
+			<return type="int32_t" />
+			<arg type="PRN_SETTINGS*" name="settings" /> 
+			<arg type="PDLG_SUB*" name="sub" /> 
+		</callback>
+		<callback name="PDLG_HNDL">
+			<return type="int32_t" />
+			<arg type="PRN_SETTINGS*" name="settings" /> 
+			<arg type="PDLG_SUB*" name="sub" /> 
+			<arg type="int16_t" name="exit_obj" /> 
+		</callback>
+		<callback name="PDLG_RESET">
+			<return type="int32_t" />
+			<arg type="PRN_SETTINGS*" name="settings" /> 
+			<arg type="PDLG_SUB*" name="sub" /> 
+		</callback>
+		<callback name="INT32_NVDI_CB_VOID">
+			<return type="int32_t" />
+			<arg name="par" type="void*" />
 		</callback>
 		<struct name="AESPARBLK">
 			<member name="contrl" type="int16_t[5]" />
@@ -187,14 +226,305 @@
 			<member name="rsh_nimages" type="uint16_t" />
 			<member name="rsh_rssize" type="uint16_t" />
 		</struct>
+		<struct name="MAC_SETTINGS">
+			<member type="uint8_t[120]" name="inside" />
+		</struct>
+		<struct name="PRN_SETTINGS">
+			<member type="int32_t" name="magic" />
+			<member type="int32_t" name="length" />
+			<member type="int32_t" name="format" />
+			<member type="int32_t" name="reserved" />
+			<member type="int32_t" name="page_flags" />
+			<member type="int16_t" name="first_page" />
+			<member type="int16_t" name="last_page" />
+			<member type="int16_t" name="no_copies" />
+			<member type="int16_t" name="orientation" />
+			<member type="fix31" name="scale" />
+			<member type="int16_t" name="driver_id" />
+			<member type="int16_t" name="driver_type" />
+			<member type="int32_t" name="driver_mode" />
+			<member type="int32_t" name="reserved1" />
+			<member type="int32_t" name="reserved2" />
+			<member type="int32_t" name="printer_id" />
+			<member type="int32_t" name="mode_id" />
+			<member type="int16_t" name="mode_hdpi" />
+			<member type="int16_t" name="mode_vdpi" />
+			<member type="int32_t" name="quality_id" />
+			<member type="int32_t" name="color_mode" />
+			<member type="int32_t" name="plane_flags" />
+			<member type="int32_t" name="dither_mode" />
+			<member type="int32_t" name="dither_value" />
+			<member type="int32_t" name="size_id" />
+			<member type="int32_t" name="type_id" />
+			<member type="int32_t" name="input_id" />
+			<member type="int32_t" name="output_id" />
+			<member type="fix31" name="contrast" />
+			<member type="fix31" name="brightness" />
+			<member type="int32_t" name="reserved3" />
+			<member type="int32_t" name="reserved4" />
+			<member type="int32_t" name="reserved5" />
+			<member type="int32_t" name="reserved6" />
+			<member type="int32_t" name="reserved7" />
+			<member type="int32_t" name="reserved8" />
+			<member type="int8_t" name="device[128]" />
+			<member type="MAC_SETTINGS" name="mac_settings" />
+		</struct>
+		<struct name="PRN_TRAY">
+			<member type="PRN_TRAY*" name="next" />
+			<member type="int32_t" name="tray_id" />
+			<member type="int8_t[32]" name="name" />
+		</struct>
+		<struct name="MEDIA_SIZE">
+			<member type="MEDIA_SIZE*" name="next" />
+			<member type="int32_t" name="size_id" />
+			<member type="int8_t[32]" name="name" />
+		</struct>
+		<struct name="MEDIA_TYPE">
+			<member type="MEDIA_TYPE*" name="next" />
+			<member type="int32_t" name="type_id" />
+			<member type="int8_t[32]" name="name" />
+		</struct>
+		<struct name="PRN_MODE">
+			<member type="PRN_MODE*" name="next" />
+			<member type="int32_t" name="mode_id" />
+			<member type="int16_t" name="hdpi" />
+			<member type="int16_t" name="vdpi" />
+			<member type="int32_t" name="mode_capabilities" />
+			<member type="int32_t" name="color_capabilities" />
+			<member type="int32_t" name="dither_flags" />
+			<member type="MEDIA_TYPE*" name="paper_types" />
+			<member type="int32_t" name="reserved" />
+			<member type="int8_t[32]" name="name" />
+		</struct>
+		<struct name="PRN_ENTRY">
+			<member type="PRN_ENTRY*	next" />
+			<member type="int32_t" name="length" />
+			<member type="int32_t" name="format" />
+			<member type="int32_t" name="reserved" />
+			<member type="int16_t" name="driver_id" />
+			<member type="int16_t" name="driver_type" />
+			<member type="int32_t" name="printer_id" />
+			<member type="int32_t" name="printer_capabilities" />
+			<member type="int32_t" name="reserved1" />
+			<member type="int32_t" name="sub_flags" />
+			<member type="PDLG_SUB*" name="sub_dialogs" />
+			<member type="PRN_SWITCH" name="setup_panel" />
+			<member type="PRN_SWITCH" name="close_panel" />
+			<member type="PRN_MODE*" name="modes" />
+			<member type="MEDIA_SIZE*" name="papers" />
+			<member type="PRN_TRAY*" name="input_trays" />
+			<member type="PRN_TRAY*" name="output_trays" />
+			<member type="int8_t[32]" name="name" />
+		</struct>
+		<struct name="DITHER_MODE">
+			<member type="DITHER_MODE*" name="next" />
+			<member type="int32_t" name="length" />
+			<member type="int32_t" name="format" />
+			<member type="int32_t" name="reserved" />
+			<member type="int32_t" name="dither_id" />
+			<member type="int32_t" name="color_modes" />
+			<member type="int32_t" name="reserved1" />
+			<member type="int32_t" name="reserved2" />
+			<member type="int8_t[32]" name="name" />
+		</struct>
+		<struct name="DRV_INFO">
+			<member type="int32_t" name="magic" />
+			<member type="int32_t" name="length" />
+			<member type="int32_t" name="format" />
+			<member type="int32_t" name="reserved" />
+			<member type="int16_t" name="driver_id" />
+			<member type="int16_t" name="driver_type" />
+			<member type="int32_t" name="reserved1" />
+			<member type="int32_t" name="reserved2" />
+			<member type="int32_t" name="reserved3" />
+			<member type="PRN_ENTRY*" name="printers" />
+			<member type="DITHER_MODE*" name="dither_modes" />
+			<member type="int32_t" name="reserved4" />
+			<member type="int32_t" name="reserved5" />
+			<member type="int32_t" name="reserved6" />
+			<member type="int32_t" name="reserved7" />
+			<member type="int32_t" name="reserved8" />
+			<member type="int32_t" name="reserved9" />
+			<member type="int8_t[128]" name="device" />
+		</struct>
+		<struct name="DRV_ENTRY">
+			<member type="DRV_ENTRY*" name="next" />
+		</struct>
+		<struct name="PDLG_SUB">
+			<member type="PDLG_SUB*" name="next" />
+			<member type="int32_t" name="length" />
+			<member type="int32_t" name="format" />
+			<member type="int32_t" name="reserved" />
+			<member type="void*" name="drivers" />
+			<member type="int16_t" name="option_flags" />
+			<member type="int16_t" name="sub_id" />
+			<member type="DIALOG*" name="dialog" />
+			<member type="OBJECT*" name="tree" />
+			<member type="int16_t" name="index_offset" />
+			<member type="int16_t" name="reserved1" />
+			<member type="int32_t" name="reserved2" />
+			<member type="int32_t" name="reserved3" />
+			<member type="int32_t" name="reserved4" />
+			<member type="PDLG_INIT" name="init_dlg" />
+			<member type="PDLG_HNDL" name="do_dlg" />
+			<member type="PDLG_RESET" name="reset_dlg" />
+			<member type="int32_t" name="reserved5" />
+			<member type="OBJECT*" name="sub_icon" />
+			<member type="OBJECT*" name="sub_tree" />
+			<member type="int32_t" name="reserved6" />
+			<member type="int32_t" name="reserved7" />
+			<member type="int32_t" name="private1" />
+			<member type="int32_t" name="private2" />
+			<member type="int32_t" name="private3" />
+			<member type="int32_t" name="private4" />
+		</struct>
+		<struct name="XAESMSG">
+			<member type="int16_t" name="dst_apid" />
+			<member type="int16_t" name="unique_flg" />
+			<member type="void*" name="attached_mem" />
+			<member type="int16_t*" name="msgbuf" />
+		</struct>
+		<struct name="SCANX">
+			<member type="int8_t" name="scancode" />
+			<member type="int8_t" name="nclicks" />
+			<member type="int16_t" name="objnr" />
+		</struct>
+		<struct name="XDO_INF">
+			<member type="SCANX*" name="unsh" />
+			<member type="SCANX*" name="shift" />
+			<member type="SCANX*" name="ctrl" />
+			<member type="SCANX*" name="alt" />
+			<member type="void*" name="resvd" />
+		</struct>
+		<struct name="XTED">
+			<member type="int8_t*" name="xte_ptmplt" />
+			<member type="int8_t*" name="xte_pvalid" />
+			<member type="int16_t" name="xte_vislen" />
+			<member type="int16_t" name="xte_scroll" />
+		</struct>
+		<struct name="SWINFO">
+			<member type="int8_t*" name="string" />
+			<member type="int16_t" name="num" />
+			<member type="int16_t" name="maxnum" />
+		</struct>
+		<struct name="POPINFO">
+			<member type="OBJECT*" name="tree" />
+			<member type="int16_t" name="obnum" />
+		</struct>
+		<struct name="SHELTAIL">
+			<member type="int16_t" name="dummy" />
+			<member type="int32_t" name="magic" />
+			<member type="int16_t" name="isfirst" />
+			<member type="int32_t" name="lasterr" />
+			<member type="int16_t" name="wasgr" />
+		</struct>
+		<struct name="XSHW_COMMAND">
+			<member type="int8_t*" name="command" />
+			<member type="int32_t" name="limit" />
+			<member type="int32_t" name="nice" />
+			<member type="int8_t*" name="defdir" />
+			<member type="int8_t*" name="env" />
+			<member type="int32_t" name="flags" />
+		</struct>
+		<struct name="THREADINFO">
+			<member type="INT32_NVDI_CB_VOID" name="proc" />
+			<member type="void*" name="user_stack" />
+			<member type="uint32_t" name="stacksize" />
+			<member type="int16_t" name="mode" />
+			<member type="int32_t" name="res1" />
+		</struct>
+		<struct name="LBOX_ITEM">
+			<member type="LBOX_ITEM*" name="next" />
+			<member type="int16_t" name="selected" />
+			<member type="int16_t" name="data1" />
+			<member type="void*" name="data2" />
+			<member type="void*" name="data3" />
+		</struct>
+		<struct name="FNTS_ITEM">
+			<member type="FNTS_ITEM*" name="next" />
+			<member type="UTXT_FN" name="display" />
+			<member type="int32_t" name="id" />
+			<member type="int16_t" name="index" />
+			<member type="int8_t" name="mono" />
+			<member type="int8_t" name="outline" />
+			<member type="int16_t" name="npts" />
+			<member type="int8_t*" name="full_name" />
+			<member type="int8_t*" name="family_name" />
+			<member type="int8_t*" name="style_name" />
+			<member type="int8_t*" name="pts" />
+			<member type="int32_t[4]" name="reserved" />
+		</struct>
 	</structs>
-	<defines category="Application">
+	<defines category="NVDI Printer defines">
+		<define name="CC_MONO" value="0x0001" />
+		<define name="CC_4_GREY" value="0x0002" />
+		<define name="CC_8_GREY" value="0x0004" />
+		<define name="CC_16_GREY" value="0x0008" />
+		<define name="CC_256_GREY" value="0x0010" />
+		<define name="CC_32K_GREY" value="0x0020" />
+		<define name="CC_65K_GREY" value="0x0040" />
+		<define name="CC_16M_GREY" value="0x0080" />
+		<define name="CC_2_COLOR" value="0x0100" />
+		<define name="CC_4_COLOR" value="0x0200" />
+		<define name="CC_8_COLOR" value="0x0400" />
+		<define name="CC_16_COLOR" value="0x0800" />
+		<define name="CC_256_COLOR" value="0x1000" />
+		<define name="CC_32K_COLOR" value="0x2000" />
+		<define name="CC_65K_COLOR" value="0x4000" />
+		<define name="CC_16M_COLOR" value="0x8000" />
+		<define name="NO_CC_BITS" value="16" />
+		<define name="DC_NONE" value="0" />
+		<define name="DC_FLOYD" value="1" />
+		<define name="NO_DC_BITS" value="1" />
+		<define name="PC_FILE" value="0x0001" />
+		<define name="PC_SERIAL" value="0x0002" />
+		<define name="PC_PARALLEL" value="0x0004" />
+		<define name="PC_ACSI" value="0x0008" />
+		<define name="PC_SCSI" value="0x0010" />
+		<define name="PC_BACKGROUND" value="0x0080" />
+		<define name="PC_SCALING" value="0x0100" />
+		<define name="PC_COPIES" value="0x0200" />
+		<define name="MC_PORTRAIT" value="0x0001" />
+		<define name="MC_LANDSCAPE" value="0x0002" />
+		<define name="MC_REV_PTRT" value="0x0004" />
+		<define name="MC_REV_LNDSCP" value="0x0008" />
+		<define name="MC_ORIENTATION" value="0x000f" />
+		<define name="MC_SLCT_CMYK" value="0x0400" />
+		<define name="MC_CTRST_BRGHT" value="0x0800" />
+		<define name="PLANE_BLACK" value="0x0001" />
+		<define name="PLANE_YELLOW" value="0x0002" />
+		<define name="PLANE_MAGENTA" value="0x0004" />
+		<define name="PLANE_CYAN" value="0x0008" />
+		<define name="DM_BG_PRINTING" value="0x0001" />
+		<define name="PG_EVEN_PAGES" value="0x0001" />
+		<define name="PG_ODD_PAGES" value="0x0002" />
+		<define name="PG_MIN_PAGE" value="1" />
+		<define name="PG_MAX_PAGE" value="9999" />
+		<define name="PG_UNKNOWN" value="0x0000" />
+		<define name="PG_PORTRAIT" value="0x0001" />
+		<define name="PG_LANDSCAPE" value="0x0002" />
+	</defines>
+	<defines category="NVDI Printer dialog defines">
+		<define name="PRN_STD_SUBS" value="0x0001" />
+		<define name="PRN_FSM_SUBS" value="0x0002" />
+		<define name="PRN_QD_SUBS" value="0x0004" />
+		<define name="PDLG_CHG_SUB" value="0x80000000" />
+		<define name="PDLG_IS_BUTTON" value="0x40000000" />
+		<define name="PDLG_PREBUTTON" value="0x20000000" />
+		<define name="PDLG_PB_OK" value="1" />
+		<define name="PDLG_PB_CANCEL" value="2" />
+		<define name="PDLG_PB_DEVICE" value="3" />
+		<define name="PDLG_BUT_OK" value="( PDLG_PREBUTTON + PDLG_PB_OK )" />
+		<define name="PDLG_BUT_CNCL" value="( PDLG_PREBUTTON + PDLG_PB_CANCEL )" />
+		<define name="PDLG_BUT_DEV" value="( PDLG_PREBUTTON + PDLG_PB_DEVICE )" />
+	</defines>
+	<defines category="NVDI Application">
 		<define name="APPEVNT_TIMER" value="0" />
 		<define name="APPEVNT_BUTTON" value="1" />
 		<define name="APPEVNT_MOUSE" value="2" />
 		<define name="APPEVNT_KEYBOARD" value="3" />
 	</defines>
-	<defines category="Multitos">
+	<defines category="NVDI Multitos">
 		<define name="DD_OK" value="0" />
 		<define name="DD_NAK" value="1" />
 		<define name="DD_EXT" value="2" />

@@ -5,7 +5,10 @@
 <vdi>
 	<include name="&quot;aes.h&quot;" />
 	<structs>
-		<typedef typename="fix31" type="int32_t" />
+		<typedef typename="INVERSE_CTAB" type="void" />
+		<typedef typename="*CTAB_PTR" type="COLOR_TAB" />
+		<typedef typename="*CTAB_REF" type="COLOR_TAB" />
+		<typedef typename="*ITAB_REF" type="INVERSE_CTAB" />
 		<callback name="INT16_VDI_CB">
 			<return type="int16_t" />
 		</callback>
@@ -78,7 +81,218 @@
 			<member name="fd_r2" type="int16_t" />
 			<member name="fd_r3" type="int16_t" />
 		</struct>
+		<struct name="RGB1000">
+			<member type="int16_t" name="red" />
+			<member type="int16_t" name="green" />
+			<member type="int16_t" name="blue" />
+		</struct>
+		<struct name="COLOR_RGB">
+			<member type="uint16_t" name="reserved" />
+			<member type="uint16_t" name="red" />
+			<member type="uint16_t" name="green" />
+			<member type="uint16_t" name="blue" />
+		</struct>
+		<struct name="COLOR_CMYK">
+			<member type="uint16_t" name="cyan" />
+			<member type="uint16_t" name="magenta" />
+			<member type="uint16_t" name="yellow" />
+			<member type="uint16_t" name="black" />
+		</struct>
+		<union name="COLOR_ENTRY">
+			<member type="COLOR_RGB" name="rgb" />
+			<member type="COLOR_CMYK" name="cmyk" />
+		</union>
+		<struct name="COLOR_TAB">
+			<member type="int32_t" name="magic" />
+			<member type="int32_t" name="length" />
+			<member type="int32_t" name="format" />
+			<member type="int32_t" name="reserved" />
+			<member type="int32_t" name="map_id" />
+			<member type="int32_t" name="color_space" />
+			<member type="int32_t" name="flags" />
+			<member type="int32_t" name="no_colors" />
+			<member type="int32_t" name="reserved1" />
+			<member type="int32_t" name="reserved2" />
+			<member type="int32_t" name="reserved3" />
+			<member type="int32_t" name="reserved4" />
+			<member type="COLOR_ENTRY[]" name="colors" />
+		</struct>
+		<struct name="COLOR_TAB256">
+			<member type="int32_t" name="magic" />
+			<member type="int32_t" name="length" />
+			<member type="int32_t" name="format" />
+			<member type="int32_t" name="reserved" />
+			<member type="int32_t" name="map_id" />
+			<member type="int32_t" name="color_space" />
+			<member type="int32_t" name="flags" />
+			<member type="int32_t" name="no_colors" />
+			<member type="int32_t" name="reserved1" />
+			<member type="int32_t" name="reserved2" />
+			<member type="int32_t" name="reserved3" />
+			<member type="int32_t" name="reserved4" />
+			<member type="COLOR_ENTRY[256]" name="colors" />
+		</struct>
+		<struct name="GCBITMAP">
+			<member type="int32_t" name="magic" />
+			<member type="int32_t" name="length" />
+			<member type="int32_t" name="format" />
+			<member type="int32_t" name="reserved" />
+			<member type="uint8_t" name="*addr" />
+			<member type="int32_t" name="width" />
+			<member type="int32_t" name="bits" />
+			<member type="uint32_t" name="px_format" />
+			<member type="int32_t" name="xmin" />
+			<member type="int32_t" name="ymin" />
+			<member type="int32_t" name="xmax" />
+			<member type="int32_t" name="ymax" />
+			<member type="CTAB_REF" name="ctab" />
+			<member type="ITAB_REF" name="itab" />
+			<member type="int32_t" name="reserved0" />
+			<member type="int32_t" name="reserved1" />
+		</struct>
+		<struct name="RECT16">
+			<member type="int16_t" name="x1" />
+			<member type="int16_t" name="y1" />
+			<member type="int16_t" name="x2" />
+			<member type="int16_t" name="y2" />
+		</struct>
+
+		<struct name="RECT32">
+			<member type="int32_t" name="x1" />
+			<member type="int32_t" name="y1" />
+			<member type="int32_t" name="x2" />
+			<member type="int32_t" name="y2" />
+		</struct>
+		<struct name="XFNT_INFO">
+			<member type="int32_t" name="size" />
+			<member type="int16_t" name="format" />
+			<member type="int16_t" name="id" />
+			<member type="int16_t" name="index" />
+			<member type="int8_t[50]" name="font_name" />
+			<member type="int8_t[50]" name="family_name" />
+			<member type="int8_t[50]" name="style_name" />
+			<member type="int8_t[200]" name="file_name1" />
+			<member type="int8_t[200]" name="file_name2" />
+			<member type="int8_t[200]" name="file_name3" />
+			<member type="int16_t" name="pt_cnt" />
+			<member type="int16_t[64]" name="pt_sizes" />
+		</struct>
 	</structs>
+
+	<defines category="NVDI Pixel format">
+		<define name="PX_1COMP" value="0x01000000" />
+		<define name="PX_3COMP" value="0x03000000" />
+		<define name="PX_4COMP" value="0x04000000" />
+		<define name="PX_REVERSED" value="0x00800000" />
+		<define name="PX_xFIRST" value="0x00400000" />
+		<define name="PX_kFIRST" value="0x00200000" />
+		<define name="PX_aFIRST" value="0x00100000" />
+		<define name="PX_PACKED" value="0x00020000" />
+		<define name="PX_PLANES" value="0x00010000" />
+		<define name="PX_IPLANES" value="0x00000000" />
+		<define name="PX_USES1" value="0x00000100" />
+		<define name="PX_USES2" value="0x00000200" />
+		<define name="PX_USES3" value="0x00000300" />
+		<define name="PX_USES4" value="0x00000400" />
+		<define name="PX_USES8" value="0x00000800" />
+		<define name="PX_USES15" value="0x00000f00" />
+		<define name="PX_USES16" value="0x00001000" />
+		<define name="PX_USES24" value="0x00001800" />
+		<define name="PX_USES32" value="0x00002000" />
+		<define name="PX_USES48" value="0x00003000" />
+		<define name="PX_1BIT" value="0x00000001" />
+		<define name="PX_2BIT" value="0x00000002" />
+		<define name="PX_3BIT" value="0x00000003" />
+		<define name="PX_4BIT" value="0x00000004" />
+		<define name="PX_8BIT" value="0x00000008" />
+		<define name="PX_16BIT" value="0x00000010" />
+		<define name="PX_24BIT" value="0x00000018" />
+		<define name="PX_32BIT" value="0x00000020" />
+		<define name="PX_48BIT" value="0x00000030" />
+		<define name="PX_CMPNTS" value="0x0f000000" />
+		<define name="PX_FLAGS" value="0x00f00000" />
+		<define name="PX_PACKING" value="0x00030000" />
+		<define name="PX_USED" value="0x00003f00" />
+		<define name="PX_BITS" value="0x0000003f" />
+	</defines>
+	<defines category="NVDI Atari Pixel format">
+		<define name="PX_ATARI1" value="( PX_PACKED + PX_1COMP + PX_USES1 + PX_1BIT )" />
+		<define name="PX_ATARI2" value="( PX_IPLANES + PX_1COMP + PX_USES2 + PX_2BIT )" />
+		<define name="PX_ATARI4" value="( PX_IPLANES + PX_1COMP + PX_USES4 + PX_4BIT )" />
+		<define name="PX_ATARI8" value="( PX_IPLANES + PX_1COMP + PX_USES8 + PX_8BIT )" />
+		<define name="PX_FALCON15" value="( PX_PACKED + PX_3COMP + PX_USES16 + PX_16BIT )" />
+	</defines>
+	<defines category="NVDI Mac Pixel format">
+		<define name="PX_MAC1" value="( PX_PACKED + PX_1COMP + PX_USES1 + PX_1BIT )" />
+		<define name="PX_MAC4" value="( PX_PACKED + PX_1COMP + PX_USES4 + PX_4BIT )" />
+		<define name="PX_MAC8" value="( PX_PACKED + PX_1COMP + PX_USES8 + PX_8BIT )" />
+		<define name="PX_MAC15" value="( PX_xFIRST + PX_PACKED + PX_3COMP + PX_USES15 + PX_16BIT )" />
+		<define name="PX_MAC32" value="( PX_xFIRST + PX_PACKED + PX_3COMP + PX_USES24 + PX_32BIT )" />
+	</defines>
+	<defines category="NVDI Graphic cards Pixel format">
+		<define name="PX_VGA1" value="( PX_PACKED + PX_1COMP + PX_USES1 + PX_1BIT )" />
+		<define name="PX_VGA4" value="( PX_PLANES + PX_1COMP + PX_USES4 + PX_4BIT )" />
+		<define name="PX_VGA8" value="( PX_PACKED + PX_1COMP + PX_USES8 + PX_8BIT )" />
+		<define name="PX_VGA15" value="( PX_REVERSED + PX_xFIRST + PX_PACKED + PX_3COMP + PX_USES15 + PX_16BIT )" />
+		<define name="PX_VGA16" value="( PX_REVERSED + PX_PACKED + PX_3COMP + PX_USES16 + PX_16BIT )" />
+		<define name="PX_VGA24" value="( PX_REVERSED + PX_PACKED + PX_3COMP + PX_USES24 + PX_24BIT )" />
+		<define name="PX_VGA32" value="( PX_REVERSED + PX_xFIRST + PX_PACKED + PX_3COMP + PX_USES24 + PX_32BIT )" />
+		<define name="PX_MATRIX16" value="( PX_PACKED + PX_3COMP + PX_USES16 + PX_16BIT )" />
+		<define name="PX_NOVA32" value="( PX_PACKED + PX_3COMP + PX_USES24 + PX_32BIT )" />
+	</defines>
+	<defines category="NVDI Printer Pixel format">
+		<define name="PX_PRN1" value="( PX_PACKED + PX_1COMP + PX_USES1 + PX_1BIT )" />
+		<define name="PX_PRN8" value="( PX_PACKED + PX_1COMP + PX_USES8 + PX_8BIT )" />
+		<define name="PX_PRN32" value="( PX_xFIRST + PX_PACKED + PX_3COMP + PX_USES24 + PX_32BIT )" />
+	</defines>
+	<defines category="NVDI Bitmap Pixel format">
+		<define name="PX_PREF1" value="( PX_PACKED + PX_1COMP + PX_USES1 + PX_1BIT )" />
+		<define name="PX_PREF2" value="( PX_PACKED + PX_1COMP + PX_USES2 + PX_2BIT )" />
+		<define name="PX_PREF4" value="( PX_PACKED + PX_1COMP + PX_USES4 + PX_4BIT )" />
+		<define name="PX_PREF8" value="( PX_PACKED + PX_1COMP + PX_USES8 + PX_8BIT )" />
+		<define name="PX_PREF15" value="( PX_xFIRST + PX_PACKED + PX_3COMP + PX_USES15 + PX_16BIT )" />
+		<define name="PX_PREF32" value="( PX_xFIRST + PX_PACKED + PX_3COMP + PX_USES24 + PX_32BIT )" />
+	</defines>
+	<defines category="NVDI Color table">
+		<define name="CSPACE_RGB" value="0x0001" />
+		<define name="CSPACE_ARGB" value="0x0002" />
+		<define name="CSPACE_CMYK" value="0x0004" />
+		<define name="CSPACE_1COMPONENT" value="0x0001" />
+		<define name="CSPACE_2COMPONENTS" value="0x0002" />
+		<define name="CSPACE_3COMPONENTS" value="0x0003" />
+		<define name="CSPACE_4COMPONENTS" value="0x0004" />
+	</defines>
+	<defines category="NVDI Magics">
+		<define name="COLOR_TAB_MAGIC" value="'ctab'" />
+		<define name="CBITMAP_MAGIC" value="'cbtm'" />
+	</defines>
+	<defines category="NVDI Bitmap defines">
+		<define name="T_NOT" value="4" />
+		<define name="T_COLORIZE" value="16" />
+		<define name="T_LOGIC_MODE" value="0" />
+		<define name="T_DRAW_MODE" value="32" />
+		<define name="T_ARITH_MODE" value="64" />
+		<define name="T_DITHER_MODE" value="128" />
+		<define name="T_LOGIC_COPY" value="T_LOGIC_MODE+0" />
+		<define name="T_LOGIC_OR" value="T_LOGIC_MODE+1" />
+		<define name="T_LOGIC_XOR" value="T_LOGIC_MODE+2" />
+		<define name="T_LOGIC_AND" value="T_LOGIC_MODE+3" />
+		<define name="T_LOGIC_NOT_COPY" value="T_LOGIC_MODE+4" />
+		<define name="T_LOGIC_NOT_OR" value="T_LOGIC_MODE+5" />
+		<define name="T_LOGIC_NOT_XOR" value="T_LOGIC_MODE+6" />
+		<define name="T_LOGIC_NOT_AND" value="T_LOGIC_MODE+7" />
+		<define name="T_REPLACE" value="T_DRAW_MODE+0" />
+		<define name="T_TRANSPARENT" value="T_DRAW_MODE+1" />
+		<define name="T_HILITE" value="T_DRAW_MODE+2" />
+		<define name="T_REVERS_TRANSPARENT" value="T_DRAW_MODE+3" />
+		<define name="T_BLEND" value="T_ARITH_MODE+0" />
+		<define name="T_ADD" value="T_ARITH_MODE+1" />
+		<define name="T_ADD_OVER" value="T_ARITH_MODE+2" />
+		<define name="T_SUB" value="T_ARITH_MODE+3" />
+		<define name="T_MAX" value="T_ARITH_MODE+5" />
+		<define name="T_SUB_OVER" value="T_ARITH_MODE+6" />
+		<define name="T_MIN" value="T_ARITH_MODE+7" />
+	</defines>
 
 	<functions grpid="2" category="Control">
 		<function id="1" name="v_opnwk">
