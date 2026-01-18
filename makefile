@@ -1,4 +1,4 @@
-#	Copyright (C) 2025 Mikael Hildenborg
+#	Copyright (C) 2026 Mikael Hildenborg
 #	SPDX-License-Identifier: MIT
 
 .DEFAULT_GOAL := all

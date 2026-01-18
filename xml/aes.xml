@@ -1,5 +1,5 @@
 <!--
-	Copyright (C) 2025 Mikael Hildenborg
+	Copyright (C) 2026 Mikael Hildenborg
 	SPDX-License-Identifier: MIT
 -->
 <aes>
@@ -194,6 +194,19 @@
 		<define name="APPEVNT_MOUSE" value="2" />
 		<define name="APPEVNT_KEYBOARD" value="3" />
 	</defines>
+	<defines category="Multitos">
+		<define name="DD_OK" value="0" />
+		<define name="DD_NAK" value="1" />
+		<define name="DD_EXT" value="2" />
+		<define name="DD_LEN" value="3" />
+		<define name="DD_TIMEOUT" value="4000" />
+		<define name="DD_NUMEXTS" value="8" />
+		<define name="DD_EXTSIZE" value="32" />
+		<define name="DD_FNAME" value="&quot;U:\\PIPE\\DRAGDROP.AA&quot;" />
+		<define name="DD_NAMEMAX" value="128" />
+		<define name="DD_HDRMIN" value="9" />
+		<define name="DD_HDRMAX" value="( 8 + DD_NAMEMAX )" />
+	</defines>
 	<defines category="Events">
 		<define name="MU_KEYBD" value="0x0001" />
 		<define name="MU_BUTTON" value="0x0002" />
@@ -214,26 +227,58 @@
 		<define name="WM_NEWTOP" value="29" />
 		<define name="WM_UNTOPPED" value="30" />
 		<define name="WM_ONTOP" value="31" />
+		<define name="WM_BOTTOMED" value="33" />
+		<define name="WM_ICONIFY" value="34" />
+		<define name="WM_UNICONIFY" value="35" />
+		<define name="WM_ALLICONIFY" value="36" />
 		<define name="AC_OPEN" value="40" />
 		<define name="AC_CLOSE" value="41" />
 		<define name="CT_UPDATE" value="50" />
 		<define name="CT_MOVE" value="51" />
 		<define name="CT_NEWTOP" value="52" />
+		<define name="CT_KEY" value="53" />
 		<define name="AP_TERM" value="50" />
 		<define name="AP_TFAIL" value="51" />
 		<define name="AP_RESCHG" value="57" />
 		<define name="SHUT_COMPLETED" value="60" />
 		<define name="RESCHG_COMPLETED" value="61" />
 		<define name="AP_DRAGDROP" value="63" />
-		<define name="CH_EXIT" value="80" />
+		<define name="SH_WDRAW" value="72" />
+		<define name="SC_CHANGED" value="80" />
+		<define name="PRN_CHANGED" value="82" />
+		<define name="FNT_CHANGED" value="83" />
+		<define name="THR_EXIT" value="88" />
+		<define name="PA_EXIT" value="89" />
+		<define name="CH_EXIT" value="90" />
+		<define name="WM_M_BDROPPED" value="100" />
+		<define name="SM_M_SPECIAL" value="101" />
+		<define name="SM_M_RES2" value="102" />
+		<define name="SM_M_RES3" value="103" />
+		<define name="SM_M_RES4" value="104" />
+		<define name="SM_M_RES5" value="105" />
+		<define name="SM_M_RES6" value="106" />
+		<define name="SM_M_RES7" value="107" />
+		<define name="SM_M_RES8" value="108" />
+		<define name="SM_M_RES9" value="109" />
+		<define name="WM_SHADED" value="22360" />
+		<define name="WM_UNSHADED" value="22361" />
 		<define name="K_RSHIFT" value="0x0001" />
 		<define name="K_LSHIFT" value="0x0002" />
 		<define name="K_CTRL" value="0x0004" />
 		<define name="K_ALT" value="0x0008" />
 		<define name="MO_ENTER" value="0" />
 		<define name="MO_LEAVE" value="1" />
+		<define name="SMC_TIDY_UP" value="0" />
+		<define name="SMC_TERMINATE" value="1" />
+		<define name="SMC_SWITCH" value="2" />
+		<define name="SMC_FREEZE" value="3" />
+		<define name="SMC_UNFREEZE" value="4" />
+		<define name="SMC_RES5" value="5" />
+		<define name="SMC_UNHIDEALL" value="6" />
+		<define name="SMC_HIDEOTHERS" value="7" />
+		<define name="SMC_HIDEACT" value="8" />
 	</defines>
-	<defines category="Objects">
+	<defines category="Object types">
 		<define name="G_BOX" value="20" />
 		<define name="G_TEXT" value="21" />
 		<define name="G_BOXTEXT" value="22" />
@@ -248,6 +293,12 @@
 		<define name="G_ICON" value="31" />
 		<define name="G_TITLE" value="32" />
 		<define name="G_CICON" value="33" />
+		<define name="G_SWBUTTON" value="34" />
+		<define name="G_POPUP" value="35" />
+		<define name="G_RESVD1" value="36" />
+		<define name="G_SHORTCUT" value="38" />
+	</defines>
+	<defines category="Object flags">
 		<define name="NONE" value="0x0000" />
 		<define name="SELECTABLE" value="0x0001" />
 		<define name="DEFAULT" value="0x0002" />
@@ -258,6 +309,14 @@
 		<define name="TOUCHEXIT" value="0x0040" />
 		<define name="HIDETREE" value="0x0080" />
 		<define name="INDIRECT" value="0x0100" />
+		<define name="FL3DMASK" value="0x0600" />
+		<define name="FL3DNONE" value="0x0000" />
+		<define name="FL3DIND" value="0x0200" />
+		<define name="FL3DBAK" value="0x0400" />
+		<define name="FL3DACT" value="0x0600" />
+		<define name="SUBMENU" value="0x0800" />
+	</defines>
+	<defines category="Object states">
 		<define name="NORMAL" value="0x00" />
 		<define name="SELECTED" value="0x01" />
 		<define name="CROSSED" value="0x02" />
@@ -265,7 +324,18 @@
 		<define name="DISABLED" value="0x08" />
 		<define name="OUTLINED" value="0x10" />
 		<define name="SHADOWED" value="0x20" />
-		<define name="__COLORS" value="1" />
+		<define name="WHITEBAK" value="0x40" />
+		<define name="DRAW3D" value="0x80" />
+	</defines>
+	<defines category="Object vars">
+		<define name="LK3DIND" value="1" />
+		<define name="LK3DACT" value="2" />
+		<define name="INDBUTCOL" value="3" />
+		<define name="ACTBUTCOL" value="4" />
+		<define name="BACKGRCOL" value="5" />
+		<define name="AD3DVALUE" value="6" />
+		<define name="MX_ENABLE3D" value="10" />
+
 		<define name="WHITE" value="0" />
 		<define name="BLACK" value="1" />
 		<define name="RED" value="2" />
@@ -282,6 +352,7 @@
 		<define name="LCYAN" value="13" />
 		<define name="LYELLOW" value="14" />
 		<define name="LMAGENTA" value="15" />
+
 		<define name="ROOT" value="0" />
 		<define name="MAX_LEN" value="81" />
 		<define name="MAX_DEPTH" value="8" />
@@ -291,9 +362,15 @@
 		<define name="ED_INIT" value="1" />
 		<define name="ED_CHAR" value="2" />
 		<define name="ED_END" value="3" />
+		<define name="ED_CRSR" value="100" />
+		<define name="ED_DRAW" value="103" />
 		<define name="TE_LEFT" value="0" />
 		<define name="TE_RIGHT" value="1" />
 		<define name="TE_CNTR" value="2" />
+
+		<define name="MENU_HIDE" value="0" />
+		<define name="MENU_SHOW" value="1" />
+		<define name="MENU_INSTL" value="100" />
 	</defines>
 	<defines category="Forms">
 		<define name="FMD_START" value="0" />
@@ -314,8 +391,10 @@
 		<define name="USER_DEF" value="255" />
 		<define name="M_OFF" value="256" />
 		<define name="M_ON" value="257" />
+		<define name="M_SAVE" value="258" />
+		<define name="M_RESTORE" value="259" />
 	</defines>
-	<defines category="Windows">
+	<defines category="Window">
 		<define name="NAME" value="0x0001" />
 		<define name="CLOSER" value="0x0002" />
 		<define name="FULLER" value="0x0004" />
@@ -328,6 +407,12 @@
 		<define name="LFARROW" value="0x0200" />
 		<define name="RTARROW" value="0x0400" />
 		<define name="HSLIDE" value="0x0800" />
+		<define name="HOTCLOSEBOX" value="0x1000" />
+		<define name="BACKDROP" value="0x2000" />
+		<define name="ICONIFIER" value="0x4000" />
+		<define name="SMALLER" value="ICONIFIER" />
+	</defines>
+	<defines category="Window modes">
 		<define name="WF_KIND" value="1" />
 		<define name="WF_NAME" value="2" />
 		<define name="WF_INFO" value="3" />
@@ -350,6 +435,18 @@
 		<define name="WF_OWNER" value="20" />
 		<define name="WF_BEVENT" value="24" />
 		<define name="WF_BOTTOM" value="25" />
+		<define name="WF_ICONIFY" value="26" />
+		<define name="WF_UNICONIFY" value="27" />
+		<define name="WF_UNICONIFYXYWH" value="28" />
+		<define name="WF_M_BACKDROP" value="100" />
+		<define name="WF_M_OWNER" value="101" />
+		<define name="WF_M_WINDLIST" value="102" />
+		<define name="WF_SHADE" value="0x575d" />
+		<define name="WF_STACK" value="0x575e" />
+		<define name="WF_TOPALL" value="0x575f" />
+		<define name="WF_BOTTOMALL" value="0x5760" />
+	</defines>
+	<defines category="Window set">
 		<define name="W_BOX" value="0" />
 		<define name="W_TITLE" value="1" />
 		<define name="W_CLOSER" value="2" />
@@ -369,6 +466,12 @@
 		<define name="W_RTARROW" value="16" />
 		<define name="W_HSLIDE" value="17" />
 		<define name="W_HELEV" value="18" />
+		<define name="W_SMALLER" value="19" />
+		<define name="W_BOTTOMER" value="20" />
+		<define name="BEVENT_WORK" value="0x0001" />
+		<define name="BEVENT_INFO" value="0x0002" />
+	</defines>
+	<defines category="Window message">
 		<define name="WA_UPPAGE" value="0" />
 		<define name="WA_DNPAGE" value="1" />
 		<define name="WA_UPLINE" value="2" />
@@ -403,6 +506,99 @@
 		<define name="R_FRSTR" value="15" />
 		<define name="R_FRIMG" value="16" />
 	</defines>
+	<defines category="shel_write">
+		<define name="SHW_IMMED" value="0" />
+		<define name="SHW_CHAIN" value="1" />
+		<define name="SHW_DOS" value="2" />
+		<define name="SHW_PARALLEL" value="100" />
+		<define name="SHW_SINGLE" value="101" />
+		<define name="SHW_NOEXEC" value="0" />
+		<define name="SHW_EXEC" value="1" />
+		<define name="SHW_EXEC_ACC" value="3" />
+		<define name="SHW_SHUTDOWN" value="4" />
+		<define name="SHW_RESCHNG" value="5" />
+		<define name="SHW_BROADCAST" value="7" />
+		<define name="SHW_INFRECGN" value="9" />
+		<define name="SHW_AESSEND" value="10" />
+		<define name="SHW_THR_CREATE" value="20" />
+		<define name="SHW_XMDLIMIT" value="256" />
+		<define name="SHW_XMDNICE" value="512" />
+		<define name="SHW_XMDDEFDIR" value="1024" />
+		<define name="SHW_XMDENV" value="2048" />
+		<define name="SHW_XMDFLAGS" value="4096" />
+		<define name="WDLG_BKGD" value="1" />
+	</defines>
+	<defines category="handle_exit">
+		<define name="HNDL_INIT" value="-1" />
+		<define name="HNDL_MESG" value="-2" />
+		<define name="HNDL_CLSD" value="-3" />
+		<define name="HNDL_OPEN" value="-5" />
+		<define name="HNDL_EDIT" value="-6" />
+		<define name="HNDL_EDDN" value="-7" />
+		<define name="HNDL_EDCH" value="-8" />
+		<define name="HNDL_MOVE" value="-9" />
+		<define name="HNDL_TOPW" value="-10" />
+		<define name="HNDL_UNTP" value="-11" />
+		<define name="LBOX_VERT" value="1" />
+		<define name="LBOX_AUTO" value="2" />
+		<define name="LBOX_AUTOSLCT" value="4" />
+		<define name="LBOX_REAL" value="8" />
+		<define name="LBOX_SNGL" value="16" />
+		<define name="LBOX_SHFT" value="32" />
+		<define name="LBOX_TOGGLE" value="64" />
+		<define name="LBOX_2SLDRS" value="128" />
+	</defines>
+	<defines category="fnts_create">
+		<define name="FNTS_BTMP" value="1" />
+		<define name="FNTS_OUTL" value="2" />
+		<define name="FNTS_MONO" value="4" />
+		<define name="FNTS_PROP" value="8" />
+		<define name="FNTS_3D" value="1" />
+	</defines>
+	<defines category="fnts_open">
+		<define name="FNTS_SNAME" value="0x01" />
+		<define name="FNTS_SSTYLE" value="0x02" />
+		<define name="FNTS_SSIZE" value="0x04" />
+		<define name="FNTS_SRATIO" value="0x08" />
+		<define name="FNTS_CHNAME" value="0x0100" />
+		<define name="FNTS_CHSTYLE" value="0x0200" />
+		<define name="FNTS_CHSIZE" value="0x0400" />
+		<define name="FNTS_CHRATIO" value="0x0800" />
+		<define name="FNTS_RATIO" value="0x1000" />
+		<define name="FNTS_BSET" value="0x2000" />
+		<define name="FNTS_BMARK" value="0x4000" />
+	</defines>
+	<defines category="fnts_evnt">
+		<define name="FNTS_CANCEL" value="1" />
+		<define name="FNTS_OK" value="2" />
+		<define name="FNTS_SET" value="3" />
+		<define name="FNTS_MARK" value="4" />
+		<define name="FNTS_OPT" value="5" />
+	</defines>
+	<defines category="file selector">
+		<define name="SORTBYNAME" value="0" />
+		<define name="SORTBYDATE" value="1" />
+		<define name="SORTBYSIZE" value="2" />
+		<define name="SORTBYTYPE" value="3" />
+		<define name="SORTBYNONE" value="4" />
+		<define name="DOSMODE" value="1" />
+		<define name="NFOLLOWSLKS" value="2" />
+		<define name="GETMULTI" value="8" />
+		<define name="SHOW8P3" value="1" />
+		<define name="XATTR" value="void" />
+	</defines>
+	<defines category="pdlg">
+		<define name="PDLG_3D" value="0x0001" />
+		<define name="PDLG_PREFS" value="0x0000" />
+		<define name="PDLG_PRINT" value="0x0001" />
+		<define name="PDLG_ALWAYS_COPIES" value="0x0010" />
+		<define name="PDLG_ALWAYS_ORIENT" value="0x0020" />
+		<define name="PDLG_ALWAYS_SCALE" value="0x0040" />
+		<define name="PDLG_EVENODD" value="0x0100" />
+		<define name="PDLG_CANCEL" value="1" />
+		<define name="PDLG_OK" value="2" />
+	</defines>
+
 	<functions grpid="2" category="Application">
 		<function id="10" name="appl_init" nvdi_style="1">
 			<return type="int16_t" />
