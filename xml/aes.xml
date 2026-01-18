@@ -643,10 +643,10 @@
 		<function id="130" name="appl_getinfo" nvdi_style="1">
 			<return type="int16_t" />
 			<arg name="type" type="int16_t" dst="intin" />
-			<arg name="gout1" type="int16_t*" src="intout" />
-			<arg name="gout2" type="int16_t*" src="intout" />
-			<arg name="gout3" type="int16_t*" src="intout" />
-			<arg name="gout4" type="int16_t*" src="intout" />
+			<arg name="gout1" type="int16_t*" src="intout" nullchk="1" />
+			<arg name="gout2" type="int16_t*" src="intout" nullchk="1" />
+			<arg name="gout3" type="int16_t*" src="intout" nullchk="1" />
+			<arg name="gout4" type="int16_t*" src="intout" nullchk="1" />
 		</function>
 	</functions>
 	<functions grpid="2" category="Events">

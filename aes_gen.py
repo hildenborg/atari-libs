@@ -51,27 +51,34 @@ def CodeAESFunction(iname, build_dir, ff, dicts):
 			src = a.attrib.get("src")
 			dst = a.attrib.get("dst")
 			t = a.attrib.get("type")
+			nc = a.attrib.get("nullchk")
 			if not first:
 				funcDecl += ", "
 			first = False
 			[isPtr, argType] = header_gen.GetTypeString(n, t, dicts)
 			funcDecl += argType
+			beginnc = ""
+			endnc = ""
+			if nc:
+				beginnc = "\tif(" + n + " != 0)\n\t{\n\t"
+				endnc = "\t}\n"
+
 			if src == "intout":
-				s_intout = s_intout + "\t*" + n + " = " + "intout[" + str(intout) + "];\n"
+				s_intout += beginnc + "\t*" + n + " = " + "intout[" + str(intout) + "];\n" + endnc
 				intout = intout + 1
 			elif src == "addrout":
-				s_addrout = s_addrout + "\t*" + n + " = " + "addrout[" + str(addrout) + "];\n"
+				s_addrout += beginnc + "\t*" + n + " = " + "addrout[" + str(addrout) + "];\n" + endnc
 				addrout = addrout + 1
 			if dst == "intin":
 				if (t == "int32_t" or t == "uint32_t") and not isPtr:
 					[_, longType, _, _, _] = header_gen.GetTypeName("int32_t", dicts)
-					s_intin = s_intin + "\t*(" + longType + "*)(&" + "intin[" + str(intin) + "]) = " + isPtr + n + ";\n"
+					s_intin += beginnc + "\t*(" + longType + "*)(&" + "intin[" + str(intin) + "]) = " + isPtr + n + ";\n" + endnc
 					intin = intin + 2
 				else:
-					s_intin = s_intin + "\t" + "intin[" + str(intin) + "] = " + isPtr + n + ";\n"
+					s_intin += beginnc + "\t" + "intin[" + str(intin) + "] = " + isPtr + n + ";\n" + endnc
 					intin = intin + 1
 			elif dst == "addrin":
-				s_addrin = s_addrin + "\t" + "addrin[" + str(addrin) + "] = (void*)" + n + ";\n"
+				s_addrin += beginnc + "\t" + "addrin[" + str(addrin) + "] = (void*)" + n + ";\n" + endnc
 				addrin = addrin + 1
 
 		f.write(funcDecl)
