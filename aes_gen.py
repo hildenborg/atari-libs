@@ -19,9 +19,15 @@ def CodeAESFunction(iname, build_dir, ff, dicts):
 		print ("group id: " + grpid + "\n")
 		raise ValueError
 	ret = "void"
+	retVal = ""
+	retSrc = "intout"
 	r = ff.find("return")
 	if r is not None:
 		ret = r.attrib.get("type")
+		retVal = r.attrib.get("value")
+		retSrc = r.attrib.get("src")
+		if not retSrc:
+			retSrc = "intout"
 
 	with open(build_dir + name + ".c", "w") as f:
 		f.write('#include "aes_def.h"\n\n')
@@ -34,10 +40,15 @@ def CodeAESFunction(iname, build_dir, ff, dicts):
 			funcDecl += " " + name + "("
 		intin = 0
 		intout = 0
-		if ret != "void":
-			intout = 1
 		addrin = 0
 		addrout = 0
+		if retSrc == "intout" and not retVal:
+			if ret == "int32_t" or ret == "uint32_t":
+				intout = 2
+			else:	
+				intout = 1
+		elif retSrc == "addrout":
+			addrout = 1
 		s_intin = ""
 		s_addrin = ""
 		s_intout = ""
@@ -48,6 +59,7 @@ def CodeAESFunction(iname, build_dir, ff, dicts):
 			n = a.attrib.get("name")
 			src = a.attrib.get("src")
 			dst = a.attrib.get("dst")
+			idx = a.attrib.get("idx")
 			t = a.attrib.get("type")
 			nc = a.attrib.get("nullchk")
 			if not n:
@@ -66,20 +78,43 @@ def CodeAESFunction(iname, build_dir, ff, dicts):
 				endnc = "\t}\n"
 
 			if src == "intout":
-				s_intout += beginnc + "\t*" + n + " = " + "intout[" + str(intout) + "];\n" + endnc
-				intout = intout + 1
+				if idx is not None and int(idx) != int(intout):
+					pass
+				if (t == "int16_t*" or t == "uint16_t*"):
+					s_intout += beginnc + "\t*" + n + " = " + "intout[" + str(intout) + "];\n" + endnc
+					intout = intout + 1
+				elif t == "GRECT*":
+					s_intout += beginnc + "\t*" + n + " = " + "*(GRECT*)(&intout[" + str(intout) + "]);\n" + endnc
+					intout = intout + 4
+				else:
+					[_, castType, castPtr, _, _] = header_gen.GetTypeName(t, dicts)
+					s_intout += beginnc + "\t*" + n + " = " + "*(" + castType + castPtr +")(&intout[" + str(intout) + "]);\n" + endnc
+					intout = intout + 2
 			elif src == "addrout":
+				if idx is not None and int(idx) != int(addrout):
+					pass
 				s_addrout += beginnc + "\t*" + n + " = " + "addrout[" + str(addrout) + "];\n" + endnc
 				addrout = addrout + 1
 			if dst == "intin":
-				if (t == "int32_t" or t == "uint32_t") and not isPtr:
+				if idx is not None and int(idx) != int(intin):
+					pass
+				if (t == "int32_t" or t == "uint32_t"):
 					[_, longType, _, _, _] = header_gen.GetTypeName("int32_t", dicts)
 					s_intin += beginnc + "\t*(" + longType + "*)(&" + "intin[" + str(intin) + "]) = " + isPtr + n + ";\n" + endnc
+					intin = intin + 2
+				elif t == "GRECT*":
+					s_intin += beginnc + "\t*(GRECT*)(&" + "intin[" + str(intin) + "]) = " + isPtr + n + ";\n" + endnc
+					intin = intin + 4
+				elif isPtr:
+					[_, castType, castPtr, _, _] = header_gen.GetTypeName(t, dicts)
+					s_intin += beginnc + "\t*("+ castType + castPtr + "*)(&" + "intin[" + str(intin) + "]) = " + n + ";\n" + endnc
 					intin = intin + 2
 				else:
 					s_intin += beginnc + "\t" + "intin[" + str(intin) + "] = " + isPtr + n + ";\n" + endnc
 					intin = intin + 1
 			elif dst == "addrin":
+				if idx is not None and int(idx) != int(addrin):
+					pass
 				s_addrin += beginnc + "\t" + "addrin[" + str(addrin) + "] = (void*)" + n + ";\n" + endnc
 				addrin = addrin + 1
 
@@ -130,13 +165,19 @@ def CodeAESFunction(iname, build_dir, ff, dicts):
 		f.write(s_intin)
 		f.write(s_addrin)
 		f.write("\t")
-		if ret != "void":
-			f.write(retType + " result = ")
-			f.write("aes_call(&lcl_aespb);\n")
+		if ret != "void" and not retVal:
+			if ret == "int32_t" or ret == "uint32_t":
+				f.write(retType + " result = ")
+			else:
+				f.write(retType + " result = (" + retType + ")")
+		f.write("aes_call(&lcl_aespb);\n")
 		f.write(s_intout)
 		f.write(s_addrout)
 		if ret != "void":
-			f.write("\treturn result;\n")
+			if retVal:
+				f.write("\treturn " + retVal + ";\n")
+			else:
+				f.write("\treturn result;\n")
 		f.write("}\n\n")
 
 		if nvdi_style:
