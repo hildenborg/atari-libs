@@ -170,20 +170,22 @@ def CodeAESFunction(iname, build_dir, ff, dicts):
 			
 		f.write(s_intin)
 		f.write(s_addrin)
-		f.write("\t")
-		if ret != "void" and not retVal:
-			if ret == "int32_t" or ret == "uint32_t":
-				f.write(retType + " result = ")
-			else:
-				f.write(retType + " result = (" + retType + ")")
-		f.write("aes_call(&lcl_aespb);\n")
+		f.write("\taes_call(&lcl_aespb);\n")
 		f.write(s_intout)
 		f.write(s_addrout)
 		if ret != "void":
+			f.write("\treturn ")
 			if retVal:
-				f.write("\treturn " + retVal + ";\n")
+				f.write(retVal + ";\n")
+			elif retSrc == "addrout":
+				f.write("addrout[0]")
 			else:
-				f.write("\treturn result;\n")
+				if ret != "int16_t" and ret != "uint16_t":
+					[_, castType, _, _, _] = header_gen.GetTypeName(ret, dicts)
+					f.write("*(" + castType + "*)(&intout[0])")
+				else:
+					f.write("intout[0]")
+			f.write(";\n")
 		f.write("}\n\n")
 
 		if nvdi_style:

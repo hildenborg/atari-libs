@@ -15,8 +15,8 @@ INT16_T mt_appl_init(INT16_T* aes_global)
 	};
 	aes_global[0] = 0;
 	aes_global[2] = -1;
-	INT16_T result = (INT16_T)aes_call(&lcl_aespb);
-	return result;
+	aes_call(&lcl_aespb);
+	return intout[0];
 }
 
 INT16_T appl_init(void)

@@ -17,7 +17,15 @@ extern INT16_T _aes_global[16];
 extern void* aes_unused_dummy_addr[16];
 extern INT16_T aes_unused_dummy_int[16];
 
-INT16_T aes_call(AESPB* aespb);
+void aes_call(AESPB* aespb);
+
+#define AES_COPY_LONG(src, dst) \
+	__asm__ volatile ( \
+		"move.l	%0@, %1@\n\t" \
+		: \
+		: "a" (src), "a" (dst) \
+		: "cc", "memory" \
+	);
 
 #ifdef __cplusplus
 }

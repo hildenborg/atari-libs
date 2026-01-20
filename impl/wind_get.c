@@ -26,7 +26,7 @@ INT16_T mt_wind_get(INT16_T handle, INT16_T mode, INT16_T* parm1, INT16_T* parm2
 		intin[2] = *parm1;
 		control[1] = 3;
 	}
-	INT16_T result = aes_call(&lcl_aespb);
+	aes_call(&lcl_aespb);
 	if (parm1 != 0)
 	{
 		*parm1 = intout[1];
@@ -43,10 +43,10 @@ INT16_T mt_wind_get(INT16_T handle, INT16_T mode, INT16_T* parm1, INT16_T* parm2
 	{
 		*parm4 = intout[4];
 	}
-	return result;
+	return intout[0];
 }
 
 INT16_T wind_get(INT16_T handle, INT16_T mode, INT16_T* parm1, INT16_T* parm2, INT16_T* parm3, INT16_T* parm4)
 {
-	return mt_wind_get(handle, mode, parm1, parm2, parm3, parm4, aes_global);
+	return mt_wind_get(handle, mode, parm1, parm2, parm3, parm4, 0);
 }

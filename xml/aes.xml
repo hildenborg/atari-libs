@@ -1111,7 +1111,7 @@
 			<arg name="m2flag" type="int16_t" dst="intin" />
 			<arg name="g2" type="GRECT*" dst="intin" />
 			<arg name="msg" type="int16_t*" dst="addrin" />
-			<arg name="ms" type="int32_t" dst="intin" />
+			<arg name="ms" type="uint32_t" dst="intin" />
 			<arg name="ev" type="EVNTDATA*" src="intout" />
 			<arg name="kreturn" type="int16_t*" src="intout" />
 			<arg name="breturn" type="int16_t*" src="intout" />
@@ -1654,9 +1654,7 @@
 			<arg name="nextob" type="int16_t*" src="intout" idx="1" />
 			<arg name="windowhandle" type="int16_t" dst="intin" idx="2" />
 		</function>
-		<!--
-		Not in order
-		<function name="form_wkeybd" id="64" nvdi_style="1">
+		<function name="form_wkeybd" id="64" nvdi_style="1" onlyheader="1">
 			<return type="int16_t" />
 			<arg name="tree" type="OBJECT*" dst="addrin" idx="0" />
 			<arg name="object" type="int16_t" dst="intin" idx="0" />
@@ -1666,7 +1664,6 @@
 			<arg name="ochar" type="int16_t*" src="intout" idx="2" />
 			<arg name="windowhandle" type="int16_t" dst="intin" idx="3" />
 		</function>
-		-->
 		<function name="objc_wedit" id="65" nvdi_style="1">
 			<return type="int16_t" />
 			<arg name="tree" type="OBJECT*" dst="addrin" idx="0" />
@@ -1752,8 +1749,7 @@
 			<arg name="x" type="int16_t" dst="intin" idx="0" />
 			<arg name="y" type="int16_t" dst="intin" idx="1" />
 		</function>
-		<!--
-		<function name="xfrm_popup" id="135" nvdi_style="1">
+		<function name="xfrm_popup" id="135" nvdi_style="1" onlyheader="1">
 			<return type="int16_t" />
 			<arg name="tree" type="OBJECT*" dst="addrin" idx="0" />
 			<arg name="x" type="int16_t" dst="intin" idx="0" />
@@ -1761,11 +1757,10 @@
 			<arg name="firstscrlob" type="int16_t" dst="intin" idx="2" />
 			<arg name="lastscrlob" type="int16_t" dst="intin" idx="3" />
 			<arg name="nlines" type="int16_t" dst="intin" idx="4" />
-			<arg name="init" type="XFRM_POPUP_CB" />
+			<arg name="init" type="XFRM_POPUP_CB" dst="addrin" idx="1" />
 			<arg name="param" type="void*" dst="addrin" idx="2" />
-			<arg name="lastscrlpos" type="int16_t*" fixme="double arrays" />
+			<arg name="lastscrlpos" type="int16_t*" src="intout" dst="intin" />
 		</function>
-		-->
 		<function name="form_xerr" id="136" nvdi_style="1">
 			<return type="int16_t" />
 			<arg name="errcode" type="int32_t" dst="intin" idx="0" />
@@ -1789,10 +1784,6 @@
 			<arg name="y" type="int16_t" dst="intin" idx="2" />
 			<arg name="code" type="int16_t" dst="intin" idx="3" />
 			<arg name="data" type="void*" dst="addrin" idx="2" />
-		</function>
-		<function name="wdlg_close" id="162" nvdi_style="1">
-			<return type="int16_t" />
-			<arg name="dialog" type="DIALOG*" dst="addrin" idx="0" />
 		</function>
 		<function name="wdlg_close" id="162" nvdi_style="1">
 			<return type="int16_t" />
@@ -2168,8 +2159,7 @@
 			<arg name="sort_mode" type="int16_t*" src="intout" idx="3" />
 			<arg name="pattern" type="int8_t**" src="addrout" idx="0" />
 		</function>
-		<!--
-		<function name="fslx_do" id="194" nvdi_style="1">
+		<function name="fslx_do" id="194" nvdi_style="1" onlyheader="1">
 			<return type="void*" src="addrout" idx="0" />
 			<arg name="title" type="int8_t*" dst="addrin" idx="0" />
 			<arg name="path" type="int8_t*" dst="addrin" idx="1" />
@@ -2179,13 +2169,12 @@
 			<arg name="patterns" type="int8_t*" dst="addrin" idx="3" />
 			<arg name="filter" type="XFSL_FILTER*" dst="addrin" idx="4" />
 			<arg name="paths" type="int8_t*" dst="addrin" idx="5" />
-			<arg name="sort_mode" type="int16_t*" fixme="double arrays" />
+			<arg name="sort_mode" type="int16_t*" dst="intin" idx="2" />
 			<arg name="flags" type="int16_t" dst="intin" idx="3" />
 			<arg name="button" type="int16_t*" src="intout" idx="1" />
 			<arg name="nfiles" type="int16_t*" src="intout" idx="2" />
 			<arg name="pattern" type="int8_t**" src="addrout" idx="1" />
 		</function>
-		-->
 		<function name="fslx_set_flags" id="195" nvdi_style="1">
 			<return type="int16_t" />
 			<arg dst="intin" type="int16_t" idx="0" value="0" />

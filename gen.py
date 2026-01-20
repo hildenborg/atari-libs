@@ -209,7 +209,7 @@ def main():
 
 	GenerateGlobals("def_types", build_dir, target)
 	Generate("tos", build_dir, target, [])
-	Generate("aes", build_dir, target, ["aes.c", "aes_def.h", "wind_get.c", "evnt_multi.c", "appl_init.c"])
+	Generate("aes", build_dir, target, ["aes.c", "aes_def.h", "wind_get.c", "evnt_multi.c", "appl_init.c", "form_wkeybd.c", "xfrm_popup.c", "fslx_do.c"])
 	Generate("vdi", build_dir, target, ["vdi.c", "vdi_def.h", "v_opnvwk.c", "vq_vgdos.c", "vq_gdos.c", "vs_clip.c", "vsm_locator.c"])
 #	Generate("line_a", target, ["line_a.c", "line_a_def.h"])
 

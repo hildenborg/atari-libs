@@ -9,7 +9,7 @@ INT16_T _aes_global[16];
 void* aes_unused_dummy_addr[16];
 INT16_T aes_unused_dummy_int[16];
 
-INT16_T aes_call(AESPB* aespb)
+void aes_call(AESPB* aespb)
 {
 	if (aespb->global == 0)
 	{
@@ -23,5 +23,4 @@ INT16_T aes_call(AESPB* aespb)
 		: "g" (aespb)
 		: "d0", "d1", "d2", "a0", "a1", "a2", "cc", "memory"
 	);
-	return *(aespb->intout);
 }
