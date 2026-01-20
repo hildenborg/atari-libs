@@ -172,7 +172,7 @@ def MT_styleDefine(f, ff, name, dicts):
 			
 	if not first:
 		f.write(", ")
-	f.write("aes_global) mt_" + name + "(")
+	f.write("aes_global) \\\n\tmt_" + name + "(")
 	first = True
 	for a in ff.findall('arg'):
 		n = a.attrib.get("name")

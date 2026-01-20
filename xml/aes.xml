@@ -6,6 +6,42 @@
 	<structs>
 		<typedef typename="fix31" type="int32_t" />
 		<typedef typename="*DIALOG" type="void" />
+		<typedef typename="*PRN_DIALOG" type="void" />
+		<typedef typename="*FNT_DIALOG" type="void" />
+		<typedef typename="*LIST_BOX" type="void" />
+		<callback name="SLCT_ITEM">
+			<return type="void" />
+			<arg name="box" type="LIST_BOX*" />
+			<arg name="tree" type="OBJECT*" />
+			<arg name="item" type="LBOX_ITEM*" />
+			<arg name="user_data" type="void*" />
+			<arg name="obj_index" type="int16_t" />
+			<arg name="last_state" type="int16_t" />
+		</callback>
+		<callback name="SET_ITEM">
+			<return type="int16_t" />
+			<arg name="box" type="LIST_BOX*" />
+			<arg name="tree" type="OBJECT*" />
+			<arg name="item" type="LBOX_ITEM*" />
+			<arg name="obj_index" type="int16_t" />
+			<arg name="user_data" type="void*" />
+			<arg name="rect" type="GRECT*" />
+			<arg name="first" type="int16_t" />
+		</callback>
+		<callback name="HNDL_OBJ">
+			<return type="int16_t" />
+			<arg name="dialog" type="DIALOG*" />
+			<arg name="events" type="EVNT*" />
+			<arg name="obj" type="int16_t" />
+			<arg name="clicks" type="int16_t" />
+			<arg name="data" type="void*" />
+		</callback>
+		<callback name="XFSL_FILTER">
+			<return type="int16_t" />
+			<arg name="path" type="int8_t*" />
+			<arg name="name" type="int8_t*" />
+			<arg name="xa" type="void*" />
+		</callback>
 		<callback name="XFRM_POPUP_CB">
 			<return type="void" />
 			<arg name="tree" type="OBJECT*" />
@@ -76,6 +112,17 @@
 			<member name="m_y" type="int16_t" />
 			<member name="m_w" type="int16_t" />
 			<member name="m_h" type="int16_t" />
+		</struct>
+		<struct name="EVNT">
+			<member name="mwhich" type="int16_t" />
+			<member name="mx" type="int16_t" />
+			<member name="my" type="int16_t" />
+			<member name="mbutton" type="int16_t" />
+			<member name="kstate" type="int16_t" />
+			<member name="key" type="int16_t" />
+			<member name="mclicks" type="int16_t" />
+			<member name="reserved" type="int16_t[9]" />
+			<member name="msg" type="int16_t[16]" />
 		</struct>
 		<struct name="GRECT">
 			<member name="g_x" type="int16_t" />
@@ -1639,7 +1686,7 @@
 			<return type="int16_t" src="intout" idx="0" />
 			<arg name="whdl" type="int16_t" dst="intin" idx="0" />
 			<arg name="subfn" type="int16_t" dst="intin" idx="1" />
-			<arg name="s" type="char*" dst="intin" idx="2" />
+			<arg name="s" type="int8_t*" dst="intin" idx="2" />
 		</function>
 		<function name="wind_set_grect" id="105" nvdi_style="1">
 			<return type="int16_t" src="intout" idx="0" />
@@ -1662,13 +1709,13 @@
 		</function>
 		<function name="shel_rdef" id="126" nvdi_style="1">
 			<return type="void" />
-			<arg name="fname" type="char*" dst="addrin" idx="0" />
-			<arg name="dir" type="char*" dst="addrin" idx="1" />
+			<arg name="fname" type="int8_t*" dst="addrin" idx="0" />
+			<arg name="dir" type="int8_t*" dst="addrin" idx="1" />
 		</function>
 		<function name="shel_wdef" id="127" nvdi_style="1">
 			<return type="void" />
-			<arg name="fname" type="char*" dst="addrin" idx="0" />
-			<arg name="dir" type="char*" dst="addrin" idx="1" />
+			<arg name="fname" type="int8_t*" dst="addrin" idx="0" />
+			<arg name="dir" type="int8_t*" dst="addrin" idx="1" />
 		</function>
 		<function name="form_popup" id="135" nvdi_style="1">
 			<return type="int16_t" src="intout" idx="0" />
@@ -1693,7 +1740,7 @@
 		<function name="form_xerr" id="136" nvdi_style="1">
 			<return type="int16_t" src="intout" idx="0" />
 			<arg name="errcode" type="int32_t" dst="intin" idx="0" />
-			<arg name="errfile" type="char*" dst="addrin" idx="0" />
+			<arg name="errfile" type="int8_t*" dst="addrin" idx="0" />
 		</function>
 		<function name="wdlg_create" id="160" nvdi_style="1">
 			<return type="DIALOG*" src="addrout" idx="0" />
@@ -1707,7 +1754,7 @@
 		<function name="wdlg_open" id="161" nvdi_style="1">
 			<return type="int16_t" src="intout" idx="0" />
 			<arg name="dialog" type="DIALOG*" dst="addrin" idx="0" />
-			<arg name="title" type="char*" dst="addrin" idx="1" />
+			<arg name="title" type="int8_t*" dst="addrin" idx="1" />
 			<arg name="kind" type="int16_t" dst="intin" idx="0" />
 			<arg name="x" type="int16_t" dst="intin" idx="1" />
 			<arg name="y" type="int16_t" dst="intin" idx="2" />
@@ -1774,7 +1821,7 @@
 			<arg dst="intin" type="int16_t" idx="0" value="3" />
 			<arg name="dialog" type="DIALOG*" dst="addrin" idx="0" />
 			<arg name="g" type="GRECT*" dst="addrin" idx="1" />
-			<arg name="title" type="char*" dst="addrin" idx="2" />
+			<arg name="title" type="int8_t*" dst="addrin" idx="2" />
 			<arg name="tree" type="OBJECT*" dst="addrin" idx="3" />
 			<arg name="obj" type="int16_t" dst="intin" idx="1" />
 		</function>
@@ -1783,7 +1830,7 @@
 			<arg dst="intin" type="int16_t" idx="0" value="4" />
 			<arg name="dialog" type="DIALOG*" dst="addrin" idx="0" />
 			<arg name="g" type="GRECT*" dst="addrin" idx="1" />
-			<arg name="title" type="char*" dst="addrin" idx="2" />
+			<arg name="title" type="int8_t*" dst="addrin" idx="2" />
 			<arg name="tree" type="OBJECT*" dst="addrin" idx="3" />
 		</function>
 		<function name="wdlg_evnt" id="166" nvdi_style="1">
@@ -1956,8 +2003,8 @@
 			<arg name="no_fonts" type="int16_t" dst="intin" idx="1" />
 			<arg name="font_flags" type="int16_t" dst="intin" idx="2" />
 			<arg name="dialog_flags" type="int16_t" dst="intin" idx="3" />
-			<arg name="sample" type="char*" dst="addrin" idx="0" />
-			<arg name="opt_button" type="char*" dst="addrin" idx="1" />
+			<arg name="sample" type="int8_t*" dst="addrin" idx="0" />
+			<arg name="opt_button" type="int8_t*" dst="addrin" idx="1" />
 		</function>
 		<function name="fnts_delete" id="181" nvdi_style="1">
 			<return type="int16_t" src="intout" idx="0" />
@@ -2058,17 +2105,17 @@
 		</function>
 		<function name="fslx_open" id="190" nvdi_style="1">
 			<return type="void*" src="addrout" idx="0" />
-			<arg name="title" type="char*" dst="addrin" idx="0" />
+			<arg name="title" type="int8_t*" dst="addrin" idx="0" />
 			<arg name="x" type="int16_t" dst="intin" idx="0" />
 			<arg name="y" type="int16_t" dst="intin" idx="1" />
 			<arg name="handle" type="int16_t*" src="intout" idx="0" />
-			<arg name="path" type="char*" dst="addrin" idx="1" />
+			<arg name="path" type="int8_t*" dst="addrin" idx="1" />
 			<arg name="pathlen" type="int16_t" dst="intin" idx="2" />
-			<arg name="fname" type="char*" dst="addrin" idx="2" />
+			<arg name="fname" type="int8_t*" dst="addrin" idx="2" />
 			<arg name="fnamelen" type="int16_t" dst="intin" idx="3" />
-			<arg name="patterns" type="char*" dst="addrin" idx="3" />
+			<arg name="patterns" type="int8_t*" dst="addrin" idx="3" />
 			<arg name="filter" type="XFSL_FILTER*" dst="addrin" idx="4" />
-			<arg name="paths" type="char*" dst="addrin" idx="0" />
+			<arg name="paths" type="int8_t*" dst="addrin" idx="0" />
 			<arg name="sort_mode" type="int16_t" dst="intin" idx="4" />
 			<arg name="flags" type="int16_t" dst="intin" idx="5" />
 		</function>
@@ -2079,35 +2126,35 @@
 		<function name="fslx_getnxtfile" id="192" nvdi_style="1">
 			<return type="int16_t" src="intout" idx="0" />
 			<arg name="fsd" type="void*" dst="addrin" idx="0" />
-			<arg name="fname" type="char*" dst="addrin" idx="1" />
+			<arg name="fname" type="int8_t*" dst="addrin" idx="1" />
 		</function>
 		<function name="fslx_evnt" id="193" nvdi_style="1">
 			<return type="int16_t" src="intout" idx="0" />
 			<arg name="fsd" type="void*" dst="addrin" idx="0" />
 			<arg name="events" type="EVNT*" dst="addrin" idx="1" />
-			<arg name="path" type="char*" dst="addrin" idx="2" />
-			<arg name="fname" type="char*" dst="addrin" idx="3" />
+			<arg name="path" type="int8_t*" dst="addrin" idx="2" />
+			<arg name="fname" type="int8_t*" dst="addrin" idx="3" />
 			<arg name="button" type="int16_t*" src="intout" idx="1" />
 			<arg name="nfiles" type="int16_t*" src="intout" idx="2" />
 			<arg name="sort_mode" type="int16_t*" src="intout" idx="3" />
-			<arg name="pattern" type="char**" src="addrout" idx="0" />
+			<arg name="pattern" type="int8_t**" src="addrout" idx="0" />
 		</function>
 		<!--
 		<function name="fslx_do" id="194" nvdi_style="1">
 			<return type="void*" src="addrout" idx="0" />
-			<arg name="title" type="char*" dst="addrin" idx="0" />
-			<arg name="path" type="char*" dst="addrin" idx="1" />
+			<arg name="title" type="int8_t*" dst="addrin" idx="0" />
+			<arg name="path" type="int8_t*" dst="addrin" idx="1" />
 			<arg name="pathlen" type="int16_t" dst="intin" idx="0" />
-			<arg name="fname" type="char*" dst="addrin" idx="2" />
+			<arg name="fname" type="int8_t*" dst="addrin" idx="2" />
 			<arg name="fnamelen" type="int16_t" dst="intin" idx="1" />
-			<arg name="patterns" type="char*" dst="addrin" idx="3" />
+			<arg name="patterns" type="int8_t*" dst="addrin" idx="3" />
 			<arg name="filter" type="XFSL_FILTER*" dst="addrin" idx="4" />
-			<arg name="paths" type="char*" dst="addrin" idx="5" />
+			<arg name="paths" type="int8_t*" dst="addrin" idx="5" />
 			<arg name="sort_mode" type="int16_t*" fixme="double arrays" />
 			<arg name="flags" type="int16_t" dst="intin" idx="3" />
 			<arg name="button" type="int16_t*" src="intout" idx="1" />
 			<arg name="nfiles" type="int16_t*" src="intout" idx="2" />
-			<arg name="pattern" type="char**" src="addrout" idx="1" />
+			<arg name="pattern" type="int8_t**" src="addrout" idx="1" />
 		</function>
 		-->
 		<function name="fslx_set_flags" id="195" nvdi_style="1">
