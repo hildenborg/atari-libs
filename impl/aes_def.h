@@ -13,7 +13,7 @@ extern "C" {
 #include "def_types.h"
 #include "aes.h"
 
-extern INT16_T aes_global[16];
+extern INT16_T _aes_global[16];
 extern void* aes_unused_dummy_addr[16];
 extern INT16_T aes_unused_dummy_int[16];
 

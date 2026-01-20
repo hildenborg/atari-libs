@@ -113,6 +113,12 @@
 			<member name="m_w" type="int16_t" />
 			<member name="m_h" type="int16_t" />
 		</struct>
+		<struct name="EVNTDATA">
+			<member name="x" type="int16_t" />
+			<member name="y" type="int16_t" />
+			<member name="bstate" type="int16_t" />
+			<member name="kstate" type="int16_t" />
+		</struct>
 		<struct name="EVNT">
 			<member name="mwhich" type="int16_t" />
 			<member name="mx" type="int16_t" />
@@ -984,7 +990,7 @@
 	</defines>
 
 	<functions grpid="2" category="Application">
-		<function id="10" name="appl_init" nvdi_style="1">
+		<function id="10" name="appl_init" nvdi_style="1" onlyheader="1">
 			<return type="int16_t" />
 		</function>
 		<function id="11" name="appl_read" nvdi_style="1">
@@ -1068,7 +1074,7 @@
 			<arg name="locnt" type="int16_t" dst="intin" />
 			<arg name="hicnt" type="int16_t" dst="intin" />
 		</function>
-		<function id="25" name="evnt_multi" nvdi_style="1">
+		<function id="25" name="evnt_multi" onlyheader="1">
 			<return type="int16_t" />
 			<arg name="events" type="int16_t" dst="intin" />
 			<arg name="bclicks" type="int16_t" dst="intin" />
@@ -1093,6 +1099,36 @@
 			<arg name="kstate" type="int16_t*" src="intout" />
 			<arg name="kreturn" type="int16_t*" src="intout" />
 			<arg name="breturn" type="int16_t*" src="intout" />
+		</function>
+		<function id="25" name="mt_evnt_multi" onlyheader="1">
+			<return type="int16_t" />
+			<arg name="events" type="int16_t" dst="intin" />
+			<arg name="bclicks" type="int16_t" dst="intin" />
+			<arg name="bmask" type="int16_t" dst="intin" />
+			<arg name="bstate" type="int16_t" dst="intin" />
+			<arg name="m1flag" type="int16_t" dst="intin" />
+			<arg name="g1" type="GRECT*" dst="intin" />
+			<arg name="m2flag" type="int16_t" dst="intin" />
+			<arg name="g2" type="GRECT*" dst="intin" />
+			<arg name="msg" type="int16_t*" dst="addrin" />
+			<arg name="ms" type="int32_t" dst="intin" />
+			<arg name="ev" type="EVNTDATA*" src="intout" />
+			<arg name="kreturn" type="int16_t*" src="intout" />
+			<arg name="breturn" type="int16_t*" src="intout" />
+			<arg name="aes_global" type="int16_t*" />
+		</function>
+		<function id="25" name="MT_EVNT_multi" onlyheader="1">
+			<return type="void" />
+			<arg name="events" type="int16_t" dst="intin" />
+			<arg name="bclicks" type="int16_t" dst="intin" />
+			<arg name="bmask" type="int16_t" dst="intin" />
+			<arg name="bstate" type="int16_t" dst="intin" />
+			<arg name="m1" type="MOBLK*" dst="intin" />
+			<arg name="m2" type="MOBLK*" dst="intin" />
+			<arg name="msg" type="int16_t*" dst="addrin" />
+			<arg name="ms" type="int32_t" dst="intin" />
+			<arg name="ev" type="EVNT*" src="intout" />
+			<arg name="aes_global" type="int16_t*" />
 		</function>
 		<function id="26" name="evnt_dclick" nvdi_style="1">
 			<return type="int16_t" />
@@ -1547,19 +1583,6 @@
 		<function name="appl_yield" id="17" nvdi_style="1">
 			<return type="int16_t" />
 		</function>
-		<!--
-		<function name="EVNT_multi" id="25" nvdi_style="1">
-			<return type="void" />
-			<arg name="evtypes" type="int16_t" dst="intin" idx="0" />
-			<arg name="nclicks" type="int16_t" dst="intin" idx="1" />
-			<arg name="bmask" type="int16_t" dst="intin" idx="2" />
-			<arg name="bstate" type="int16_t" dst="intin" idx="3" />
-			<arg name="m1" type="MOBLK*" dst="intin" idx="fixme idx" />
-			<arg name="m2" type="MOBLK*" dst="intin" idx="fixme idx" />
-			<arg name="ms" type="Uint32_t" dst="intin" idx="14" />
-			<arg name="event" type="EVNT*" fixme="noarrays" />
-		</function>
-		-->
 		<function name="evnt_dclicks" id="26" nvdi_style="1">
 			<return type="int16_t" />
 			<arg name="val" type="int16_t" dst="intin" idx="0" />
@@ -1574,17 +1597,15 @@
 			<arg name="val" type="int16_t" dst="intin" idx="0" />
 			<arg name="setflag" type="int16_t" dst="intin" idx="1" />
 		</function>
-		<!--
 		<function name="objc_xedit" id="46" nvdi_style="1">
 			<return type="int16_t" />
 			<arg name="tree" type="OBJECT*" dst="addrin" idx="0" />
 			<arg name="objnr" type="int16_t" dst="intin" idx="0" />
 			<arg name="key" type="int16_t" dst="intin" idx="1" />
-			<arg name="cursor_xpos" type="int16_t*" fixme="double arrays" />
+			<arg name="cursor_xpos" type="int16_t*" src="intout" dst="intin" />
 			<arg name="subfn" type="int16_t" dst="intin" idx="3" />
 			<arg name="r" type="GRECT*" dst="addrin" idx="1" />
 		</function>
-		-->
 		<function name="form_xdo" id="50" nvdi_style="1">
 			<return type="int16_t" />
 			<arg name="tree" type="OBJECT*" dst="addrin" idx="0" />
@@ -1646,17 +1667,15 @@
 			<arg name="windowhandle" type="int16_t" dst="intin" idx="3" />
 		</function>
 		-->
-		<!--
 		<function name="objc_wedit" id="65" nvdi_style="1">
 			<return type="int16_t" />
 			<arg name="tree" type="OBJECT*" dst="addrin" idx="0" />
 			<arg name="object" type="int16_t" dst="intin" idx="0" />
 			<arg name="edchar" type="int16_t" dst="intin" idx="1" />
-			<arg name="didx" type="int16_t*" fixme="double arrays" />
+			<arg name="didx" type="int16_t*" src="intout" dst="intin" />
 			<arg name="kind" type="int16_t" dst="intin" idx="3" />
 			<arg name="windowhandle" type="int16_t" dst="intin" idx="4" />
 		</function>
-		-->
 		<function name="graf_xhandle" id="77" nvdi_style="1">
 			<return type="int16_t" />
 			<arg name="wchar" type="int16_t*" src="intout" idx="1" />
@@ -2287,6 +2306,32 @@
 				<override name="evnt_timer">
 					<return type="int16_t" />
 					<arg name="interval" type="uint32_t" dst="intin" />
+				</override>
+				<override name="mt_evnt_multi">
+					<return type="int16_t" />
+					<arg name="events" type="int16_t" dst="intin" />
+					<arg name="bclicks" type="int16_t" dst="intin" />
+					<arg name="bmask" type="int16_t" dst="intin" />
+					<arg name="bstate" type="int16_t" dst="intin" />
+					<arg name="m1flag" type="int16_t" dst="intin" />
+					<arg name="m1x" type="int16_t" dst="intin" />
+					<arg name="m1y" type="int16_t" dst="intin" />
+					<arg name="m1w" type="int16_t" dst="intin" />
+					<arg name="m1h" type="int16_t" dst="intin" />
+					<arg name="m2flag" type="int16_t" dst="intin" />
+					<arg name="m2x" type="int16_t" dst="intin" />
+					<arg name="m2y" type="int16_t" dst="intin" />
+					<arg name="m2w" type="int16_t" dst="intin" />
+					<arg name="m2h" type="int16_t" dst="intin" />
+					<arg name="msg" type="int16_t*" dst="addrin" />
+					<arg name="interval" type="uint32_t" dst="intin" />
+					<arg name="mx" type="int16_t*" src="intout" />
+					<arg name="my" type="int16_t*" src="intout" />
+					<arg name="button" type="int16_t*" src="intout" />
+					<arg name="kstate" type="int16_t*" src="intout" />
+					<arg name="kreturn" type="int16_t*" src="intout" />
+					<arg name="breturn" type="int16_t*" src="intout" />
+					<arg name="aes_global" type="int16_t*" />
 				</override>
 				<override name="evnt_multi">
 					<return type="int16_t" />

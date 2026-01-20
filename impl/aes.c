@@ -5,7 +5,7 @@
 
 #include "aes_def.h"
 
-INT16_T aes_global[16];
+INT16_T _aes_global[16];
 void* aes_unused_dummy_addr[16];
 INT16_T aes_unused_dummy_int[16];
 
@@ -13,7 +13,7 @@ INT16_T aes_call(AESPB* aespb)
 {
 	if (aespb->global == 0)
 	{
-		aespb->global = aes_global;
+		aespb->global = _aes_global;
 	}
 	__asm__ volatile (
 		"move.l	%0, %%d1\n\t"

@@ -53,10 +53,13 @@ def CodeAESFunction(iname, build_dir, ff, dicts):
 		s_addrin = ""
 		s_intout = ""
 		s_addrout = ""
+		got_global = False
 		first = True
 		[_, wordType, _, _, _] = header_gen.GetTypeName("int16_t", dicts)
 		for a in ff.findall('arg'):
 			n = a.attrib.get("name")
+			if n == "aes_global":
+				got_global = True
 			src = a.attrib.get("src")
 			dst = a.attrib.get("dst")
 			idx = a.attrib.get("idx")
@@ -105,7 +108,7 @@ def CodeAESFunction(iname, build_dir, ff, dicts):
 				elif t == "GRECT*":
 					s_intin += beginnc + "\t*(GRECT*)(&" + "intin[" + str(intin) + "]) = " + isPtr + n + ";\n" + endnc
 					intin = intin + 4
-				elif isPtr:
+				elif (t != "int16_t*" and t != "uint16_t*") and isPtr:
 					[_, castType, castPtr, _, _] = header_gen.GetTypeName(t, dicts)
 					s_intin += beginnc + "\t*("+ castType + castPtr + "*)(&" + "intin[" + str(intin) + "]) = " + n + ";\n" + endnc
 					intin = intin + 2
@@ -138,7 +141,10 @@ def CodeAESFunction(iname, build_dir, ff, dicts):
 		f.write(str(addrout))
 		f.write("};\n")
 		lcl_aespb += "\t\tcontrol,\n"
-		lcl_aespb += "\t\taes_global,\n"
+		if nvdi_style or got_global:
+			lcl_aespb += "\t\taes_global,\n"
+		else:
+			lcl_aespb += "\t\t0,\n"
 		if intin > 0:
 			f.write("\t" + wordType + " intin[" + str(intin) + "];\n")
 			lcl_aespb += "\t\tintin,\n"
