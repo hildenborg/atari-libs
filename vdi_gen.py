@@ -639,7 +639,11 @@ def WriteReturn(f, ff, dicts):
 		if type and type != "void":
 			src = r.attrib.get("src")
 			idx = r.attrib.get("idx")
-			if longs:
+			code = r.attrib.get("code")
+			if code:
+				code = code.replace("contrl", "lcl_contrl")
+				f.write("\treturn " + code + ";\n")
+			elif longs:
 				f.write("#pragma GCC diagnostic push\n")
 				f.write("#pragma GCC diagnostic ignored \"-Wstrict-aliasing\"\n")
 				f.write("\treturn *(" + type + "*)(&lcl_" + src + "[" + str(idx) +"]);\n")

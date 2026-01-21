@@ -1489,7 +1489,135 @@
 			<arg name="skew" dst="intin" type="int16_t" />
 		</function>
 	</functions>
+	<functions grpid="2" category="NVDI">
+		<function id="200" subid="0" name="vst_fg_color">
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg name="color_space" dst="intin" type="int32_t" longs="1" />
+			<arg name="fg_color" dst="intin" type="COLOR_ENTRY*" longs="2" />
+		</function>
+		<function id="200" subid="1" name="vsf_fg_color">
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg name="color_space" dst="intin" type="int32_t" longs="1" />
+			<arg name="fg_color" dst="intin" type="COLOR_ENTRY*" longs="2" />
+		</function>
+		<function id="200" subid="2" name="vsl_fg_color">
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg name="color_space" dst="intin" type="int32_t" longs="1" />
+			<arg name="fg_color" dst="intin" type="COLOR_ENTRY*" longs="2" />
+		</function>
+		<function id="200" subid="3" name="vsm_fg_color">
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg name="color_space" dst="intin" type="int32_t" longs="1" />
+			<arg name="fg_color" dst="intin" type="COLOR_ENTRY*" longs="2" />
+		</function>
+		<function id="200" subid="4" name="vsr_fg_color">
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg name="color_space" dst="intin" type="int32_t" longs="1" />
+			<arg name="fg_color" dst="intin" type="COLOR_ENTRY*" longs="2" />
+		</function>
+		<function id="202" subid="0" name="vqt_fg_color">
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg name="color_space" dst="intin" type="int32_t" longs="1" />
+			<arg name="fg_color" dst="intin" type="COLOR_ENTRY*" longs="2" />
+		</function>
+		<function id="202" subid="1" name="vqf_fg_color">
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg name="color_space" dst="intin" type="int32_t" longs="1" />
+			<arg name="fg_color" dst="intin" type="COLOR_ENTRY*" longs="2" />
+		</function>
+		<function id="202" subid="2" name="vql_fg_color">
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg name="color_space" dst="intin" type="int32_t" longs="1" />
+			<arg name="fg_color" dst="intin" type="COLOR_ENTRY*" longs="2" />
+		</function>
+		<function id="202" subid="3" name="vqm_fg_color">
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg name="color_space" dst="intin" type="int32_t" longs="1" />
+			<arg name="fg_color" dst="intin" type="COLOR_ENTRY*" longs="2" />
+		</function>
+		<function id="202" subid="4" name="vqr_fg_color">
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg name="color_space" dst="intin" type="int32_t" longs="1" />
+			<arg name="fg_color" dst="intin" type="COLOR_ENTRY*" longs="2" />
+		</function>
 
+		<function id="201" subid="0" name="vst_bg_color">
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg name="color_space" dst="intin" type="int32_t" longs="1" />
+			<arg name="fg_color" dst="intin" type="COLOR_ENTRY*" longs="2" />
+		</function>
+		<function id="201" subid="1" name="vsf_bg_color">
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg name="color_space" dst="intin" type="int32_t" longs="1" />
+			<arg name="fg_color" dst="intin" type="COLOR_ENTRY*" longs="2" />
+		</function>
+		<function id="201" subid="2" name="vsl_bg_color">
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg name="color_space" dst="intin" type="int32_t" longs="1" />
+			<arg name="fg_color" dst="intin" type="COLOR_ENTRY*" longs="2" />
+		</function>
+		<function id="201" subid="3" name="vsm_bg_color">
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg name="color_space" dst="intin" type="int32_t" longs="1" />
+			<arg name="fg_color" dst="intin" type="COLOR_ENTRY*" longs="2" />
+		</function>
+		<function id="201" subid="4" name="vsr_bg_color">
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg name="color_space" dst="intin" type="int32_t" longs="1" />
+			<arg name="fg_color" dst="intin" type="COLOR_ENTRY*" longs="2" />
+		</function>
+		<function id="203" subid="0" name="vqt_bg_color">
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg name="color_space" dst="intin" type="int32_t" longs="1" />
+			<arg name="fg_color" dst="intin" type="COLOR_ENTRY*" longs="2" />
+		</function>
+		<function id="203" subid="1" name="vqf_bg_color">
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg name="color_space" dst="intin" type="int32_t" longs="1" />
+			<arg name="fg_color" dst="intin" type="COLOR_ENTRY*" longs="2" />
+		</function>
+		<function id="203" subid="2" name="vql_bg_color">
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg name="color_space" dst="intin" type="int32_t" longs="1" />
+			<arg name="fg_color" dst="intin" type="COLOR_ENTRY*" longs="2" />
+		</function>
+		<function id="203" subid="3" name="vqm_bg_color">
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg name="color_space" dst="intin" type="int32_t" longs="1" />
+			<arg name="fg_color" dst="intin" type="COLOR_ENTRY*" longs="2" />
+		</function>
+		<function id="203" subid="4" name="vqr_bg_color">
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg name="color_space" dst="intin" type="int32_t" longs="1" />
+			<arg name="fg_color" dst="intin" type="COLOR_ENTRY*" longs="2" />
+		</function>
+		<function id="206" name="vq_ctab">
+			<return type="int16_t" code="(contrl[4] != 0)" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg name="ctab_length" dst="intin" type="int32_t" longs="1" />
+			<arg name="ctab" src="intout" type="COLOR_TAB*" longs="13" />
+		</function>
+	</functions>
 	<targets>
 		<target name="m68k-atari-mintelf">
 			<renames>
