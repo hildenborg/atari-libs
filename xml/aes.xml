@@ -580,6 +580,7 @@
 		<define name="PDLG_BUT_DEV" value="( PDLG_PREBUTTON + PDLG_PB_DEVICE )" />
 	</defines>
 	<defines category="NVDI Application">
+		<define name="vq_aes()" value="( appl_init() >= 0 )" />
 		<define name="APPEVNT_TIMER" value="0" />
 		<define name="APPEVNT_BUTTON" value="1" />
 		<define name="APPEVNT_MOUSE" value="2" />
@@ -2476,6 +2477,56 @@
 			<arg name="whdl" type="int16_t" dst="intin" />
 			<arg name="yscroll" type="int32_t" dst="intin" />
 			<arg name="xscroll" type="int16_t" dst="intin" />
+		</function>
+		<function name="lbox_get_avis" id="174" nvdi_style="1">
+			<return type="int16_t" src="intout" />
+			<arg name="box" type="LIST_BOX*" dst="addrin" />
+			<arg value="2" type="int16_t" dst="intin" />
+		</function>
+		<function name="lbox_get_visible" id="174" nvdi_style="1">
+			<return type="int16_t" src="intout" />
+			<arg name="box" type="LIST_BOX*" dst="addrin" />
+			<arg value="2" type="int16_t" dst="intin" />
+		</function>
+		<function name="lbox_get_afirst" id="174" nvdi_style="1">
+			<return type="int16_t" src="intout" />
+			<arg name="box" type="LIST_BOX*" dst="addrin" />
+			<arg value="4" type="int16_t" dst="intin" />
+		</function>
+		<function name="lbox_get_first" id="174" nvdi_style="1">
+			<return type="int16_t" src="intout" />
+			<arg name="box" type="LIST_BOX*" dst="addrin" />
+			<arg value="4" type="int16_t" dst="intin" />
+		</function>
+		<function name="lbox_set_asldr" id="175" nvdi_style="1">
+			<return type="void" />
+			<arg name="box" type="LIST_BOX*" dst="addrin" />
+			<arg value="0" type="int16_t" dst="intin" />
+			<arg name="first" type="int16_t" dst="intin" />
+			<arg name="rect" type="GRECT*" dst="addrin" />
+		</function>
+		<function name="lbox_set_slider" id="175" nvdi_style="1">
+			<return type="void" />
+			<arg name="box" type="LIST_BOX*" dst="addrin" />
+			<arg value="0" type="int16_t" dst="intin" />
+			<arg name="first" type="int16_t" dst="intin" />
+			<arg name="rect" type="GRECT*" dst="addrin" />
+		</function>
+		<function name="lbox_ascroll_to" id="175" nvdi_style="1">
+			<return type="void" />
+			<arg name="box" type="LIST_BOX*" dst="addrin" />
+			<arg value="4" type="int16_t" dst="intin" />
+			<arg name="first" type="int16_t" dst="intin" />
+			<arg name="box_rect" type="GRECT*" dst="addrin" />
+			<arg name="slider_rect" type="GRECT*" dst="addrin" />
+		</function>
+		<function name="lbox_scroll_to" id="175" nvdi_style="1">
+			<return type="void" />
+			<arg name="box" type="LIST_BOX*" dst="addrin" />
+			<arg value="4" type="int16_t" dst="intin" />
+			<arg name="first" type="int16_t" dst="intin" />
+			<arg name="box_rect" type="GRECT*" dst="addrin" />
+			<arg name="slider_rect" type="GRECT*" dst="addrin" />
 		</function>
 	</functions>
 	<targets>

@@ -18,6 +18,7 @@ extern void* aes_unused_dummy_addr[16];
 extern INT16_T aes_unused_dummy_int[16];
 
 void aes_call(AESPB* aespb);
+void _appl_yield(void);
 
 #define AES_COPY_LONG(src, dst) \
 	__asm__ volatile ( \
