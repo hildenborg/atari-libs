@@ -48,8 +48,9 @@ def CodeAESFunction(iname, build_dir, ff, dicts):
 				clrOutput = "\tintout[0] = 0;\n"
 				clrOutput += "\tintout[1] = 0;\n"
 				intout = 2
-			else:	
-				clrOutput = "\tintout[0] = 0;\n"
+			else:
+				if ret != "void":	
+					clrOutput = "\tintout[0] = 0;\n"
 				intout = 1
 		elif retSrc == "addrout":
 			clrOutput = "\taddrout[0] = 0;\n"

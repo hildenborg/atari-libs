@@ -9,6 +9,7 @@
 		<typedef typename="*PRN_DIALOG" type="void" />
 		<typedef typename="*FNT_DIALOG" type="void" />
 		<typedef typename="*LIST_BOX" type="void" />
+		<typedef typename="XEDITINFO" type="void" />
 		<callback name="SLCT_ITEM">
 			<return type="void" />
 			<arg name="box" type="LIST_BOX*" />
@@ -2288,6 +2289,193 @@
 			<arg name="settings" type="PRN_SETTINGS*" dst="addrin" />
 			<arg name="document_name" type="int8_t*" dst="addrin" />
 			<arg name="option_flags" type="int16_t" dst="intin" />
+		</function>
+		<function name="edit_create" id="210" nvdi_style="1">
+			<return type="XEDITINFO*" src="addrout" idx="0" />
+		</function>
+		<function name="edit_open" id="211" nvdi_style="1">
+			<return type="int16_t" src="intout" idx="0" />
+			<arg name="tree" type="OBJECT*" dst="addrin" idx="0" />
+			<arg name="obj" type="int16_t" dst="intin" idx="0" />
+		</function>
+		<function name="edit_close" id="212" nvdi_style="1">
+			<return type="void" />
+			<arg name="tree" type="OBJECT*" dst="addrin" idx="0" />
+			<arg name="obj" type="int16_t" dst="intin" idx="0" />
+		</function>
+		<function name="edit_delete" id="213" nvdi_style="1">
+			<return type="void" />
+			<arg name="xi" type="XEDITINFO*" dst="addrin" idx="0" />
+		</function>
+		<function name="edit_cursor" id="214" nvdi_style="1">
+			<return type="int16_t" src="intout" idx="0" />
+			<arg name="tree" type="OBJECT*" dst="addrin" idx="0" />
+			<arg name="obj" type="int16_t" dst="intin" idx="0" />
+			<arg name="whdl" type="int16_t" dst="intin" idx="1" />
+			<arg name="show" type="int16_t" dst="intin" idx="2" />
+		</function>
+		<function name="edit_evnt" id="215" nvdi_style="1">
+			<return type="int16_t" src="intout" idx="0" />
+			<arg name="tree" type="OBJECT*" dst="addrin" idx="0" />
+			<arg name="obj" type="int16_t" dst="intin" idx="0" />
+			<arg name="whdl" type="int16_t" dst="intin" idx="1" />
+			<arg name="ev" type="EVNT*" dst="addrin" idx="1" />
+		</function>
+		<function name="edit_get_buf" id="216" nvdi_style="1">
+			<return type="int16_t" src="intout" idx="0" />
+			<arg name="tree" type="OBJECT*" dst="addrin" idx="0" />
+			<arg name="obj" type="int16_t" dst="intin" />
+			<arg value="0" type="int16_t" dst="intin" />
+			<arg name="buf" type="int8_t**" src="addrout" idx="0" />
+			<arg name="buflen" type="int32_t*" src="intout" />
+			<arg name="txtlen" type="int32_t*" src="intout" />
+		</function>
+		<function name="edit_get_format" id="216" nvdi_style="1">
+			<return type="int16_t" src="intout" idx="0" />
+			<arg name="tree" type="OBJECT*" dst="addrin" idx="0" />
+			<arg name="obj" type="int16_t" dst="intin" idx="0" />
+			<arg dst="intin" type="int16_t" idx="1" value="1" />
+			<arg name="tabwidth" type="int16_t*" src="intout" idx="1" />
+			<arg name="autowrap" type="int16_t*" src="intout" idx="2" />
+		</function>
+		<function name="edit_get_colour" id="216" nvdi_style="1">
+			<return type="int16_t" src="intout" idx="0" />
+			<arg name="tree" type="OBJECT*" dst="addrin" idx="0" />
+			<arg name="obj" type="int16_t" dst="intin" idx="0" />
+			<arg dst="intin" type="int16_t" idx="1" value="2" />
+			<arg name="tcolour" type="int16_t*" src="intout" idx="1" />
+			<arg name="bcolour" type="int16_t*" src="intout" idx="2" />
+		</function>
+		<function name="edit_get_font" id="216" nvdi_style="1">
+			<return type="int16_t" src="intout" idx="0" />
+			<arg name="tree" type="OBJECT*" dst="addrin" idx="0" />
+			<arg name="obj" type="int16_t" dst="intin" idx="0" />
+			<arg dst="intin" type="int16_t" idx="1" value="3" />
+			<arg name="fontID" type="int16_t*" src="intout" idx="1" />
+			<arg name="fontH" type="int16_t*" src="intout" idx="2" />
+			<arg name="mono" type="int16_t*" src="intout" idx="3" />
+		</function>
+		<function name="edit_get_cursor" id="216" nvdi_style="1">
+			<return type="int16_t" src="intout" idx="0" />
+			<arg name="tree" type="OBJECT*" dst="addrin" idx="0" />
+			<arg name="obj" type="int16_t" dst="intin" idx="0" />
+			<arg dst="intin" type="int16_t" idx="1" value="4" />
+			<arg name="cursorpos" type="int8_t**" src="addrout" idx="0" />
+		</function>
+		<function name="edit_get_pos" id="216" nvdi_style="1">
+			<return type="void" />
+			<arg name="tree" type="OBJECT*" dst="addrin" idx="0" />
+			<arg name="obj" type="int16_t" dst="intin" idx="0" />
+			<arg dst="intin" type="int16_t" idx="1" value="5" />
+			<arg name="xscroll" type="int16_t*" src="intout" idx="1" />
+			<arg name="yscroll" type="int32_t*" src="intout" idx="2" />
+			<arg name="cyscroll" type="int8_t**" src="addrout" idx="0" />
+			<arg name="cursorpos" type="int8_t**" src="addrout" idx="1" />
+			<arg name="cx" type="int16_t*" src="intout" idx="4" />
+			<arg name="cy" type="int16_t*" src="intout" idx="5" />
+		</function>
+		<function name="edit_get_dirty" id="216" nvdi_style="1">
+			<return type="int16_t" src="intout" idx="0" />
+			<arg name="tree" type="OBJECT*" dst="addrin" idx="0" />
+			<arg name="obj" type="int16_t" dst="intin" idx="0" />
+			<arg dst="intin" type="int16_t" idx="1" value="7" />
+		</function>
+		<function name="edit_get_sel" id="216" nvdi_style="1">
+			<return type="void" />
+			<arg name="tree" type="OBJECT*" dst="addrin" idx="0" />
+			<arg name="obj" type="int16_t" dst="intin" idx="0" />
+			<arg dst="intin" type="int16_t" idx="1" value="8" />
+			<arg name="bsel" type="int8_t**" src="addrout" idx="0" />
+			<arg name="esel" type="int8_t**" src="addrout" idx="1" />
+		</function>
+		<function name="edit_get_scrollinfo" id="216" nvdi_style="1">
+			<return type="void" />
+			<arg name="tree" type="OBJECT*" dst="addrin" idx="0" />
+			<arg name="obj" type="int16_t" dst="intin" idx="0" />
+			<arg dst="intin" type="int16_t" idx="1" value="9" />
+			<arg name="nlines" type="int32_t*" src="intout" idx="1" />
+			<arg name="yscroll" type="int32_t*" src="intout" idx="3" />
+			<arg name="yvis" type="int16_t*" src="intout" idx="5" />
+			<arg name="yval" type="int16_t*" src="intout" idx="6" />
+			<arg name="ncols" type="int16_t*" src="intout" idx="7" />
+			<arg name="xscroll" type="int16_t*" src="intout" idx="8" />
+			<arg name="xvis" type="int16_t*" src="intout" idx="9" />
+		</function>
+		<function name="edit_set_buf" id="217" nvdi_style="1">
+			<return type="void" />
+			<arg name="tree" type="OBJECT*" dst="addrin" idx="0" />
+			<arg name="obj" type="int16_t" dst="intin" idx="0" />
+			<arg dst="intin" type="int16_t" idx="1" value="0" />
+			<arg name="buf" type="int8_t*" dst="addrin" idx="1" />
+			<arg name="buflen" type="int32_t" dst="intin" idx="2" />
+		</function>
+		<function name="edit_set_format" id="217" nvdi_style="1">
+			<return type="void" />
+			<arg name="tree" type="OBJECT*" dst="addrin" idx="0" />
+			<arg name="obj" type="int16_t" dst="intin" idx="0" />
+			<arg dst="intin" type="int16_t" idx="1" value="1" />
+			<arg name="tabwidth" type="int16_t" dst="intin" idx="2" />
+			<arg name="autowrap" type="int16_t" dst="intin" idx="3" />
+		</function>
+		<function name="edit_set_colour" id="217" nvdi_style="1">
+			<return type="void" />
+			<arg name="tree" type="OBJECT*" dst="addrin" idx="0" />
+			<arg name="obj" type="int16_t" dst="intin" idx="0" />
+			<arg dst="intin" type="int16_t" idx="1" value="2" />
+			<arg name="tcolour" type="int16_t" dst="intin" idx="2" />
+			<arg name="bcolour" type="int16_t" dst="intin" idx="3" />
+		</function>
+		<function name="edit_set_font" id="217" nvdi_style="1">
+			<return type="void" />
+			<arg name="tree" type="OBJECT*" dst="addrin" idx="0" />
+			<arg name="obj" type="int16_t" dst="intin" idx="0" />
+			<arg dst="intin" type="int16_t" idx="1" value="3" />
+			<arg name="fontID" type="int16_t" dst="intin" idx="2" />
+			<arg name="fontH" type="int16_t" dst="intin" idx="3" />
+			<arg name="mono" type="int16_t" dst="intin" idx="4" />
+		</function>
+		<function name="edit_set_cursor" id="217" nvdi_style="1">
+			<return type="void" />
+			<arg name="tree" type="OBJECT*" dst="addrin" idx="0" />
+			<arg name="obj" type="int16_t" dst="intin" idx="0" />
+			<arg dst="intin" type="int16_t" idx="1" value="4" />
+			<arg name="cursorpos" type="int8_t*" dst="addrin" idx="1" />
+		</function>
+		<function name="edit_set_pos" id="217" nvdi_style="1">
+			<return type="void" />
+			<arg name="tree" type="OBJECT*" dst="addrin" idx="0" />
+			<arg name="obj" type="int16_t" dst="intin" idx="0" />
+			<arg dst="intin" type="int16_t" idx="1" value="5" />
+			<arg name="xscroll" type="int16_t" dst="intin" idx="2" />
+			<arg name="yscroll" type="int32_t" dst="intin" idx="3" />
+			<arg name="cyscroll" type="int8_t*" dst="addrin" idx="1" />
+			<arg name="cursorpos" type="int8_t*" dst="addrin" idx="2" />
+			<arg name="cx" type="int16_t" dst="intin" idx="5" />
+			<arg name="cy" type="int16_t" dst="intin" idx="6" />
+		</function>
+		<function name="edit_resized" id="217" nvdi_style="1">
+			<return type="int16_t" src="intout" idx="0" />
+			<arg name="tree" type="OBJECT*" dst="addrin" idx="0" />
+			<arg name="obj" type="int16_t" dst="intin" idx="0" />
+			<arg dst="intin" type="int16_t" idx="1" value="6" />
+			<arg name="oldrh" type="int16_t*" src="intout" idx="1" />
+			<arg name="newrh" type="int16_t*" src="intout" idx="2" />
+		</function>
+		<function name="edit_set_dirty" id="217" nvdi_style="1">
+			<return type="void" />
+			<arg name="tree" type="OBJECT*" dst="addrin" idx="0" />
+			<arg name="obj" type="int16_t" dst="intin" idx="0" />
+			<arg dst="intin" type="int16_t" idx="1" value="7" />
+			<arg name="dirty" type="int16_t" dst="intin" idx="2" />
+		</function>
+		<function name="edit_scroll" id="217" nvdi_style="1">
+			<return type="int16_t" src="intout" idx="0" />
+			<arg name="tree" type="OBJECT*" dst="addrin" idx="0" />
+			<arg name="obj" type="int16_t" dst="intin" idx="0" />
+			<arg dst="intin" type="int16_t" idx="1" value="9" />
+			<arg name="whdl" type="int16_t" dst="intin" idx="2" />
+			<arg name="yscroll" type="int32_t" dst="intin" idx="3" />
+			<arg name="xscroll" type="int16_t" dst="intin" idx="5" />
 		</function>
 	</functions>
 	<targets>
