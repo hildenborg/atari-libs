@@ -1,10 +1,10 @@
 #include "aes_def.h"
 
-void* mt_fslx_do(char* title, char* path, short pathlen, char* fname, short fnamelen, char* patterns, XFSL_FILTER* filter, char* paths, short* sort_mode, short flags, short* button, short* nfiles, char** pattern, short* aes_global)
+XFSL_DIALOG* mt_fslx_do(const INT8_T* title, INT8_T* path, INT16_T pathlen, INT8_T* fname, INT16_T fnamelen, const INT8_T* patterns, XFSL_FILTER filter, INT8_T* paths, INT16_T* sort_mode, INT16_T flags, INT16_T* button, INT16_T* nfiles, INT8_T** pattern, INT16_T* aes_global)
 {
-	short control[5] = {194, 4, 2, 6, 2};
-	short intin[4];
-	short intout[3];
+	INT16_T control[5] = {194, 4, 2, 6, 2};
+	INT16_T intin[4];
+	INT16_T intout[3];
 	void* addrin[6];
 	void* addrout[2];
 	AESPB lcl_aespb =
@@ -31,10 +31,10 @@ void* mt_fslx_do(char* title, char* path, short pathlen, char* fname, short fnam
 	*nfiles = intout[1];
 	*sort_mode = intout[2];
 	*pattern = addrout[1];
-	return addrout[0];
+	return (XFSL_DIALOG*)addrout[0];
 }
 
-void* fslx_do(char* title, char* path, short pathlen, char* fname, short fnamelen, char* patterns, XFSL_FILTER* filter, char* paths, short* sort_mode, short flags, short* button, short* nfiles, char** pattern)
+XFSL_DIALOG* fslx_do(const INT8_T* title, INT8_T* path, INT16_T pathlen, INT8_T* fname, INT16_T fnamelen, const INT8_T* patterns, XFSL_FILTER filter, INT8_T* paths, INT16_T* sort_mode, INT16_T flags, INT16_T* button, INT16_T* nfiles, INT8_T** pattern)
 {
 	return mt_fslx_do(title, path, pathlen, fname, fnamelen, patterns, filter, paths, sort_mode, flags, button, nfiles, pattern, 0);
 }
