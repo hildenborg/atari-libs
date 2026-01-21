@@ -42,12 +42,17 @@ def CodeAESFunction(iname, build_dir, ff, dicts):
 		intout = 0
 		addrin = 0
 		addrout = 0
+		clrOutput = ""
 		if retSrc == "intout" and not retVal:
 			if ret == "int32_t" or ret == "uint32_t":
+				clrOutput = "\tintout[0] = 0;\n"
+				clrOutput += "\tintout[1] = 0;\n"
 				intout = 2
 			else:	
+				clrOutput = "\tintout[0] = 0;\n"
 				intout = 1
 		elif retSrc == "addrout":
+			clrOutput = "\taddrout[0] = 0;\n"
 			addrout = 1
 		s_intin = ""
 		s_addrin = ""
@@ -62,7 +67,6 @@ def CodeAESFunction(iname, build_dir, ff, dicts):
 				got_global = True
 			src = a.attrib.get("src")
 			dst = a.attrib.get("dst")
-			idx = a.attrib.get("idx")
 			t = a.attrib.get("type")
 			nc = a.attrib.get("nullchk")
 			if not n:
@@ -81,8 +85,6 @@ def CodeAESFunction(iname, build_dir, ff, dicts):
 				endnc = "\t}\n"
 
 			if src == "intout":
-				if idx is not None and int(idx) != int(intout):
-					pass
 				if (t == "int16_t*" or t == "uint16_t*"):
 					s_intout += beginnc + "\t*" + n + " = " + "intout[" + str(intout) + "];\n" + endnc
 					intout = intout + 1
@@ -91,33 +93,26 @@ def CodeAESFunction(iname, build_dir, ff, dicts):
 					intout = intout + 4
 				else:
 					[_, castType, castPtr, _, _] = header_gen.GetTypeName(t, dicts)
-					s_intout += beginnc + "\t*" + n + " = " + "*(" + castType + castPtr +")(&intout[" + str(intout) + "]);\n" + endnc
+					s_intout += beginnc + "\tAES_COPY_LONG(&intout[" + str(intout) + "], " + n + ");\n" + endnc
 					intout = intout + 2
 			elif src == "addrout":
-				if idx is not None and int(idx) != int(addrout):
-					pass
 				s_addrout += beginnc + "\t*" + n + " = " + "addrout[" + str(addrout) + "];\n" + endnc
 				addrout = addrout + 1
 			if dst == "intin":
-				if idx is not None and int(idx) != int(intin):
-					pass
 				if (t == "int32_t" or t == "uint32_t"):
 					[_, longType, _, _, _] = header_gen.GetTypeName("int32_t", dicts)
-					s_intin += beginnc + "\t*(" + longType + "*)(&" + "intin[" + str(intin) + "]) = " + isPtr + n + ";\n" + endnc
+					s_intin += beginnc + "\tAES_COPY_LONG(&" + n + ", &intin[" + str(intin) + "]);\n" + endnc
 					intin = intin + 2
 				elif t == "GRECT*":
 					s_intin += beginnc + "\t*(GRECT*)(&" + "intin[" + str(intin) + "]) = " + isPtr + n + ";\n" + endnc
 					intin = intin + 4
 				elif (t != "int16_t*" and t != "uint16_t*") and isPtr:
-					[_, castType, castPtr, _, _] = header_gen.GetTypeName(t, dicts)
-					s_intin += beginnc + "\t*("+ castType + castPtr + "*)(&" + "intin[" + str(intin) + "]) = " + n + ";\n" + endnc
+					s_intin += beginnc + "\tAES_COPY_LONG(&" + n + ", &intin[" + str(intin) + "]);\n" + endnc
 					intin = intin + 2
 				else:
 					s_intin += beginnc + "\t" + "intin[" + str(intin) + "] = " + isPtr + n + ";\n" + endnc
 					intin = intin + 1
 			elif dst == "addrin":
-				if idx is not None and int(idx) != int(addrin):
-					pass
 				s_addrin += beginnc + "\t" + "addrin[" + str(addrin) + "] = (void*)" + n + ";\n" + endnc
 				addrin = addrin + 1
 
@@ -130,6 +125,14 @@ def CodeAESFunction(iname, build_dir, ff, dicts):
 			funcDecl += "void"
 
 		f.write(")\n{\n")
+
+		res = ff.find("reserve")
+		if res is not None:
+			# Only Intout for now.
+			resArr = res.attrib.get("dst")
+			resCnt = res.attrib.get("count")
+			if resArr == "intout" and resCnt:
+				intout = int(resCnt)
 
 		lcl_aespb = "\tAESPB lcl_aespb =\n\t{\n"
 
@@ -170,22 +173,24 @@ def CodeAESFunction(iname, build_dir, ff, dicts):
 			
 		f.write(s_intin)
 		f.write(s_addrin)
+		f.write(clrOutput)
 		f.write("\taes_call(&lcl_aespb);\n")
 		f.write(s_intout)
 		f.write(s_addrout)
 		if ret != "void":
-			f.write("\treturn ")
 			if retVal:
-				f.write(retVal + ";\n")
+				f.write("\treturn " + retVal + ";\n")
 			elif retSrc == "addrout":
-				f.write("addrout[0]")
+				f.write("\treturn addrout[0];\n")
 			else:
 				if ret != "int16_t" and ret != "uint16_t":
 					[_, castType, _, _, _] = header_gen.GetTypeName(ret, dicts)
-					f.write("*(" + castType + "*)(&intout[0])")
+					f.write("#pragma GCC diagnostic push\n")
+					f.write("#pragma GCC diagnostic ignored \"-Wstrict-aliasing\"\n")
+					f.write("\treturn *(" + castType + "*)(&intout[0]);\n")
+					f.write("#pragma GCC diagnostic pop\n")
 				else:
-					f.write("intout[0]")
-			f.write(";\n")
+					f.write("\treturn intout[0];\n")
 		f.write("}\n\n")
 
 		if nvdi_style:

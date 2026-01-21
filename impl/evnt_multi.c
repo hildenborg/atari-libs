@@ -78,7 +78,7 @@ INT16_T mt_evnt_multi(INT16_T events, INT16_T bclicks, INT16_T bmask, INT16_T bs
 		intin[9] = m2flag;
 		*(GRECT*)(&intin[10]) = *g2;
 	}
-	*(INT32_T*)(&intin[14]) = ms;
+	AES_COPY_LONG(&ms, &intin[14]);
 	addrin[0] = (void*)msg;
 	aes_call(&lcl_aespb);
 	*ev = *(EVNTDATA*)(&intout[1]);
@@ -158,7 +158,7 @@ void MT_EVNT_multi(INT16_T events, INT16_T bclicks, INT16_T bmask, INT16_T bstat
 	{
 		*((MOBLK*)(&intin[9])) = *m2;
 	}
-	*(INT32_T*)(&intin[14]) = ms;
+	AES_COPY_LONG(&ms, &intin[14]);
 	addrin[0] = (void*)msg;
 	aes_call(&lcl_aespb);
 	*ev = *(EVNT*)(&intout[1]);
