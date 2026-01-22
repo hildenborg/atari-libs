@@ -1611,12 +1611,164 @@
 			<arg name="color_space" dst="intin" type="int32_t" longs="1" />
 			<arg name="fg_color" dst="intin" type="COLOR_ENTRY*" longs="2" />
 		</function>
-		<function id="206" name="vq_ctab">
+		<function id="206" subid="0" name="vq_ctab">
 			<return type="int16_t" code="(contrl[4] != 0)" />
 			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
 			<arg name="ctab_length" dst="intin" type="int32_t" longs="1" />
 			<arg name="ctab" src="intout" type="COLOR_TAB*" longs="13" />
 		</function>
+		<function id="206" subid="6" name="v_get_ctab_id">
+			<return src="intout" idx="0" type="int32_t" longs="1" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+		</function>
+		<function id="205" subid="0" name="v_ctab">
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg name="ctab" dst="intin" type="COLOR_TAB*" words="(INT16_T)(ctab->length >> 1)" />
+		</function>
+		<function id="205" subid="1" name="v_ctab_entry">
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg name="index" dst="intin" type="int16_t" />
+			<arg name="color_space" dst="intin" type="int32_t" longs="1" />
+			<arg name="color" dst="intin" type="COLOR_ENTRY*" longs="2" />
+		</function>
+		<function id="205" subid="2" name="vs_dflt_ctab">
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+		</function>
+		<function id="206" subid="1" name="vq_ctab_entry">
+			<return src="intout" idx="0" type="int32_t" longs="1" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg name="index" dst="intin" type="int16_t" />
+			<arg name="color" src="intout" type="COLOR_ENTRY*" longs="2" />
+		</function>
+		<function id="206" subid="2" name="vq_ctab_id">
+			<return src="intout" idx="0" type="int32_t" longs="1" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+		</function>
+		<function id="206" subid="3" name="v_ctab_idx2vdi">
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg name="index" dst="intin" type="int16_t" />
+		</function>
+		<function id="206" subid="4" name="v_ctab_vdi2idx">
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg name="vdi_index" dst="intin" type="int16_t" />
+		</function>
+		<function id="206" subid="5" name="v_ctab_idx2value">
+			<return src="intout" idx="0" type="int32_t" longs="1" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg name="index" dst="intin" type="int16_t" />
+		</function>
+		<function id="206" subid="7" name="vq_dflt_ctab">
+			<return type="int16_t" code="(contrl[4] != 0)" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg name="ctab_length" dst="intin" type="int32_t" longs="1" />
+			<arg name="ctab" src="intout" type="COLOR_TAB*" longs="0" />
+		</function>
+		<function id="206" subid="8" name="v_create_ctab">
+			<return src="intout" idx="0" type="COLOR_TAB*" longs="0" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg name="color_space" dst="intin" type="int32_t" longs="1" />
+			<arg name="px_format" dst="intin" type="uint32_t" longs="1" />
+		</function>
+		<function id="206" subid="9" name="v_delete_ctab">
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg name="ctab" dst="intin" type="COLOR_TAB*" longs="0" />
+		</function>
+		<function id="208" subid="0" name="v_create_itab">
+			<return src="intout" idx="0" type="ITAB_REF" longs="0" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg name="ctab" dst="intin" type="COLOR_TAB*" longs="0" />
+			<arg name="bits" dst="intin" type="int16_t" />
+			<arg value="0" dst="intin" type="int16_t" />
+			<arg value="0" dst="intin" type="int16_t" />
+		</function>
+		<function id="208" subid="1" name="v_delete_itab">
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg name="itab" dst="intin" type="ITAB_REF" longs="0" />
+		</function>
+		<function id="207" subid="0" name="vs_hilite_color">
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg name="color_space" dst="intin" type="int32_t" longs="1" />
+			<arg name="hilite_color" dst="intin" type="COLOR_ENTRY*" longs="2" />
+		</function>
+		<function id="207" subid="1" name="vs_min_color">
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg name="color_space" dst="intin" type="int32_t" longs="1" />
+			<arg name="min_color" dst="intin" type="COLOR_ENTRY*" longs="2" />
+		</function>
+		<function id="207" subid="2" name="vs_max_color">
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg name="color_space" dst="intin" type="int32_t" longs="1" />
+			<arg name="max_color" dst="intin" type="COLOR_ENTRY*" longs="2" />
+		</function>
+		<function id="207" subid="3" name="vs_weight_color">
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg name="color_space" dst="intin" type="int32_t" longs="1" />
+			<arg name="weight_color" dst="intin" type="COLOR_ENTRY*" longs="2" />
+		</function>
+		<function id="209" subid="0" name="vq_hilite_color">
+			<return src="intout" idx="0" type="int32_t" longs="1" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg name="hilite_color" src="intout" type="COLOR_ENTRY*" longs="2" />
+		</function>
+		<function id="209" subid="1" name="vq_min_color">
+			<return src="intout" idx="0" type="int32_t" longs="1" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg name="min_color" src="intout" type="COLOR_ENTRY*" longs="2" />
+		</function>
+		<function id="209" subid="2" name="vq_max_color">
+			<return src="intout" idx="0" type="int32_t" longs="1" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg name="max_color" src="intout" type="COLOR_ENTRY*" longs="2" />
+		</function>
+		<function id="209" subid="3" name="vq_weight_color">
+			<return src="intout" idx="0" type="int32_t" longs="1" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg name="weight_color" src="intout" type="COLOR_ENTRY*" longs="2" />
+		</function>
+		<function id="204" subid="0" name="v_color2value">
+			<return src="intout" idx="0" type="uint32_t" longs="1" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg name="color_space" dst="intin" type="int32_t" longs="1" />
+			<arg name="color" dst="intin" type="COLOR_ENTRY*" longs="2" />
+		</function>
+		<function id="204" subid="1" name="v_value2color">
+			<return src="intout" idx="0" type="int32_t" longs="1" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg name="value" dst="intin" type="int32_t" longs="1" />
+			<arg name="color" src="intout" type="COLOR_ENTRY*" longs="2" />
+		</function>
+		<function id="204" subid="2" name="v_color2nearest">
+			<return src="intout" idx="0" type="int32_t" longs="1" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg name="color_space" dst="intin" type="int32_t" longs="1" />
+			<arg name="color" dst="intin" type="COLOR_ENTRY*" longs="2" />
+			<arg name="nearest_color" src="intout" type="COLOR_ENTRY*" longs="2" />
+		</function>
+		<function id="204" subid="3" name="vq_px_format">
+			<return src="intout" idx="0" type="int32_t" longs="1" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg name="px_format" src="intout" type="uint32_t*" longs="1" />
+		</function>
+		<function id="138" name="v_setrgb">
+			<return src="intout" idx="0" type="int32_t" longs="1" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg name="type" dst="contrl" idx="5" type="int16_t" />
+			<arg name="r" dst="intin" type="int16_t" />
+			<arg name="g" dst="intin" type="int16_t" />
+			<arg name="b" dst="intin" type="int16_t" />
+		</function>
+
 	</functions>
 	<targets>
 		<target name="m68k-atari-mintelf">

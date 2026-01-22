@@ -274,9 +274,7 @@ def PreprocessOutArray(ff, chkarr, arrUse: ArrayUse, dicts):
 	SetTypeUsage(ff, arrUse, dicts)
 	GetArraySize(arrUse)
 
-	if arrUse.values != 0:
-		print ("Error: " + name + " - No values in output, must be pointers")
-	elif arrUse.ret == 0 and arrUse.pointers == 1 and arrUse.chars == 0:
+	if arrUse.ret == 0 and arrUse.pointers == 1 and arrUse.chars == 0:
 		# Simple case where we can use the ptr directly.
 		arrUse.directPointer = True
 	else:
@@ -506,6 +504,9 @@ def WriteWorkOutSetup(f, arrUse : ArrayUse, dicts):
 		#arrUse.contrl = count
 		# Create array
 		arrUse.vdipb = "lcl_" + arrUse.name
+		if arrUse.name == "intout" and str(count) == "1":
+			# Just to be safe if the call uses int instead of short.
+			count = "2"
 		f.write("\t" + wordType + " " + arrUse.vdipb + "[" + count + "];\n")
 #		WriteWorkOutArgSetup(f, arrUse, dicts)
 	elif arrUse.directPointer:
@@ -644,9 +645,10 @@ def WriteReturn(f, ff, dicts):
 				code = code.replace("contrl", "lcl_contrl")
 				f.write("\treturn " + code + ";\n")
 			elif longs:
+				[_, castType, castPtr, _, _] = header_gen.GetTypeName(type, dicts)
 				f.write("#pragma GCC diagnostic push\n")
 				f.write("#pragma GCC diagnostic ignored \"-Wstrict-aliasing\"\n")
-				f.write("\treturn *(" + type + "*)(&lcl_" + src + "[" + str(idx) +"]);\n")
+				f.write("\treturn *(" + castType + castPtr + "*)(&lcl_" + src + "[" + str(idx) +"]);\n")
 				f.write("#pragma GCC diagnostic pop\n")
 			else:
 				f.write("\treturn lcl_" + src + "[" + str(idx) +"];\n")
