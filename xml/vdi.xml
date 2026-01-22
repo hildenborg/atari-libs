@@ -1612,7 +1612,7 @@
 			<arg name="fg_color" dst="intin" type="COLOR_ENTRY*" longs="2" />
 		</function>
 		<function id="206" subid="0" name="vq_ctab">
-			<return type="int16_t" code="(contrl[4] != 0)" />
+			<return type="int16_t" code="(contrl[4] != 0) ? 1 : 0" />
 			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
 			<arg name="ctab_length" dst="intin" type="int32_t" longs="1" />
 			<arg name="ctab" src="intout" type="COLOR_TAB*" longs="13" />
@@ -1663,7 +1663,7 @@
 			<arg name="index" dst="intin" type="int16_t" />
 		</function>
 		<function id="206" subid="7" name="vq_dflt_ctab">
-			<return type="int16_t" code="(contrl[4] != 0)" />
+			<return type="int16_t" code="(contrl[4] != 0) ? 1 : 0" />
 			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
 			<arg name="ctab_length" dst="intin" type="int32_t" longs="1" />
 			<arg name="ctab" src="intout" type="COLOR_TAB*" longs="0" />
@@ -1817,6 +1817,52 @@
 			<arg name="height" dst="intin" type="int16_t" />
 			<arg name="byte_width" dst="intin" type="int32_t" longs="1" />
 			<arg name="addr" dst="intin" type="uint8_t*" longs="0" />
+		</function>
+		<function id="1" name="v_opnprn" onlyheader="1" >
+			<return src="contrl" idx="6" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg name="settings" dst="intin" type="PRN_SETTINGS*" />
+			<arg name="work_out" dst="intin" type="int16_t*" />
+		</function>
+		<function id="102" subid="1" name="vq_scrninfo" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg name="work_out" src="intout" type="int16_t*" />
+			<arg value="2" dst="intin" type="int16_t" />
+		</function>
+		<function id="248" subid="4242" name="vq_ext_devinfo" >
+			<return src="intout" idx="1" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg name="id" dst="intin" type="int16_t" />
+			<arg name="exists" src="intout" idx="0" type="int16_t*" />
+			<arg name="file_path" dst="intin" type="int8_t*" longs="0"/>
+			<arg name="file_name" dst="intin" type="int8_t*" longs="0"/>
+			<arg name="name" dst="intin" type="int8_t*" longs="0"/>
+		</function>
+		<function id="236" subid="0" name="vst_map_mode" onlyheader="1" >
+			<return code="(contrl[4] != 0) ? intout[0] : (mode == 1)" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg name="mode" dst="intin" type="int16_t" />
+			<arg value="1" dst="intin" type="int16_t" />
+		</function>
+		<function id="231" subid="0" name="vst_width" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg name="width" dst="ptsin" type="int16_t" />
+			<arg value="0" dst="ptsin" type="int16_t" />
+			<arg name="char_width" src="intout" idx="0" type="int16_t*" />
+			<arg name="char_height" src="intout" idx="1" type="int16_t*" />
+			<arg name="cell_width" src="intout" idx="2" type="int16_t*" />
+			<arg name="cell_height" src="intout" idx="3" type="int16_t*" />
+		</function>
+		<function id="237" subid="0" name="vst_track_offset" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg value="255" dst="intin" idx="0" type="int16_t" />
+			<arg name="offset" dst="intin" type="fix31" idx="2" longs="1" />
+			<arg name="pair_mode" dst="intin" idx="1" type="int16_t" />
+			<arg name="track" src="intout" idx="0" type="int16_t*" />
+			<arg name="pairs" src="intout" idx="1" type="int16_t*" />
 		</function>
 
 	</functions>

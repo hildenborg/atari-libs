@@ -1,8 +1,8 @@
 #include "vdi_def.h"
 
-void v_opnbm(short* work_in, MFDB* bitmap, short* handle, short* work_out)
+void v_opnbm(INT16_T* work_in, MFDB* bitmap, INT16_T* handle, INT16_T* work_out)
 {
-	short lcl_contrl[16];
+	INT16_T lcl_contrl[16];
 	lcl_contrl[0] = 100;
 	lcl_contrl[1] = 0;
 	lcl_contrl[3] = 20;
@@ -12,10 +12,10 @@ void v_opnbm(short* work_in, MFDB* bitmap, short* handle, short* work_out)
 	VDIPB lcl_vdipb =
 	{
 		lcl_contrl,
-		(short*)work_in,
+		(INT16_T*)work_in,
 		unused_dummy_array,
-		(short*)work_out,
-		&((short*)work_out)[45]
+		(INT16_T*)work_out,
+		&((INT16_T*)work_out)[45]
 	};
 	vdi_call(&lcl_vdipb);
 	*handle = lcl_contrl[6];
