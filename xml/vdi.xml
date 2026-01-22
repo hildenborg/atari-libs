@@ -137,7 +137,7 @@
 			<member type="int32_t" name="length" />
 			<member type="int32_t" name="format" />
 			<member type="int32_t" name="reserved" />
-			<member type="uint8_t" name="*addr" />
+			<member type="uint8_t*" name="addr" />
 			<member type="int32_t" name="width" />
 			<member type="int32_t" name="bits" />
 			<member type="uint32_t" name="px_format" />
@@ -1761,12 +1761,62 @@
 			<arg name="px_format" src="intout" type="uint32_t*" longs="1" />
 		</function>
 		<function id="138" name="v_setrgb">
-			<return src="intout" idx="0" type="int32_t" longs="1" />
+			<return type="void" />
 			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
 			<arg name="type" dst="contrl" idx="5" type="int16_t" />
 			<arg name="r" dst="intin" type="int16_t" />
 			<arg name="g" dst="intin" type="int16_t" />
 			<arg name="b" dst="intin" type="int16_t" />
+		</function>
+		<function id="170" subid="0" name="vr_transfer_bits">
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg name="src_bm" dst="contrl" idx="7" type="GCBITMAP*" longs="0" />
+			<arg name="dst_bm" dst="contrl" idx="9" type="GCBITMAP*" longs="0" />
+			<arg value="0" dst="contrl" idx="11" type="int16_t" />
+			<arg value="0" dst="contrl" idx="12" type="int16_t" />
+			<arg name="src_rect" dst="ptsin" idx="0" type="int16_t*" words="4" />
+			<arg name="dst_rect" dst="ptsin" idx="4" type="int16_t*" words="4" />
+			<arg name="mode" dst="intin" type="int16_t" />
+			<arg value="0" dst="intin" type="int16_t" />
+			<arg value="0" dst="intin" type="int16_t" />
+			<arg value="0" dst="intin" type="int16_t" />
+		</function>
+
+		<function id="100" subid="3" name="v_open_bm">
+			<return src="contrl" idx="6" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg name="bitmap" dst="contrl" idx="7" type="GCBITMAP*" longs="0" />
+			<arg name="color_flags" dst="intin" type="int16_t" />
+			<arg name="unit_flags" dst="intin" type="int16_t" />
+			<arg name="pixel_width" dst="intin" type="int16_t" />
+			<arg name="pixel_height" dst="intin" type="int16_t" />
+		</function>
+		<function id="101" subid="1" name="v_close_bm">
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+		</function>
+		<function id="101" subid="1" name="v_clsbm">
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+		</function>
+		<function id="100" subid="1" name="v_opnbm" onlyheader="1" >
+			<return type="void" />
+			<arg name="work_in" dst="intin" words="20" type="int16_t*" />
+			<arg name="bitmap" dst="contrl" idx="7" longs="0" type="MFDB*" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t*" />
+			<arg name="work_out" type="int16_t*">
+				<sequence src="intout" words="45" />
+				<sequence src="ptsout" words="12" />
+			</arg>
+		</function>
+		<function id="100" subid="2" name="v_resize_bm">
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg name="width" dst="intin" type="int16_t" />
+			<arg name="height" dst="intin" type="int16_t" />
+			<arg name="byte_width" dst="intin" type="int32_t" longs="1" />
+			<arg name="addr" dst="intin" type="uint8_t*" longs="0" />
 		</function>
 
 	</functions>
