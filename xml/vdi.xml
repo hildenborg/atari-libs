@@ -1864,7 +1864,118 @@
 			<arg name="track" src="intout" idx="0" type="int16_t*" />
 			<arg name="pairs" src="intout" idx="1" type="int16_t*" />
 		</function>
-
+		<function id="230" subid="0" name="vst_name" >
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg name="font_format" dst="intin" type="int16_t" />
+			<arg name="font_name" dst="intin" words="strlen" type="cint8_t*" />
+			<arg name="ret_name" src="intout" words="contrl[4] - 1" type="int8_t*" nullchk="1" estimate="81" />
+			<arg value="0" dst="contrl" idx="4" type="int16_t" />
+		</function>
+		<function id="190" subid="0" name="vqt_char_index" >
+			<return src="intout" idx="0" type="uint16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg name="src_index" dst="intin" type="uint16_t" />
+			<arg name="src_mode" dst="intin" type="int16_t" />
+			<arg name="dst_mode" dst="intin" type="int16_t" />
+		</function>
+		<function id="243" subid="1" name="v_get_outline" >
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg name="index" dst="intin" idx="0" type="uint16_t" />
+			<arg name="x_offset" dst="intin" idx="6" type="int16_t" />
+			<arg name="y_offset" dst="intin" idx="7" type="int16_t" />
+			<arg name="pts" dst="intin" idx="2" type="int16_t*" longs="0" />
+			<arg name="flags" dst="intin" idx="4" type="int8_t*" longs="0" />
+			<arg name="max_pts" dst="intin" idx="1" type="int16_t" />
+		</function>
+		<function id="229" subid="0" name="vqt_xfntinfo" onlyheader="1" >
+			<return src="intout" idx="1" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg name="flags" dst="intin" type="int16_t" />
+			<arg name="id" dst="intin" type="int16_t" />
+			<arg name="index" dst="intin" type="int16_t" />
+			<arg name="info" dst="intin" type="XFNT_INFO*" longs="0" />
+		</function>
+		<function id="230" subid="100" name="vqt_name_and_id" >
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg name="font_format" dst="intin" type="int16_t" />
+			<arg name="font_name" dst="intin" words="strlen" type="cint8_t*" />
+			<arg name="ret_name" src="intout" words="contrl[4] - 1" type="int8_t*" nullchk="1" estimate="81" />
+		</function>
+		<function id="5" subid="27" name="v_orient" >
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg name="orientation" dst="intin" type="int16_t" />
+		</function>
+		<function id="5" subid="28" name="v_copies" >
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg name="copies" dst="intin" type="int16_t" />
+		</function>
+		<function id="241" subid="0" name="v_ftext_wide" >
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg name="x" dst="ptsin" idx="0" type="int16_t" />
+			<arg name="y" dst="ptsin" idx="1" type="int16_t" />
+			<arg name="string" dst="intin" type="cuint16_t*" words="wstrlen" />
+		</function>
+		<function id="240" subid="0" name="vqt_extent_wide">
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg name="string" dst="intin" words="wstrlen" type="cuint16_t*" />
+			<arg name="extent" src="ptsout" longs="4" type="int16_t*" />
+		</function>
+		<function id="240" subid="4200" name="vqt_real_extent">
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg name="x" dst="ptsin" idx="0" type="int16_t" />
+			<arg name="y" dst="ptsin" idx="1" type="int16_t" />
+			<arg name="string" dst="intin" words="strlen" type="cint8_t*" />
+			<arg name="extent" src="ptsout" longs="4" type="int16_t*" />
+		</function>
+		<function id="240" subid="4200" name="vqt_real_extent_wide">
+			<return type="void" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg name="x" dst="ptsin" idx="0" type="int16_t" />
+			<arg name="y" dst="ptsin" idx="1" type="int16_t" />
+			<arg name="string" dst="intin" words="wstrlen" type="cint16_t*" />
+			<arg name="extent" src="ptsout" longs="4" type="int16_t*" />
+		</function>
+		<function id="5" subid="2100" name="vq_margins" >
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg name="top_margin" src="intout" type="int16_t*" />
+			<arg name="bottom_margin" src="intout" type="int16_t*" />
+			<arg name="left_margin" src="intout" type="int16_t*" />
+			<arg name="right_margin" src="intout" type="int16_t*" />
+			<arg name="hdpi" src="intout" type="int16_t*" />
+			<arg name="vdpi" src="intout" type="int16_t*" />
+		</function>
+		<function id="5" subid="2103" name="vs_document_info" onlyheader="1" >
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg name="type" dst="intin" idx="0" type="int16_t" />
+			<arg name="string" dst="intin" idx="1" words="strlen" type="cvoid*" />
+			<arg name="wchar" type="int16_t" />
+		</function>
+		<function id="5" subid="39" name="vq_prn_scaling" onlyheader="1" >
+			<return src="intout" idx="0" type="fix31" longs="1" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg value="-1" dst="intin" idx="0" type="int16_t" />
+			<arg value="-1" dst="intin" idx="1" type="int16_t" />
+			<arg value="0" dst="contrl" idx="4" type="int16_t" />
+		</function>
+		<function id="130" subid="1" name="vqt_ext_name" onlyheader="1" >
+			<return src="intout" idx="0" type="int16_t" />
+			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
+			<arg name="index" dst="intin" type="int16_t" />
+			<arg value="0" dst="intin" type="int16_t" />
+			<arg name="name" src="intout" idx="1" words="31" type="int8_t*" />
+			<arg name="font_format" src="intout" type="uint16_t*" />
+			<arg name="flags" src="intout" type="uint16_t*" />
+		</function>
 	</functions>
 	<targets>
 		<target name="m68k-atari-mintelf">

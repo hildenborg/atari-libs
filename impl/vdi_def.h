@@ -17,7 +17,9 @@ extern INT16_T unused_dummy_array[16];	// Should never be used.
 
 void vdi_words_to_bytes(const INT16_T* src, INT8_T* dst, INT16_T len);
 void vdi_bytes_to_words(const INT8_T* src, INT16_T* dst, INT16_T len);
-short vdi_strlen(const void* src);
+void vdi_swap_bytes(const INT8_T* src, INT8_T* dst, INT16_T len);
+INT16_T vdi_strlen(const void* src);
+INT16_T vdi_wstrlen(const void* src);
 
 #define vdi_call(vdipb) \
 	__asm__ volatile ( \
@@ -44,6 +46,8 @@ short vdi_strlen(const void* src);
 	for (short i = len; --i >= 0; ((unsigned short*)dst)[i] = ((unsigned short*)src)[i]) {}
 
 #define VDI_CAST_FROM_BYTES(src, dst, len) vdi_bytes_to_words((const INT8_T*)(src), (INT16_T*)(dst), (len))
+
+#define VDI_SWAP_BYTES(src, dst, len) vdi_swap_bytes((const INT8_T*)(src), (INT8_T*)(dst), (len))
 
 #define VDI_CAST_TO_BYTES(src, dst, len) vdi_words_to_bytes((const INT16_T*)(src), (INT8_T*)(dst), (len))
 

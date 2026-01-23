@@ -1,17 +1,17 @@
 #include "vdi_def.h"
 
-short vst_map_mode(short handle, short mode)
+INT16_T vst_map_mode(INT16_T handle, INT16_T mode)
 {
-	short lcl_intin[2];
+	INT16_T lcl_intin[2];
 	lcl_intin[0] = mode;
 	lcl_intin[1] = 1;
-	short lcl_contrl[16];
+	INT16_T lcl_contrl[16];
 	lcl_contrl[0] = 236;
 	lcl_contrl[1] = 0;
 	lcl_contrl[3] = 2;
 	lcl_contrl[5] = 0;
 	lcl_contrl[6] = handle;
-	short lcl_intout[2];
+	INT16_T lcl_intout[2];
 	VDIPB lcl_vdipb =
 	{
 		lcl_contrl,

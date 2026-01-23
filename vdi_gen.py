@@ -209,9 +209,13 @@ def PreprocessSizeAndIdx(ff, arrUse: ArrayUse):
 				arrUse.xmlArgs.append(a)
 				idx = SetDefaultSizeAndIdx(a, idx, arrUse)
 				words = a.attrib.get("words")
-				if words is not None and words == "strlen":
-					a.set("words", "_str_len")
-					arrUse.usesStrlen = a
+				if words is not None:
+					if words == "strlen":
+						a.set("words", "_str_len")
+						arrUse.usesStrlen = a
+					elif words == "wstrlen":
+						a.set("words", "_wstr_len")
+						arrUse.usesStrlen = a
 		else:
 			# Only for intout and ptsout
 			seqIdx = 0
@@ -440,10 +444,16 @@ def WriteWorkOutArgSetup(f, arrUse : ArrayUse, dicts):
 	for a in arrUse.xmlArgs:
 		words = a.attrib.get("words")
 		longs = a.attrib.get("longs")
+		nc = a.attrib.get("nullchk")
+		if nc:
+			name = a.attrib.get("name")
+			f.write("\tif(" + name + " != 0)\n\t{\n\t")
 		if words is not None:
 			WriteOutWords(f, a, arrUse, words, dicts)
 		elif longs is not None:
 			WriteOutLongs(f, a, arrUse, longs, dicts)
+		if nc:
+			f.write("\t}\n")
 
 def WriteWorkInSetup(f, ff, arrUse : ArrayUse, dicts):
 	# Need to set in arrUse, what pointer vdipb should use.
@@ -597,15 +607,38 @@ def WriteWorkContrlExit(f, ff, dicts):
 		else:
 			f.write("\t*" + name + " = lcl_contrl[" + str(idx) + "];\n")
 
+def WriteStrLen(f, a, dicts):
+	[_, wordType, _, _, _] = header_gen.GetTypeName("int16_t", dicts)
+	name = a.attrib.get("name")
+	words = a.attrib.get("words")
+	if words == "_str_len":
+		f.write("\t" + wordType + " _str_len = vdi_strlen(" + name + ");\n")
+	else:
+		f.write("\t" + wordType + " _wstr_len = vdi_wstrlen(" + name + ");\n")
+
 def WriteWorkInStrLen(f, funcUse : FuncUse, dicts):
 	# If any of the arrays use strlen, then we want to know that length before setting up local arrays.
 	[_, wordType, _, _, _] = header_gen.GetTypeName("int16_t", dicts)
 	if funcUse.intin.usesStrlen is not None:
-		name = funcUse.intin.usesStrlen.attrib.get("name")
-		f.write("\t" + wordType + " _str_len = vdi_strlen(" + name + ");\n")
+		WriteStrLen(f, funcUse.intin.usesStrlen, dicts)
 	elif funcUse.ptsin.usesStrlen is not None:
-		name = funcUse.ptsin.usesStrlen.attrib.get("name")
-		f.write("\t" + wordType + " _str_len = vdi_strlen(" + name + ");\n")
+		WriteStrLen(f, funcUse.ptsin.usesStrlen, dicts)
+
+def WriteWorkReturnSetup(f, ff):
+	r = ff.find("return")
+	if r is not None:
+		type = r.attrib.get("type")
+		longs = r.attrib.get("longs")
+		if type and type != "void":
+			src = r.attrib.get("src")
+			idx = r.attrib.get("idx")
+			code = r.attrib.get("code")
+			if code or src != "intout":
+				return
+			f.write("\tlcl_intout[" + str(idx) + "] = 0;\n")
+			if longs:
+				idx = int(idx) + 1
+				f.write("\tlcl_intout[" + str(idx) + "] = 0;\n")
 
 def WriteWorkSetup(f, ff, funcUse : FuncUse, dicts):
 	WriteWorkInStrLen(f, funcUse, dicts)
@@ -613,6 +646,7 @@ def WriteWorkSetup(f, ff, funcUse : FuncUse, dicts):
 	WriteWorkInSetup(f, ff, funcUse.ptsin, dicts)
 	WriteWorkOutSetup(f, funcUse.intout, dicts)
 	WriteWorkOutSetup(f, funcUse.ptsout, dicts)
+	WriteWorkReturnSetup(f, ff)
 	WriteWorkContrlSetup(f, ff, funcUse, dicts)
 	# Write vdipb
 	f.write("\tVDIPB lcl_vdipb =\n\t{\n")
