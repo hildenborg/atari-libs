@@ -712,6 +712,31 @@ def AppendDebug(ff, funcUse : FuncUse):
 		AppendDebugArray(dbg, funcUse.intout)
 		AppendDebugArray(dbg, funcUse.ptsout)
 
+def WriteTestingFunction(f, name, funcUse : FuncUse):
+	f.write('#include <stdio.h>\n\n')
+	f.write("INT16_T test_" + name + "_intout;\n")
+	f.write("INT16_T test_" + name + "_ptsout;\n\n")
+	f.write("INT16_T test_" + name + "(FILE* fp)\n{\n")
+	f.write("\ttest_" + name + "_intout = 0;\n")
+	f.write("\ttest_" + name + "_ptsout = 0;\n")
+
+	f.write("\tif (test_" + name + "_intout != 0)\n")
+	f.write("\t{\n\t\tfprintf(fp, \"" + name + ": intout = %d\\n\", test_" + name + "_intout);\n\t}\n")
+	f.write("\tif (test_" + name + "_ptsout != 0)\n")
+	f.write("\t{\n\t\tfprintf(fp, \"" + name + ": ptsout = %d\\n\", test_" + name + "_ptsout);\n\t}\n")
+	f.write("\treturn 0;\n")
+	f.write("}\n\n")
+
+def WriteTestingCheck(f, name, funcUse : FuncUse):
+	intoutcnt = str(funcUse.intout.ctrlCount)
+	intoutcnt = intoutcnt.replace("contrl", "lcl_contrl")
+	f.write("\tif (lcl_contrl[4] > " + intoutcnt + ")\n")
+	f.write("\t{\n\t\ttest_" + name + "_intout = lcl_contrl[4];\n\t}\n")
+	ptsoutcnt = str(funcUse.ptsout.ctrlCount)
+	ptsoutcnt = ptsoutcnt.replace("contrl", "lcl_contrl")
+	f.write("\tif (lcl_contrl[2] > " + ptsoutcnt + ")\n")
+	f.write("\t{\n\t\ttest_" + name + "_ptsout = lcl_contrl[2];\n\t}\n")
+
 def CodeVDIFunction(iname, build_dir, ff, dicts):
 	name = ff.attrib.get("name")
 	subid = ff.attrib.get("subid")	# VDI sub function
@@ -721,7 +746,10 @@ def CodeVDIFunction(iname, build_dir, ff, dicts):
 	if grpid != "2":
 		print ("group id: " + grpid + "\n")
 		raise ValueError
-
+	testing = dicts["settingsDict"]["testing"]
+	if testing == "":
+		testing = False
+		
 	retType = "void"
 	r = ff.find("return")
 	if r is not None:
@@ -734,6 +762,11 @@ def CodeVDIFunction(iname, build_dir, ff, dicts):
 
 	with open(build_dir + name + ".c", "w") as f:
 		f.write('#include "vdi_def.h"\n\n')
+
+		funcUse = PreprocessFunction(ff, dicts)	# Insert default and automatic attributes.
+
+		if testing:
+			WriteTestingFunction(f, name, funcUse)
 
 		header_gen.WriteType(f, "", retType, dicts)
 		f.write(" " + name + "(")
@@ -751,8 +784,11 @@ def CodeVDIFunction(iname, build_dir, ff, dicts):
 			f.write("void")
 		f.write(")\n{\n")
 
-		funcUse = PreprocessFunction(ff, dicts)	# Insert default and automatic attributes.
 		WriteFunction(f, ff, funcUse, dicts)
+
+		if testing:
+			WriteTestingCheck(f, name, funcUse)
+
 		f.write("}\n")
 
 		AppendDebug(ff, funcUse)

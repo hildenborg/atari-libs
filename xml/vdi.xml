@@ -899,7 +899,7 @@
 			<arg name="el_used" src="contrl" idx="9" type="int16_t*" />
 			<arg name="rows_used" src="contrl" idx="10" type="int16_t*" />
 			<arg name="status" src="contrl" idx="11" type="int16_t*" />
-			<arg name="colarray" src="ptsout" longs="contrl[4]" type="int16_t*" />
+			<arg name="colarray" src="ptsout" longs="contrl[2]" type="int16_t*" />
 		</function>
 		<function id="115" name="vqin_mode">
 			<return type="void" />

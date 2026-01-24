@@ -162,9 +162,11 @@ def WriteDebug(name, build_dir, dicts):
 	with open(build_dir + name + ".xml", 'wb') as f:
 		tree.write(f)
 
-def Generate(name, build_dir, target, impl):
+def Generate(name, build_dir, target, testing, impl):
 	dicts = MakeDicts()
 	ReadGlobals("xml/global.xml", target, dicts)
+	dicts["settingsDict"]["testing"] = testing
+
 	ReadDefenitions("xml/" + name + ".xml", target, dicts)
 	header_gen.WriteHeader(name, build_dir, dicts)
 	code_gen.WriteCode(name, build_dir, dicts)
@@ -174,9 +176,12 @@ def Generate(name, build_dir, target, impl):
 	# Debug
 	#WriteDebug(name, build_dir, dicts)
 
-def GenerateGlobals(name, build_dir, target):
+def GenerateGlobals(name, build_dir, target, testing):
 	dicts = MakeDicts()
 	ReadGlobals("xml/global.xml", target, dicts)
+	if testing:
+		dicts["settingsDict"]["testing"] = testing
+
 	with open(build_dir + name + ".h", "w") as f:
 		header_gen.HeaderBegin(f, name)
 		f.write("\n")
@@ -193,24 +198,27 @@ def GenerateGlobals(name, build_dir, target):
 		header_gen.HeaderEnd(f, name)
 
 def main():
-	if len(sys.argv) >=2:
+	testing = False
+	if len(sys.argv) > 2:
 		build_dir = sys.argv[1]
 		if not build_dir.endswith("/"):
 			build_dir += "/"
 		target = sys.argv[2]
+		if len(sys.argv) > 3:
+			testing = sys.argv[3]
 	else:
 		build_dir = "gen/"
 		target = "m68k-atari-elf"
-
+		testing = True
 	try:
 		os.mkdir(build_dir)
 	except FileExistsError:
 		pass
 
-	GenerateGlobals("def_types", build_dir, target)
-	Generate("tos", build_dir, target, [])
-	Generate("aes", build_dir, target, ["aes.c", "aes_def.h", "wind_get.c", "evnt_multi.c", "appl_init.c", "form_wkeybd.c", "xfrm_popup.c", "fslx_do.c", "_appl_yield.c"])
-	Generate("vdi", build_dir, target, ["vdi.c", "vdi_def.h", "v_opnvwk.c", "vq_vgdos.c", "vq_gdos.c", "vs_clip.c", "vsm_locator.c", "v_opnbm.c", "v_opnprn.c", "vst_map_mode.c", "vqt_xfntinfo.c", "vs_document_info.c", "v_bez.c", "v_bez_fill.c", "vq_prn_scaling.c", "vqt_ext_name.c"])
+	GenerateGlobals("def_types", build_dir, target, testing)
+	Generate("tos", build_dir, target, testing, [])
+	Generate("aes", build_dir, target, testing, ["aes.c", "aes_def.h", "wind_get.c", "evnt_multi.c", "appl_init.c", "form_wkeybd.c", "xfrm_popup.c", "fslx_do.c", "_appl_yield.c"])
+	Generate("vdi", build_dir, target, testing, ["vdi.c", "vdi_def.h", "v_opnvwk.c", "vq_vgdos.c", "vq_gdos.c", "vs_clip.c", "vsm_locator.c", "v_opnbm.c", "v_opnprn.c", "vst_map_mode.c", "vqt_xfntinfo.c", "vs_document_info.c", "v_bez.c", "v_bez_fill.c", "vq_prn_scaling.c", "vqt_ext_name.c"])
 #	Generate("line_a", target, ["line_a.c", "line_a_def.h"])
 
 if __name__ == "__main__":
