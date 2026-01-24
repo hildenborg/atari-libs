@@ -1,6 +1,6 @@
 #include "vdi_def.h"
 
-INT16_T vqt_ext_name(INT16_T handle, INT16_T index, INT8_T* name, UINT16_T* font_format, UINT16_T* flags)
+INT16_T vqt_ext_name(INT16_T handle, INT16_T index, INT8_T* name, INT16_T* font_format, INT16_T* flags)
 {
 	INT16_T lcl_intin[2];
 	lcl_intin[0] = index;

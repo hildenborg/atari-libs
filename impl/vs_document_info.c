@@ -1,6 +1,6 @@
 #include "vdi_def.h"
 
-INT16_T vs_document_info(INT16_T handle, INT16_T type, const void *string, INT16_T wchar)
+INT16_T vs_document_info(INT16_T handle, INT16_T type, const INT8_T *string, INT16_T wchar)
 {
 	INT16_T _str_len;
 	if (wchar != 0)

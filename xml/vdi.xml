@@ -1521,34 +1521,29 @@
 			<arg name="fg_color" dst="intin" type="COLOR_ENTRY*" longs="2" />
 		</function>
 		<function id="202" subid="0" name="vqt_fg_color">
-			<return src="intout" idx="0" type="int16_t" />
+			<return src="intout" idx="0" type="int32_t" longs="1" />
 			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
-			<arg name="color_space" dst="intin" type="int32_t" longs="1" />
-			<arg name="fg_color" dst="intin" type="COLOR_ENTRY*" longs="2" />
+			<arg name="fg_color" src="intout" type="COLOR_ENTRY*" longs="2" />
 		</function>
 		<function id="202" subid="1" name="vqf_fg_color">
-			<return src="intout" idx="0" type="int16_t" />
+			<return src="intout" idx="0" type="int32_t" longs="1" />
 			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
-			<arg name="color_space" dst="intin" type="int32_t" longs="1" />
-			<arg name="fg_color" dst="intin" type="COLOR_ENTRY*" longs="2" />
+			<arg name="fg_color" src="intout" type="COLOR_ENTRY*" longs="2" />
 		</function>
 		<function id="202" subid="2" name="vql_fg_color">
-			<return src="intout" idx="0" type="int16_t" />
+			<return src="intout" idx="0" type="int32_t" longs="1" />
 			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
-			<arg name="color_space" dst="intin" type="int32_t" longs="1" />
-			<arg name="fg_color" dst="intin" type="COLOR_ENTRY*" longs="2" />
+			<arg name="fg_color" src="intout" type="COLOR_ENTRY*" longs="2" />
 		</function>
 		<function id="202" subid="3" name="vqm_fg_color">
-			<return src="intout" idx="0" type="int16_t" />
+			<return src="intout" idx="0" type="int32_t" longs="1" />
 			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
-			<arg name="color_space" dst="intin" type="int32_t" longs="1" />
-			<arg name="fg_color" dst="intin" type="COLOR_ENTRY*" longs="2" />
+			<arg name="fg_color" src="intout" type="COLOR_ENTRY*" longs="2" />
 		</function>
 		<function id="202" subid="4" name="vqr_fg_color">
-			<return src="intout" idx="0" type="int16_t" />
+			<return src="intout" idx="0" type="int32_t" longs="1" />
 			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
-			<arg name="color_space" dst="intin" type="int32_t" longs="1" />
-			<arg name="fg_color" dst="intin" type="COLOR_ENTRY*" longs="2" />
+			<arg name="fg_color" src="intout" type="COLOR_ENTRY*" longs="2" />
 		</function>
 
 		<function id="201" subid="0" name="vst_bg_color">
@@ -1582,34 +1577,29 @@
 			<arg name="fg_color" dst="intin" type="COLOR_ENTRY*" longs="2" />
 		</function>
 		<function id="203" subid="0" name="vqt_bg_color">
-			<return src="intout" idx="0" type="int16_t" />
+			<return src="intout" idx="0" type="int32_t" longs="1" />
 			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
-			<arg name="color_space" dst="intin" type="int32_t" longs="1" />
-			<arg name="fg_color" dst="intin" type="COLOR_ENTRY*" longs="2" />
+			<arg name="fg_color" src="intout" type="COLOR_ENTRY*" longs="2" />
 		</function>
 		<function id="203" subid="1" name="vqf_bg_color">
-			<return src="intout" idx="0" type="int16_t" />
+			<return src="intout" idx="0" type="int32_t" longs="1" />
 			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
-			<arg name="color_space" dst="intin" type="int32_t" longs="1" />
-			<arg name="fg_color" dst="intin" type="COLOR_ENTRY*" longs="2" />
+			<arg name="fg_color" src="intout" type="COLOR_ENTRY*" longs="2" />
 		</function>
 		<function id="203" subid="2" name="vql_bg_color">
-			<return src="intout" idx="0" type="int16_t" />
+			<return src="intout" idx="0" type="int32_t" longs="1" />
 			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
-			<arg name="color_space" dst="intin" type="int32_t" longs="1" />
-			<arg name="fg_color" dst="intin" type="COLOR_ENTRY*" longs="2" />
+			<arg name="fg_color" src="intout" type="COLOR_ENTRY*" longs="2" />
 		</function>
 		<function id="203" subid="3" name="vqm_bg_color">
-			<return src="intout" idx="0" type="int16_t" />
+			<return src="intout" idx="0" type="int32_t" longs="1" />
 			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
-			<arg name="color_space" dst="intin" type="int32_t" longs="1" />
-			<arg name="fg_color" dst="intin" type="COLOR_ENTRY*" longs="2" />
+			<arg name="fg_color" src="intout" type="COLOR_ENTRY*" longs="2" />
 		</function>
 		<function id="203" subid="4" name="vqr_bg_color">
-			<return src="intout" idx="0" type="int16_t" />
+			<return src="intout" idx="0" type="int32_t" longs="1" />
 			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
-			<arg name="color_space" dst="intin" type="int32_t" longs="1" />
-			<arg name="fg_color" dst="intin" type="COLOR_ENTRY*" longs="2" />
+			<arg name="fg_color" src="intout" type="COLOR_ENTRY*" longs="2" />
 		</function>
 		<function id="206" subid="0" name="vq_ctab">
 			<return type="int16_t" code="(contrl[4] != 0) ? 1 : 0" />
@@ -1658,7 +1648,7 @@
 			<arg name="vdi_index" dst="intin" type="int16_t" />
 		</function>
 		<function id="206" subid="5" name="v_ctab_idx2value">
-			<return src="intout" idx="0" type="int32_t" longs="1" />
+			<return src="intout" idx="0" type="uint32_t" longs="1" />
 			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
 			<arg name="index" dst="intin" type="int16_t" />
 		</function>
@@ -1743,7 +1733,7 @@
 			<arg name="color" dst="intin" type="COLOR_ENTRY*" longs="2" />
 		</function>
 		<function id="204" subid="1" name="v_value2color">
-			<return src="intout" idx="0" type="int32_t" longs="1" />
+			<return src="intout" idx="0" type="uint32_t" longs="1" />
 			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
 			<arg name="value" dst="intin" type="int32_t" longs="1" />
 			<arg name="color" src="intout" type="COLOR_ENTRY*" longs="2" />
@@ -1775,8 +1765,8 @@
 			<arg name="dst_bm" dst="contrl" idx="9" type="GCBITMAP*" longs="0" />
 			<arg value="0" dst="contrl" idx="11" type="int16_t" />
 			<arg value="0" dst="contrl" idx="12" type="int16_t" />
-			<arg name="src_rect" dst="ptsin" idx="0" type="int16_t*" words="4" />
-			<arg name="dst_rect" dst="ptsin" idx="4" type="int16_t*" words="4" />
+			<arg name="src_rect" dst="ptsin" idx="0" type="cint16_t*" words="4" />
+			<arg name="dst_rect" dst="ptsin" idx="4" type="cint16_t*" words="4" />
 			<arg name="mode" dst="intin" type="int16_t" />
 			<arg value="0" dst="intin" type="int16_t" />
 			<arg value="0" dst="intin" type="int16_t" />
@@ -1873,16 +1863,16 @@
 			<arg value="0" dst="contrl" idx="4" type="int16_t" />
 		</function>
 		<function id="190" subid="0" name="vqt_char_index" >
-			<return src="intout" idx="0" type="uint16_t" />
+			<return src="intout" idx="0" type="int16_t" />
 			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
-			<arg name="src_index" dst="intin" type="uint16_t" />
+			<arg name="src_index" dst="intin" type="int16_t" />
 			<arg name="src_mode" dst="intin" type="int16_t" />
 			<arg name="dst_mode" dst="intin" type="int16_t" />
 		</function>
 		<function id="243" subid="1" name="v_get_outline" >
 			<return src="intout" idx="0" type="int16_t" />
 			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
-			<arg name="index" dst="intin" idx="0" type="uint16_t" />
+			<arg name="index" dst="intin" idx="0" type="int16_t" />
 			<arg name="x_offset" dst="intin" idx="6" type="int16_t" />
 			<arg name="y_offset" dst="intin" idx="7" type="int16_t" />
 			<arg name="pts" dst="intin" idx="2" type="int16_t*" longs="0" />
@@ -1957,7 +1947,7 @@
 			<return src="intout" idx="0" type="int16_t" />
 			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
 			<arg name="type" dst="intin" idx="0" type="int16_t" />
-			<arg name="string" dst="intin" idx="1" words="strlen" type="cvoid*" />
+			<arg name="string" dst="intin" idx="1" words="strlen" type="cint8_t*" />
 			<arg name="wchar" type="int16_t" />
 		</function>
 		<function id="5" subid="39" name="vq_prn_scaling" onlyheader="1" >
@@ -1973,8 +1963,8 @@
 			<arg name="index" dst="intin" type="int16_t" />
 			<arg value="0" dst="intin" type="int16_t" />
 			<arg name="name" src="intout" idx="1" words="31" type="int8_t*" />
-			<arg name="font_format" src="intout" type="uint16_t*" />
-			<arg name="flags" src="intout" type="uint16_t*" />
+			<arg name="font_format" src="intout" type="int16_t*" />
+			<arg name="flags" src="intout" type="int16_t*" />
 		</function>
 	</functions>
 	<targets>
