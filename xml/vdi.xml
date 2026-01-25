@@ -1268,7 +1268,7 @@
 			<arg name="address" dst="intin" longs="0" type="void*" />
 			<arg name="nparagraphs" dst="intin" type="int16_t" />
 		</function>
-		<function id="6" subid="13" name="v_bez">
+		<function id="6" subid="13" name="v_bez" onlyheader="1" >
 			<return type="void" />
 			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
 			<arg name="count" type="int16_t" />
@@ -1278,7 +1278,7 @@
 			<arg name="totpts" src="intout" type="int16_t*" />
 			<arg name="totmoves" src="intout" type="int16_t*" />
 		</function>
-		<function id="9" subid="13" name="v_bez_fill">
+		<function id="9" subid="13" name="v_bez_fill" onlyheader="1" >
 			<return type="void" />
 			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
 			<arg name="count" type="int16_t" />
@@ -1803,6 +1803,8 @@
 			</arg>
 		</function>
 		<function id="100" subid="2" name="v_resize_bm">
+			<reserve src="intout" words="45" />	<!-- undocumented -->
+			<reserve src="ptsout" longs="6" />	<!-- undocumented -->
 			<return src="intout" idx="0" type="int16_t" />
 			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
 			<arg name="width" dst="intin" type="int16_t" />

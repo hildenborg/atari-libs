@@ -20,7 +20,7 @@ INT16_T vdi_strlen(const void* src)
 		"bne.s	1b\n\t"
 		: "=r" (len)
 		: "g" (src)
-		: "d0", "d1", "a0", "cc"
+		: "d1", "a0", "cc"
 	);
 	return len;
 }
@@ -39,7 +39,7 @@ INT16_T vdi_wstrlen(const void* src)
 		"bne.s	1b\n\t"
 		: "=r" (len)
 		: "g" (src)
-		: "d0", "d1", "a0", "cc"
+		: "d1", "a0", "cc"
 	);
 	return len;
 }

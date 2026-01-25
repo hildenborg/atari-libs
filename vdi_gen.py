@@ -53,10 +53,11 @@ def CheckArgType(a, t, dicts):
 	return [v, p, ch]
 
 def GetArraySize(arrUse: ArrayUse):
-	res = arrUse.ff.find("reserve")
-	if res is not None:
-		dst = res.attrib.get("dst")
-		if dst and dst == arrUse.name:
+	for res in arrUse.ff.findall("reserve"):
+		arr = res.attrib.get("src")
+		if not arr:
+			arr = res.attrib.get("dst")
+		if arr and arr == arrUse.name:
 			cnt = res.attrib.get("words")
 			if cnt:
 				arrUse.ctrlCount = str(cnt)
@@ -371,7 +372,10 @@ def WriteInLongs(f, a, arrUse : ArrayUse, longs, dicts):
 			f.write("\tVDI_COPY_LONG(&" + name + ", &" + arrUse.vdipb + "[" + str(idx) + "]);\n")
 			return
 		elif longs == 1:
-			f.write("\tVDI_COPY_LONG(" + name + ", &" + arrUse.vdipb + "[" + str(idx) + "]);\n")
+			if "*" in type:
+				f.write("\tVDI_COPY_LONG(" + name + ", &" + arrUse.vdipb + "[" + str(idx) + "]);\n")
+			else:
+				f.write("\tVDI_COPY_LONG(&" + name + ", &" + arrUse.vdipb + "[" + str(idx) + "]);\n")
 			return
 	# Runtime known length or multiple values.
 	strLongs = str(longs).replace("contrl", "lcl_contrl")
@@ -833,8 +837,10 @@ def WriteInitTestVariable(f, a, n, dicts, funcUse : FuncUse):
 					f.write("[MAX_TEST_ARRAY] = {0};\n")
 
 def WriteTestingFunction(f, ff, retType, dicts, funcUse : FuncUse):
+	excludes = ["v_opnwk"]
 	name = ff.attrib.get("name")
-	dicts["testCalls"][name] = "INT16_T test_" + name + "(FILE* fp)"
+	if name not in excludes:
+		dicts["testCalls"][name] = "INT16_T test_" + name + "(FILE* fp)"
 
 	f.write('#include \"test.h\"\n\n')
 	f.write("INT16_T test_" + name + "_intout;\n")
@@ -849,11 +855,13 @@ def WriteTestingFunction(f, ff, retType, dicts, funcUse : FuncUse):
 		if n:
 			WriteInitTestVariable(f, a, n, dicts, funcUse)
 
-	f.write("\n\t")
+	f.write("\n")
+	f.write("\tfprintf(fp, \"Trying: " + name + "\\n\");\n")
+	f.write("\tfflush(fp);\n")
 #	if retType != "void":
 #		header_gen.WriteType(f, "result", retType, dicts)
 #		f.write(" = ")
-	f.write(name + "(")
+	f.write("\t" + name + "(")
 	first = True
 	for a in ff.findall('arg'):
 		n = a.attrib.get("name")
@@ -869,6 +877,7 @@ def WriteTestingFunction(f, ff, retType, dicts, funcUse : FuncUse):
 			else:
 				f.write(n)
 	f.write(");\n\n")
+	f.write("\tfprintf(fp, \"Done.\\n\");\n")
 
 	f.write("\tif (test_" + name + "_intout != 0)\n")
 	f.write("\t{\n\t\tfprintf(fp, \"" + name + ": intout = %d\\n\", test_" + name + "_intout);\n")
@@ -876,6 +885,7 @@ def WriteTestingFunction(f, ff, retType, dicts, funcUse : FuncUse):
 	f.write("\tif (test_" + name + "_ptsout != 0)\n")
 	f.write("\t{\n\t\tfprintf(fp, \"" + name + ": ptsout = %d\\n\", test_" + name + "_ptsout);\n")
 	f.write("\t\ttest_status = 1;\n\t}\n")
+	f.write("\tfflush(fp);\n")
 	f.write("\treturn test_status;\n")
 	f.write("}\n\n")
 
