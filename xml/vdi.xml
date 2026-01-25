@@ -1341,6 +1341,7 @@
 			<arg name="errorvar" dst="intin" longs="0" type="int16_t*" />
 		</function>
 		<function id="247" name="vqt_advance">
+			<reserve src="ptsout" longs="4" />
 			<return type="void" />
 			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
 			<arg name="ch" dst="intin" type="int16_t" />
@@ -1392,6 +1393,7 @@
 			<arg name="bitmap" src="intout" idx="10" longs="1" type="int16_t**" />
 		</function>
 		<function id="235" name="vqt_pairkern">
+			<reserve src="ptsout" longs="4" />	<!-- undocumented -->
 			<return type="void" />
 			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
 			<arg name="ch1" dst="intin" type="int16_t" />
@@ -1400,6 +1402,7 @@
 			<arg name="y" src="intout" longs="1" type="fix31*" />
 		</function>
 		<function id="234" name="vqt_trackkern">
+			<reserve src="ptsout" longs="4" />	<!-- undocumented -->
 			<return type="void" />
 			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
 			<arg name="x" src="intout" longs="1" type="fix31*" />
@@ -1477,6 +1480,7 @@
 			<arg name="filename" dst="intin" words="strlen" type="cint8_t*" />
 		</function>
 		<function id="252" name="vst_setsize">
+			<reserve src="intout" words="2" />
 			<return src="intout" idx="0" type="int16_t" />
 			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
 			<arg name="point" dst="intin" type="int16_t" />
@@ -1819,12 +1823,14 @@
 			<arg name="work_out" dst="intin" type="int16_t*" />
 		</function>
 		<function id="102" subid="1" name="vq_scrninfo" >
+			<reserve src="ptsout" longs="1" />	<!-- undocumented -->
 			<return type="void" />
 			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
-			<arg name="work_out" src="intout" type="int16_t*" />
+			<arg name="work_out" src="intout" type="int16_t*" words="272" />
 			<arg value="2" dst="intin" type="int16_t" />
 		</function>
 		<function id="248" subid="4242" name="vq_ext_devinfo" >
+			<reserve src="ptsout" longs="1" />	<!-- undocumented -->
 			<return src="intout" idx="1" type="int16_t" />
 			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
 			<arg name="id" dst="intin" type="int16_t" />
@@ -1844,10 +1850,10 @@
 			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
 			<arg name="width" dst="ptsin" type="int16_t" />
 			<arg value="0" dst="ptsin" type="int16_t" />
-			<arg name="char_width" src="intout" idx="0" type="int16_t*" />
-			<arg name="char_height" src="intout" idx="1" type="int16_t*" />
-			<arg name="cell_width" src="intout" idx="2" type="int16_t*" />
-			<arg name="cell_height" src="intout" idx="3" type="int16_t*" />
+			<arg name="char_width" src="ptsout" idx="0" type="int16_t*" />
+			<arg name="char_height" src="ptsout" idx="1" type="int16_t*" />
+			<arg name="cell_width" src="ptsout" idx="2" type="int16_t*" />
+			<arg name="cell_height" src="ptsout" idx="3" type="int16_t*" />
 		</function>
 		<function id="237" subid="0" name="vst_track_offset" >
 			<return type="void" />

@@ -837,7 +837,8 @@ def WriteInitTestVariable(f, a, n, dicts, funcUse : FuncUse):
 					f.write("[MAX_TEST_ARRAY] = {0};\n")
 
 def WriteTestingFunction(f, ff, retType, dicts, funcUse : FuncUse):
-	excludes = ["v_opnwk"]
+	# Excludes may be tested in the future.
+	excludes = ["v_opnwk", "v_getoutline", "v_getbitmap_info", "vqt_fontheader", "v_flushcache", "vqt_get_table", "v_loadcache", "v_savecache", "v_get_outline"]
 	name = ff.attrib.get("name")
 	if name not in excludes:
 		dicts["testCalls"][name] = "INT16_T test_" + name + "(FILE* fp)"

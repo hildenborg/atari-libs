@@ -1,7 +1,6 @@
 __pycache__
 build
 gen
-test
 *.pyc
 verify.py
 missing.txt
