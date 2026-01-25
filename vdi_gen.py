@@ -688,6 +688,41 @@ def WriteReturn(f, ff, dicts):
 				f.write("\treturn lcl_" + src + "[" + str(idx) +"];\n")
 
 def WriteFunction(f, ff, funcUse : FuncUse, dicts):
+	name = ff.attrib.get("name")
+	retType = "void"
+	r = ff.find("return")
+	if r is not None:
+		retType = r.attrib.get("type")
+
+	testing = dicts["settingsDict"]["testing"]
+	if testing == "":
+		testing = False
+
+	if testing:
+		# Filter out functions that are not practical for current tests.
+		if str(funcUse.intout.arraySize) == "0" and str(funcUse.ptsout.arraySize) == "0":
+			testing = False
+
+	if testing:
+		AppendDebug(ff, funcUse)
+		WriteTestingFunction(f, ff, retType, dicts, funcUse)
+
+	header_gen.WriteType(f, "", retType, dicts)
+	f.write(" " + name + "(")
+
+	first = True
+	for a in ff.findall('arg'):
+		n = a.attrib.get("name")
+		t = a.attrib.get("type")
+		if n:
+			if not first:
+				f.write(", ")
+			first = False
+			header_gen.WriteType(f, n, t, dicts)
+	if first:
+		f.write("void")
+	f.write(")\n{\n")
+
 	# Write begin function
 	WriteWorkSetup(f, ff, funcUse, dicts)
 	# Write vdi call
@@ -695,8 +730,13 @@ def WriteFunction(f, ff, funcUse : FuncUse, dicts):
 
 	# Write result = if return
 	WriteWorkExit(f, ff, funcUse, dicts)
+
+	if testing:
+		WriteTestingCheck(f, name, funcUse)
 	# Write return if return
 	WriteReturn(f, ff, dicts)
+	f.write("}\n")
+
 
 def AppendDebugArray(dbg, arrUse : ArrayUse):
 	arr = ET.Element(arrUse.name)
@@ -712,19 +752,129 @@ def AppendDebug(ff, funcUse : FuncUse):
 		AppendDebugArray(dbg, funcUse.intout)
 		AppendDebugArray(dbg, funcUse.ptsout)
 
-def WriteTestingFunction(f, name, funcUse : FuncUse):
-	f.write('#include <stdio.h>\n\n')
+def GetTypeUse(t: str, dicts):
+	callbackDict = dicts["callbackDict"]
+	structDict = dicts["structDict"]
+	typeDict = dicts["typeDict"]
+	typedefDict= dicts["typedefDict"]
+	isPtr = ""
+	typename = ""
+	isCallback = False
+	isStruct = False
+
+	if t[0] == 'c':
+		t = t[1:]
+	if t[-1] == ']':
+		arr = t.index('[')
+		isPtr = "*"
+		t = t[:arr]
+	while t[-1] == '*':
+		isPtr = isPtr + "*"
+		t = t[:-1]
+
+	if t in callbackDict:
+		typename = t
+		isCallback = True
+	elif t in structDict:
+		typename = structDict[t].attrib.get("name")
+		isStruct = True
+	elif t in typedefDict:
+		typename = t
+	elif t in typeDict:
+		typename = typeDict[t]
+	else:
+		typename = t
+
+	return [typename, isPtr, isStruct, isCallback]
+
+def WriteInitTestVariable(f, a, n, dicts, funcUse : FuncUse):
+	t = a.attrib.get("type")
+	[typename, isPtr, isStruct, isCallback] = GetTypeUse(t, dicts)
+	if n == "handle":
+		if isPtr:
+			a.set("test_ampersand", "1")
+		return
+	if not isPtr:
+		f.write("\t" + typename + " " + n)
+		if isCallback:
+			f.write(" = test_" + typename +"_callback;\n")
+		else:
+			f.write(" = 0;\n")
+	else:
+		f.write("\t" + typename + " " + n)
+		if isPtr == "**":
+			f.write("_arr[MAX_TEST_ARRAY] = {0};\n")
+			f.write("\t" + typename + "* " + n + " = " + n + "_arr;\n")
+			a.set("test_ampersand", "1")
+			return
+		if isCallback:
+			f.write(" = test_" + typename +"_callback;\n")
+			a.set("test_ampersand", "1")
+		elif isStruct:
+			a.set("test_ampersand", "1")
+			f.write(" = test_" + typename +"_struct;\n")
+		else:
+			count = a.attrib.get("words")
+			if count:
+				if count == "1":
+					a.set("test_ampersand", "1")
+					f.write(" = 0;\n")
+				else:
+					f.write("[MAX_TEST_ARRAY] = {0};\n")
+			else:
+				count = a.attrib.get("longs")
+				if count == "1":
+					if t == "int16_t" or t == "uint16_t":
+						f.write("[2] = {0};\n")
+					else:
+						a.set("test_ampersand", "1")
+						f.write(" = 0;\n")
+				else:
+					f.write("[MAX_TEST_ARRAY] = {0};\n")
+
+def WriteTestingFunction(f, ff, retType, dicts, funcUse : FuncUse):
+	name = ff.attrib.get("name")
+	f.write('#include \"test.h\"\n\n')
 	f.write("INT16_T test_" + name + "_intout;\n")
 	f.write("INT16_T test_" + name + "_ptsout;\n\n")
 	f.write("INT16_T test_" + name + "(FILE* fp)\n{\n")
 	f.write("\ttest_" + name + "_intout = 0;\n")
 	f.write("\ttest_" + name + "_ptsout = 0;\n")
+	f.write("\tINT16_T test_status = 0;\n")
+
+	for a in ff.findall('arg'):
+		n = a.attrib.get("name")
+		if n:
+			WriteInitTestVariable(f, a, n, dicts, funcUse)
+
+	f.write("\n\t")
+#	if retType != "void":
+#		header_gen.WriteType(f, "result", retType, dicts)
+#		f.write(" = ")
+	f.write(name + "(")
+	first = True
+	for a in ff.findall('arg'):
+		n = a.attrib.get("name")
+		if n:
+			ampersand = a.attrib.get("test_ampersand")
+			if not first:
+				f.write(", ")
+			first = False
+			if n == "handle":
+				n = "glbl_handle"
+			if ampersand:
+				f.write("&" + n)
+			else:
+				f.write(n)
+	f.write(");\n\n")
 
 	f.write("\tif (test_" + name + "_intout != 0)\n")
-	f.write("\t{\n\t\tfprintf(fp, \"" + name + ": intout = %d\\n\", test_" + name + "_intout);\n\t}\n")
+	f.write("\t{\n\t\tfprintf(fp, \"" + name + ": intout = %d\\n\", test_" + name + "_intout);\n")
+	f.write("\t\ttest_status = 1;\n\t}\n")
 	f.write("\tif (test_" + name + "_ptsout != 0)\n")
-	f.write("\t{\n\t\tfprintf(fp, \"" + name + ": ptsout = %d\\n\", test_" + name + "_ptsout);\n\t}\n")
-	f.write("\treturn 0;\n")
+	f.write("\t{\n\t\tfprintf(fp, \"" + name + ": ptsout = %d\\n\", test_" + name + "_ptsout);\n")
+	f.write("\t\ttest_status = 1;\n\t}\n")
+	f.write("\treturn test_status;\n")
 	f.write("}\n\n")
 
 def WriteTestingCheck(f, name, funcUse : FuncUse):
@@ -738,7 +888,6 @@ def WriteTestingCheck(f, name, funcUse : FuncUse):
 	f.write("\t{\n\t\ttest_" + name + "_ptsout = lcl_contrl[2];\n\t}\n")
 
 def CodeVDIFunction(iname, build_dir, ff, dicts):
-	name = ff.attrib.get("name")
 	subid = ff.attrib.get("subid")	# VDI sub function
 	if not subid:
 		ff.set("subid", "0")
@@ -746,51 +895,16 @@ def CodeVDIFunction(iname, build_dir, ff, dicts):
 	if grpid != "2":
 		print ("group id: " + grpid + "\n")
 		raise ValueError
-	testing = dicts["settingsDict"]["testing"]
-	if testing == "":
-		testing = False
-		
-	retType = "void"
-	r = ff.find("return")
-	if r is not None:
-		retType = r.attrib.get("type")
 
 	# Create a debug element we can add information to.
 	# This can be useful if we later save out the xml for analyzing.
 	dbgElement = ET.Element("debug")
 	ff.append(dbgElement)
 
+	name = ff.attrib.get("name")
 	with open(build_dir + name + ".c", "w") as f:
 		f.write('#include "vdi_def.h"\n\n')
-
 		funcUse = PreprocessFunction(ff, dicts)	# Insert default and automatic attributes.
-
-		if testing:
-			WriteTestingFunction(f, name, funcUse)
-
-		header_gen.WriteType(f, "", retType, dicts)
-		f.write(" " + name + "(")
-
-		first = True
-		for a in ff.findall('arg'):
-			n = a.attrib.get("name")
-			t = a.attrib.get("type")
-			if n:
-				if not first:
-					f.write(", ")
-				first = False
-				header_gen.WriteType(f, n, t, dicts)
-		if first:
-			f.write("void")
-		f.write(")\n{\n")
-
 		WriteFunction(f, ff, funcUse, dicts)
-
-		if testing:
-			WriteTestingCheck(f, name, funcUse)
-
-		f.write("}\n")
-
-		AppendDebug(ff, funcUse)
 
 

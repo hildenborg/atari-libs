@@ -198,7 +198,7 @@ def GenerateGlobals(name, build_dir, target, testing):
 		header_gen.HeaderEnd(f, name)
 
 def main():
-	testing = False
+	testing = "False"
 	if len(sys.argv) > 2:
 		build_dir = sys.argv[1]
 		if not build_dir.endswith("/"):
@@ -209,16 +209,23 @@ def main():
 	else:
 		build_dir = "gen/"
 		target = "m68k-atari-elf"
-		testing = True
+		testing = "True"
 	try:
 		os.mkdir(build_dir)
 	except FileExistsError:
 		pass
 
+	tosimpl = []
+	aesimpl = ["aes.c", "aes_def.h", "wind_get.c", "evnt_multi.c", "appl_init.c", "form_wkeybd.c", "xfrm_popup.c", "fslx_do.c", "_appl_yield.c"]
+	vdiimpl = ["vdi.c", "vdi_def.h", "v_opnvwk.c", "vq_vgdos.c", "vq_gdos.c", "vs_clip.c", "vsm_locator.c", "v_opnbm.c", "v_opnprn.c", "vst_map_mode.c", "vqt_xfntinfo.c", "vs_document_info.c", "v_bez.c", "v_bez_fill.c", "vq_prn_scaling.c", "vqt_ext_name.c"]
+	if testing != "False":
+		vdiimpl.append("test.h")
+		vdiimpl.append("test.c")
+
 	GenerateGlobals("def_types", build_dir, target, testing)
-	Generate("tos", build_dir, target, testing, [])
-	Generate("aes", build_dir, target, testing, ["aes.c", "aes_def.h", "wind_get.c", "evnt_multi.c", "appl_init.c", "form_wkeybd.c", "xfrm_popup.c", "fslx_do.c", "_appl_yield.c"])
-	Generate("vdi", build_dir, target, testing, ["vdi.c", "vdi_def.h", "v_opnvwk.c", "vq_vgdos.c", "vq_gdos.c", "vs_clip.c", "vsm_locator.c", "v_opnbm.c", "v_opnprn.c", "vst_map_mode.c", "vqt_xfntinfo.c", "vs_document_info.c", "v_bez.c", "v_bez_fill.c", "vq_prn_scaling.c", "vqt_ext_name.c"])
+	Generate("tos", build_dir, target, testing, tosimpl)
+	Generate("aes", build_dir, target, testing, aesimpl)
+	Generate("vdi", build_dir, target, testing, vdiimpl)
 #	Generate("line_a", target, ["line_a.c", "line_a_def.h"])
 
 if __name__ == "__main__":
