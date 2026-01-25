@@ -19,7 +19,8 @@ def MakeDicts():
 		"categories": {},
 		"targetDict": {},
 		"typedefDict": {},
-		"includeDict": {}
+		"includeDict": {},
+		"testCalls": {}
 	}
 	return dicts
 
@@ -162,6 +163,19 @@ def WriteDebug(name, build_dir, dicts):
 	with open(build_dir + name + ".xml", 'wb') as f:
 		tree.write(f)
 
+def WriteTestList(name, build_dir, dicts):
+	testCalls = dicts["testCalls"]
+	if len(testCalls) != 0:
+		with open(build_dir + name + "_testCalls.c", 'w') as f:
+			f.write('#include \"test.h\"\n\n')
+			for n, decl in testCalls.items():
+				f.write("extern " + decl + ";\n")
+			f.write("\nTEST_CALLBACK testCalls[] =\n{\n")
+			for n, decl in testCalls.items():
+				f.write("\ttest_" + n + ",\n")
+			f.write("\t0\n")	# End with a null
+			f.write("};\n\n")
+
 def Generate(name, build_dir, target, testing, impl):
 	dicts = MakeDicts()
 	ReadGlobals("xml/global.xml", target, dicts)
@@ -175,12 +189,13 @@ def Generate(name, build_dir, target, testing, impl):
 		shutil.copyfile("impl/" + n, build_dir + n)
 	# Debug
 	#WriteDebug(name, build_dir, dicts)
+	if testing != "False":
+		WriteTestList(name, build_dir, dicts)
 
 def GenerateGlobals(name, build_dir, target, testing):
 	dicts = MakeDicts()
 	ReadGlobals("xml/global.xml", target, dicts)
-	if testing:
-		dicts["settingsDict"]["testing"] = testing
+	dicts["settingsDict"]["testing"] = testing
 
 	with open(build_dir + name + ".h", "w") as f:
 		header_gen.HeaderBegin(f, name)

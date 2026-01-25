@@ -22,6 +22,8 @@ extern "C" {
 
 extern INT16_T glbl_handle;
 #define MAX_TEST_ARRAY 512
+typedef INT16_T (*TEST_CALLBACK)(FILE*);
+INT16_T test_all_calls(FILE* fp);
 
 extern WS test_WS_struct;
 extern MFDB test_MFDB_struct;
@@ -37,7 +39,7 @@ extern GCBITMAP test_GCBITMAP_struct;
 extern RECT16 test_RECT16_struct;
 extern RECT32 test_RECT32_struct;
 extern XFNT_INFO test_XFNT_INFO_struct;
-INT16_T test_INT16_VDI_CB_callback(INT16_T mstatus);
+INT16_T test_INT16_VDI_CB_callback(void /*INT16_T mstatus*/);
 
 
 #endif

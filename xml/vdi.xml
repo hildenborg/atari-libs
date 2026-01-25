@@ -9,9 +9,10 @@
 		<typedef typename="*CTAB_PTR" type="COLOR_TAB" />
 		<typedef typename="*CTAB_REF" type="COLOR_TAB" />
 		<typedef typename="*ITAB_REF" type="INVERSE_CTAB" />
-		<callback name="INT16_VDI_CB" >
+		<callback name="INT16_VDI_CB">
 			<return type="int16_t" />
-			<arg name="mstatus" type="int16_t" />
+			<!-- argument is in d0. It is the users responsibillity of taking care of that. -->
+			<!-- <arg name="mstatus" type="int16_t" /> -->
 		</callback>
 
 		<struct name="VDIPARBLK">

@@ -834,6 +834,8 @@ def WriteInitTestVariable(f, a, n, dicts, funcUse : FuncUse):
 
 def WriteTestingFunction(f, ff, retType, dicts, funcUse : FuncUse):
 	name = ff.attrib.get("name")
+	dicts["testCalls"][name] = "INT16_T test_" + name + "(FILE* fp)"
+
 	f.write('#include \"test.h\"\n\n')
 	f.write("INT16_T test_" + name + "_intout;\n")
 	f.write("INT16_T test_" + name + "_ptsout;\n\n")

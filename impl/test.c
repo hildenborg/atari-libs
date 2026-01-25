@@ -22,7 +22,37 @@ RECT16 test_RECT16_struct = {0};
 RECT32 test_RECT32_struct = {0};
 XFNT_INFO test_XFNT_INFO_struct = {0};
 
-INT16_T test_INT16_VDI_CB_callback(INT16_T mstatus)
+INT16_T test_INT16_VDI_CB_callback(void /*INT16_T mstatus*/)
 {
+	INT16_T mstatus;
+	__asm__ volatile (
+		"move.w	%%d0, %0\n\t"
+		:
+		: "g" (&mstatus)
+		:
+	);
+	// mstatus is mouse buttons pressed.
 	return mstatus;
+}
+
+#include "vdi_testCalls.c"	// Ugly but functional
+
+INT16_T test_all_calls(FILE* fp)
+{
+	INT16_T result = 0;
+	TEST_CALLBACK *calls = testCalls;
+	while (1)
+	{
+		TEST_CALLBACK call = *calls++;
+		if (call == 0)
+		{
+			break;
+		}
+		result = call(fp);
+		if (result != 0)
+		{
+			break;
+		}
+	}
+	return result;
 }
