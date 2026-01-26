@@ -105,13 +105,15 @@ def GetArraySize(arrUse: ArrayUse):
 	if "pts" in arrUse.name:
 		topIdx = (int(topIdx) + 1) >> 1
 	if lastSize != "":
-		if mul != 1:
-			lastSize = "(" + lastSize + " << 1)"
 		if int(topIdx) != 0:
 			arrUse.ctrlCount = str(topIdx) + " + " + str(lastSize)
+			if mul != 1:
+				lastSize = "(" + lastSize + " << 1)"
 			arrUse.arraySize = str(topIdxW) + " + " + str(lastSize)
 		else:
 			arrUse.ctrlCount = str(lastSize)
+			if mul != 1:
+				lastSize = "(" + lastSize + " << 1)"
 			arrUse.arraySize = str(lastSize)
 	else:
 		arrUse.ctrlCount = str(topIdx)
