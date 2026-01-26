@@ -52,7 +52,7 @@ INT16_T mt_evnt_multi(INT16_T events, INT16_T bclicks, INT16_T bmask, INT16_T bs
 {
 	INT16_T control[5] = {25, 16, 7, 1, 0};
 	INT16_T intin[16];
-	INT16_T intout[33];
+	INT16_T intout[7];
 	void* addrin[1];
 	AESPB lcl_aespb =
 	{
@@ -91,7 +91,7 @@ INT16_T evnt_multi(INT16_T events, INT16_T bclicks, INT16_T bmask, INT16_T bstat
 {
 	INT16_T control[5] = {25, 16, 7, 1, 0};
 	INT16_T intin[16];
-	INT16_T intout[33];
+	INT16_T intout[7];
 	void* addrin[1];
 	AESPB lcl_aespb =
 	{
@@ -134,7 +134,7 @@ void MT_EVNT_multi(INT16_T events, INT16_T bclicks, INT16_T bmask, INT16_T bstat
 {
 	INT16_T control[5] = {25, 16, 7, 1, 0};
 	INT16_T intin[16];
-	INT16_T intout[33];
+	INT16_T intout[8];
 	void* addrin[1];
 	AESPB lcl_aespb =
 	{
@@ -161,6 +161,12 @@ void MT_EVNT_multi(INT16_T events, INT16_T bclicks, INT16_T bmask, INT16_T bstat
 	AES_COPY_LONG(&ms, &intin[14]);
 	addrin[0] = (void*)msg;
 	aes_call(&lcl_aespb);
-	*ev = *(EVNT*)(&intout[1]);
+	ev->mwhich = intout[1];
+	ev->mx = intout[2];
+	ev->my = intout[3];
+	ev->mbutton = intout[4];
+	ev->kstate = intout[5];
+	ev->key = intout[6];
+	ev->mclicks = intout[7];
 }
 
