@@ -30,7 +30,7 @@ CC := $(TOOLKIT_BIN)/$(MULTILIB_TARGET)-gcc
 AR := $(TOOLKIT_BIN)/$(MULTILIB_TARGET)-gcc-ar
 
 #CFLAGS := -Wall -Os -g
-CFLAGS := $(MULTILIB_FLAGS) -Wall -Wextra -Os -g -DFAST_VDI #  -DDEBUG
+CFLAGS := $(MULTILIB_FLAGS) -Wall -Wextra -Os -g # -fanalyzer
 
 # Tos object list
 TOSOBJS := $(foreach source,$(TOS_SOURCES),$(BUILD_PATH)/$(basename $(source)).o)

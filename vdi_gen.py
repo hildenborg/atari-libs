@@ -105,6 +105,8 @@ def GetArraySize(arrUse: ArrayUse):
 	if "pts" in arrUse.name:
 		topIdx = (int(topIdx) + 1) >> 1
 	if lastSize != "":
+		if mul != 1:
+			lastSize = "(" + lastSize + " << 1)"
 		if int(topIdx) != 0:
 			arrUse.ctrlCount = str(topIdx) + " + " + str(lastSize)
 			arrUse.arraySize = str(topIdxW) + " + " + str(lastSize)
@@ -146,11 +148,14 @@ def SetRetUsage(ff, arrUse: ArrayUse):
 	if r is not None:
 		retlongs = r.attrib.get("longs")
 		retsrc = r.attrib.get("src")
+		retidx = r.attrib.get("idx")
 		if retsrc == arrUse.name:
+			if retidx:
+				arrUse.ret += int(retidx)
 			if retlongs:
-				arrUse.ret = 2
+				arrUse.ret += 2
 			else:
-				arrUse.ret = 1
+				arrUse.ret += 1
 
 def SetDefaultSizeAndIdx(arg, idx, arrUse: ArrayUse):
 	arg_idx = arg.attrib.get("idx")
@@ -699,15 +704,13 @@ def WriteFunction(f, ff, funcUse : FuncUse, dicts):
 		retType = r.attrib.get("type")
 
 	testing = dicts["settingsDict"]["testing"]
-	if testing == "":
-		testing = False
 
-	if testing:
+	if testing == "True":
 		# Filter out functions that are not practical for current tests.
 		if str(funcUse.intout.arraySize) == "0" and str(funcUse.ptsout.arraySize) == "0":
-			testing = False
+			testing = "False"
 
-	if testing:
+	if testing == "True":
 		AppendDebug(ff, funcUse)
 		WriteTestingFunction(f, ff, retType, dicts, funcUse)
 
@@ -735,7 +738,7 @@ def WriteFunction(f, ff, funcUse : FuncUse, dicts):
 	# Write result = if return
 	WriteWorkExit(f, ff, funcUse, dicts)
 
-	if testing:
+	if testing == "True":
 		WriteTestingCheck(f, name, funcUse)
 	# Write return if return
 	WriteReturn(f, ff, dicts)

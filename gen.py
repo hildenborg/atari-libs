@@ -221,6 +221,8 @@ def main():
 		target = sys.argv[2]
 		if len(sys.argv) > 3:
 			testing = sys.argv[3]
+			if testing != "True":
+				testing = "False"
 	else:
 		build_dir = "gen/"
 		target = "m68k-atari-elf"

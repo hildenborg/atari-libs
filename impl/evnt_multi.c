@@ -52,7 +52,7 @@ INT16_T mt_evnt_multi(INT16_T events, INT16_T bclicks, INT16_T bmask, INT16_T bs
 {
 	INT16_T control[5] = {25, 16, 7, 1, 0};
 	INT16_T intin[16];
-	INT16_T intout[7];
+	INT16_T intout[33];
 	void* addrin[1];
 	AESPB lcl_aespb =
 	{
@@ -91,7 +91,7 @@ INT16_T evnt_multi(INT16_T events, INT16_T bclicks, INT16_T bmask, INT16_T bstat
 {
 	INT16_T control[5] = {25, 16, 7, 1, 0};
 	INT16_T intin[16];
-	INT16_T intout[7];
+	INT16_T intout[33];
 	void* addrin[1];
 	AESPB lcl_aespb =
 	{
@@ -134,7 +134,7 @@ void MT_EVNT_multi(INT16_T events, INT16_T bclicks, INT16_T bmask, INT16_T bstat
 {
 	INT16_T control[5] = {25, 16, 7, 1, 0};
 	INT16_T intin[16];
-	INT16_T intout[7];
+	INT16_T intout[33];
 	void* addrin[1];
 	AESPB lcl_aespb =
 	{
