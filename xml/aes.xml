@@ -978,7 +978,6 @@
 		<define name="NFOLLOWSLKS" value="2" />
 		<define name="GETMULTI" value="8" />
 		<define name="SHOW8P3" value="1" />
-		<define name="XATTR" value="void" />
 	</defines>
 	<defines category="pdlg">
 		<define name="PDLG_3D" value="0x0001" />
