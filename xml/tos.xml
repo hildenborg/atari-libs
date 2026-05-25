@@ -756,6 +756,67 @@
 			<arg name="str" type="int8_t*" />
 		</function>
 	</functions>
+	<defines category="bios">
+		<define name="DEV_PRINTER" value="0" />
+		<define name="DEV_AUX" value="1" />
+		<define name="DEV_CONSOLE" value="2" />
+		<define name="DEV_CON" value="2" />
+		<define name="DEV_MIDI" value="3" />
+		<define name="DEV_IKBD" value="4" />
+		<define name="DEV_RAW" value="5" />
+		<define name="DEV_MEGAMODEM1" value="6" />
+		<define name="DEV_TTMODEM1" value="6" />
+		<define name="DEV_MEGAMODEM2" value="7" />
+		<define name="DEV_TTMODEM2" value="7" />
+		<define name="DEV_FALCONMODEM" value="7" />
+		<define name="DEV_MEGALAN" value="8" />
+		<define name="DEV_TTSERIAL1" value="8" />
+		<define name="DEV_FALCONLAN" value="8" />
+		<define name="DEV_TTLAN" value="9" />
+		<define name="BAUD_19200" value="0" />
+		<define name="BAUD_9600" value="1" />
+		<define name="BAUD_4800" value="2" />
+		<define name="BAUD_3600" value="3" />
+		<define name="BAUD_2400" value="4" />
+		<define name="BAUD_2000" value="5" />
+		<define name="BAUD_1800" value="6" />
+		<define name="BAUD_1200" value="7" />
+		<define name="BAUD_600" value="8" />
+		<define name="BAUD_300" value="9" />
+		<define name="BAUD_200" value="10" />
+		<define name="BAUD_150" value="11" />
+		<define name="BAUD_134" value="12" />
+		<define name="BAUD_110" value="13" />
+		<define name="BAUD_75" value="14" />
+		<define name="BAUD_50" value="15" />
+		<define name="BAUD_INQUIRE" value="0xfffe" />
+		<define name="RS_LASTBAUD" value="0xfffe" />
+		<define name="FLOW_NONE" value="0" />
+		<define name="FLOW_SOFT" value="1" />
+		<define name="FLOW_HARD" value="2" />
+		<define name="FLOW_BOTH" value="3" />
+		<define name="RS_ODDPARITY" value="0x0002" />
+		<define name="RS_EVENPARITY" value="0x0000" />
+		<define name="RS_PARITYENABLE" value="0x0004" />
+		<define name="RS_NOSTOP" value="0x0000" />
+		<define name="RS_1STOP" value="0x0008" />
+		<define name="RS_15STOP" value="0x0010" />
+		<define name="RS_2STOP" value="0x0018" />
+		<define name="RS_8BITS" value="0x0000" />
+		<define name="RS_7BITS" value="0x0020" />
+		<define name="RS_6BITS" value="0x0040" />
+		<define name="RS_5BITS" value="0x0060" />
+		<define name="RS_CLK16" value="0x0080" />
+		<define name="RS_RECVENABLE" value="0x0001" />
+		<define name="RS_SYNCSTRIP" value="0x0002" />
+		<define name="RS_MATCHBUSY" value="0x0004" />
+		<define name="RS_BRKDETECT" value="0x0008" />
+		<define name="RS_FRAMEERR" value="0x0010" />
+		<define name="RS_PARITYERR" value="0x0020" />
+		<define name="RS_OVERRUNERR" value="0x0040" />
+		<define name="RS_BUFFULL" value="0x0080" />
+		<define name="RS_INQUIRE" value="0xffff" />
+	</defines>
 	<functions grpid="13" category="bios">
 		<function id="0" name="Getmpb">
 			<arg name="ptr" type="MPB*" />
@@ -824,6 +885,14 @@
 		<define name="BPS2" value="1" />
 		<define name="BPS1" value="0" />
 		<define name="NUMCOLS" value="7" />
+		<define name="GI_FLOPPYSIDE" value="0x01" />
+		<define name="GI_FLOPPYA" value="0x02" />
+		<define name="GI_FLOPPYB" value="0x04" />
+		<define name="GI_RTS" value="0x08" />
+		<define name="GI_DTR" value="0x10" />
+		<define name="GI_STROBE" value="0x20" />
+		<define name="GI_GPO" value="0x40" />
+		<define name="GI_SCCPORT" value="0x80" />
 	</defines>
 	<functions grpid="14" category="xbios">
 		<function id="0" name="Initmous">
