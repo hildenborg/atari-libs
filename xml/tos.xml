@@ -276,7 +276,7 @@
 		<function id="26" name="Fsetdta">
 			<arg name="buf" type="DTA*" />
 		</function>
-		<function id="32" name="Super">
+		<function id="32" name="Super" onlyheader="1">
 			<return type="int32_t" />
 			<arg name="stack" type="void*" />
 		</function>

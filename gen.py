@@ -232,7 +232,7 @@ def main():
 	except FileExistsError:
 		pass
 
-	tosimpl = []
+	tosimpl = ["tos.c"]
 	aesimpl = ["aes.c", "aes_def.h", "wind_get.c", "evnt_multi.c", "appl_init.c", "form_wkeybd.c", "xfrm_popup.c", "fslx_do.c", "_appl_yield.c"]
 	vdiimpl = ["vdi.c", "vdi_def.h", "v_opnvwk.c", "vq_vgdos.c", "vq_gdos.c", "vs_clip.c", "vsm_locator.c", "v_opnbm.c", "v_opnprn.c", "vst_map_mode.c", "vqt_xfntinfo.c", "vs_document_info.c", "v_bez.c", "v_bez_fill.c", "vq_prn_scaling.c", "vqt_ext_name.c"]
 	if testing != "False":
