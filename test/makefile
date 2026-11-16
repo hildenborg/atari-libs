@@ -4,20 +4,15 @@
 .DEFAULT_GOAL := all
 
 # Project settings
-#CPU := 68030
 BUILD_DIR := build
-SRC_DIR := .
-CFLAGS := -O0 -g -Wall -I../gen
-#CFLAGS := -g -Wall -I../gen -mcpu=$(CPU)
-LDFLAGS := -L../gen
-TARGET_NAME ?= libtst
+CFLAGS := -O0 -g -Wall
+TARGET_NAME ?= test
 
 # Toolchain command settings
 TOOLCHAIN_M68K	?= $(HOME)/toolchain/m68k-atari-elf
 TOOLCHAIN_BIN := $(TOOLCHAIN_M68K)/bin
 CC := $(TOOLCHAIN_BIN)/m68k-atari-elf-gcc
 LD := $(TOOLCHAIN_BIN)/m68k-atari-elf-gcc
-DUMP := $(TOOLCHAIN_BIN)/m68k-atari-elf-objdump
 ELFTOPRG := $(TOOLCHAIN_BIN)/m68k-atari-elf-prg
 
 # Targets
@@ -34,7 +29,7 @@ $(TARGET_PRG): $(TARGET_ELF)
 
 # Build elf executable
 $(TARGET_ELF): $(BUILD_DIR)/main.o
-	$(LD) $(LDFLAGS) $^ -o $@ -laes -ltos -lvdi
+	$(LD) $^ -o $@ -laes -ltos -lvdi
 
 # Create build directory
 $(BUILD_DIR): $(shell mkdir -p $(BUILD_DIR))
