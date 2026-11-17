@@ -973,12 +973,6 @@
 			<return type="void" />
 			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
 		</function>
-		<function id="5" subid="11" name="vs_curaddress">
-			<return type="void" />
-			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
-			<arg name="row" dst="intin" type="int16_t" />
-			<arg name="column" dst="intin" type="int16_t" />
-		</function>
 		<function id="5" subid="11" name="v_curaddress">
 			<return type="void" />
 			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
@@ -1979,9 +1973,6 @@
 	</functions>
 	<targets>
 		<target name="m68k-atari-mintelf">
-			<renames>
-				<rename name="v_curaddress" newname="vs_curaddress" />
-			</renames>
 			<overrides>
 				<override name="v_fontinit">
 					<return type="void" />
