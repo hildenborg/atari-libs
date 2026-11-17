@@ -13,6 +13,12 @@ Also supports NVDI and other newer APIs.
   The libraries are compiled with the **m68k-atari-elf** toolchain and installed into the `$HOME/toolchain/m68k-atari-elf/` path.
 - Specifications for the xml files is on the wiki: `https://github.com/hildenborg/atari-libs/wiki`+
 
+## Pitfalls
+
+- `line_a.xml` and everything related to line-a functions have been abandoned and should be ignored.
+- Allow `onlyheader` functions in xml to have `id` attribute even if it isn't needed.
+- Allow repeated `id` functions as long as they have different names.
+
 ## Testing
 
 - Libraries can only be verified in Hatari emulator.

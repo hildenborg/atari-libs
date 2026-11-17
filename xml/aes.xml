@@ -359,7 +359,7 @@
 			<member type="int8_t[32]" name="name" />
 		</struct>
 		<struct name="PRN_ENTRY">
-			<member type="PRN_ENTRY*	next" />
+			<member type="PRN_ENTRY*" name="next" />
 			<member type="int32_t" name="length" />
 			<member type="int32_t" name="format" />
 			<member type="int32_t" name="reserved" />
@@ -992,47 +992,47 @@
 	</defines>
 
 	<functions grpid="2" category="Application">
-		<function id="10" name="appl_init" nvdi_style="1" onlyheader="1">
+		<function id="10" name="appl_init" threaded="1" onlyheader="1">
 			<return type="int16_t" />
 		</function>
-		<function id="11" name="appl_read" nvdi_style="1">
-			<return type="int16_t" />
-			<arg name="ap_rid" type="int16_t" dst="intin" />
-			<arg name="length" type="int16_t" dst="intin" />
-			<arg name="msg" type="void*" dst="addrin" />
-		</function>
-		<function id="12" name="appl_write" nvdi_style="1">
+		<function id="11" name="appl_read" threaded="1">
 			<return type="int16_t" />
 			<arg name="ap_rid" type="int16_t" dst="intin" />
 			<arg name="length" type="int16_t" dst="intin" />
 			<arg name="msg" type="void*" dst="addrin" />
 		</function>
-		<function id="13" name="appl_find" nvdi_style="1">
+		<function id="12" name="appl_write" threaded="1">
+			<return type="int16_t" />
+			<arg name="ap_rid" type="int16_t" dst="intin" />
+			<arg name="length" type="int16_t" dst="intin" />
+			<arg name="msg" type="void*" dst="addrin" />
+		</function>
+		<function id="13" name="appl_find" threaded="1">
 			<return type="int16_t" />
 			<arg name="name" type="cint8_t*" dst="addrin" />
 		</function>
-		<function id="14" name="appl_tplay" nvdi_style="1">
+		<function id="14" name="appl_tplay" threaded="1">
 			<return type="int16_t" />
 			<arg name="mem" type="void*" dst="addrin" />
 			<arg name="num" type="int16_t" dst="intin" />
 			<arg name="scale" type="int16_t" dst="intin" />
 		</function>
-		<function id="15" name="appl_trecord" nvdi_style="1">
+		<function id="15" name="appl_trecord" threaded="1">
 			<return type="int16_t" />
 			<arg name="mem" type="EVNTREC*" dst="addrin" />
 			<arg name="num" type="int16_t" dst="intin" />
 		</function>
-		<function id="18" name="appl_search" nvdi_style="1">
+		<function id="18" name="appl_search" threaded="1">
 			<return type="int16_t" />
 			<arg name="mode" type="int16_t" dst="intin" />
 			<arg name="name" type="int8_t*" dst="addrin" />
 			<arg name="type" type="int16_t*" src="intout" />
 			<arg name="ap_id" type="int16_t*" src="intout" />
 		</function>
-		<function id="19" name="appl_exit" nvdi_style="1">
+		<function id="19" name="appl_exit" threaded="1">
 			<return type="int16_t" />
 		</function>
-		<function id="130" name="appl_getinfo" nvdi_style="1">
+		<function id="130" name="appl_getinfo" threaded="1">
 			<return type="int16_t" />
 			<arg name="type" type="int16_t" dst="intin" />
 			<arg name="gout1" type="int16_t*" src="intout" nullchk="1" />
@@ -1042,10 +1042,10 @@
 		</function>
 	</functions>
 	<functions grpid="2" category="Events">
-		<function id="20" name="evnt_keybd" nvdi_style="1">
+		<function id="20" name="evnt_keybd" threaded="1">
 			<return type="int16_t" />
 		</function>
-		<function id="21" name="evnt_button" nvdi_style="1">
+		<function id="21" name="evnt_button" threaded="1">
 			<return type="int16_t" />
 			<arg name="clicks" type="int16_t" dst="intin" />
 			<arg name="mask" type="int16_t" dst="intin" />
@@ -1055,7 +1055,7 @@
 			<arg name="button" type="int16_t*" src="intout" />
 			<arg name="kstate" type="int16_t*" src="intout" />
 		</function>
-		<function id="22" name="evnt_mouse" nvdi_style="1">
+		<function id="22" name="evnt_mouse" threaded="1">
 			<return type="int16_t" />
 			<arg name="flags" type="int16_t" dst="intin" />
 			<arg name="x" type="int16_t" dst="intin" />
@@ -1067,11 +1067,11 @@
 			<arg name="button" type="int16_t*" src="intout" />
 			<arg name="kstate" type="int16_t*" src="intout" />
 		</function>
-		<function id="23" name="evnt_mesag" nvdi_style="1">
+		<function id="23" name="evnt_mesag" threaded="1">
 			<return type="int16_t" />
 			<arg name="msg" type="int16_t*" dst="addrin" />
 		</function>
-		<function id="24" name="evnt_timer" nvdi_style="1">
+		<function id="24" name="evnt_timer" threaded="1">
 			<return type="int16_t" />
 			<arg name="locnt" type="int16_t" dst="intin" />
 			<arg name="hicnt" type="int16_t" dst="intin" />
@@ -1132,87 +1132,87 @@
 			<arg name="ev" type="EVNT*" src="intout" />
 			<arg name="aes_global" type="int16_t*" />
 		</function>
-		<function id="26" name="evnt_dclick" nvdi_style="1">
+		<function id="26" name="evnt_dclick" threaded="1">
 			<return type="int16_t" />
 			<arg name="new" type="int16_t" dst="intin" />
 			<arg name="flag" type="int16_t" dst="intin" />
 		</function>
 	</functions>
 	<functions grpid="2" category="Menu">
-		<function id="30" name="menu_bar" nvdi_style="1">
+		<function id="30" name="menu_bar" threaded="1">
 			<return type="int16_t" />
 			<arg name="tree" type="OBJECT*" dst="addrin" />
 			<arg name="mode" type="int16_t" dst="intin" />
 		</function>
-		<function id="31" name="menu_icheck" nvdi_style="1">
+		<function id="31" name="menu_icheck" threaded="1">
 			<return type="int16_t" />
 			<arg name="tree" type="OBJECT*" dst="addrin" />
 			<arg name="obj" type="int16_t" dst="intin" />
 			<arg name="check" type="int16_t" dst="intin" />
 		</function>
-		<function id="32" name="menu_ienable" nvdi_style="1">
+		<function id="32" name="menu_ienable" threaded="1">
 			<return type="int16_t" />
 			<arg name="tree" type="OBJECT*" dst="addrin" />
 			<arg name="obj" type="int16_t" dst="intin" />
 			<arg name="flag" type="int16_t" dst="intin" />
 		</function>
-		<function id="33" name="menu_tnormal" nvdi_style="1">
+		<function id="33" name="menu_tnormal" threaded="1">
 			<return type="int16_t" />
 			<arg name="tree" type="OBJECT*" dst="addrin" />
 			<arg name="obj" type="int16_t" dst="intin" />
 			<arg name="flag" type="int16_t" dst="intin" />
 		</function>
-		<function id="34" name="menu_text" nvdi_style="1">
+		<function id="34" name="menu_text" threaded="1">
 			<return type="int16_t" />
 			<arg name="tree" type="OBJECT*" dst="addrin" />
 			<arg name="obj" type="int16_t" dst="intin" />
 			<arg name="text" type="cint8_t*" dst="addrin" />
 		</function>
-		<function id="35" name="menu_register" nvdi_style="1">
+		<function id="35" name="menu_register" threaded="1">
 			<return type="int16_t" />
 			<arg name="ap_id" type="int16_t" dst="intin" />
 			<arg name="title" type="cint8_t*" dst="addrin" />
 		</function>
-		<function id="36" name="menu_popup" nvdi_style="1">
+		<function id="36" name="menu_popup" threaded="1">
 			<return type="int16_t" />
 			<arg name="menu" type="MENU*" dst="addrin" />
 			<arg name="x" type="int16_t" dst="intin" />
 			<arg name="y" type="int16_t" dst="intin" />
 			<arg name="mdata" type="MENU*" dst="addrin" />
 		</function>
-		<function id="37" name="menu_attach" nvdi_style="1">
+		<function id="37" name="menu_attach" threaded="1">
 			<return type="int16_t" />
 			<arg name="flag" type="int16_t" dst="intin" />
 			<arg name="tree" type="OBJECT*" dst="addrin" />
 			<arg name="item" type="int16_t" dst="intin" />
 			<arg name="mdata" type="MENU*" dst="addrin" />
 		</function>
-		<function id="38" name="menu_istart" nvdi_style="1">
+		<function id="38" name="menu_istart" threaded="1">
 			<return type="int16_t" />
 			<arg name="flag" type="int16_t" dst="intin" />
 			<arg name="tree" type="OBJECT*" dst="addrin" />
 			<arg name="menu" type="int16_t" dst="intin" />
 			<arg name="item" type="int16_t" dst="intin" />
 		</function>
-		<function id="39" name="menu_settings" nvdi_style="1">
+		<function id="39" name="menu_settings" threaded="1">
 			<return type="int16_t" />
 			<arg name="flag" type="int16_t" dst="intin" />
 			<arg name="set" type="MN_SET*" dst="addrin" />
 		</function>
 	</functions>
 	<functions grpid="2" category="Objects">
-		<function id="40" name="objc_add" nvdi_style="1">
+		<function id="40" name="objc_add" threaded="1">
 			<return type="int16_t" />
 			<arg name="tree" type="OBJECT*" dst="addrin" />
 			<arg name="parent" type="int16_t" dst="intin" />
 			<arg name="child" type="int16_t" dst="intin" />
 		</function>
-		<function id="41" name="objc_delete" nvdi_style="1">
+		<function id="41" name="objc_delete" threaded="1">
 			<return type="int16_t" />
 			<arg name="tree" type="OBJECT*" dst="addrin" />
 			<arg name="obj" type="int16_t" dst="intin" />
 		</function>
-		<function id="42" name="objc_draw" nvdi_style="1">
+		<function id="42" name="objc_draw" threaded="1">
 			<return type="int16_t" />
 			<arg name="tree" type="OBJECT*" dst="addrin" />
 			<arg name="obj" type="int16_t" dst="intin" />
@@ -1222,7 +1222,7 @@
 			<arg name="ow" type="int16_t" dst="intin" />
 			<arg name="oh" type="int16_t" dst="intin" />
 		</function>
-		<function id="43" name="objc_find" nvdi_style="1">
+		<function id="43" name="objc_find" threaded="1">
 			<return type="int16_t" />
 			<arg name="tree" type="OBJECT*" dst="addrin" />
 			<arg name="obj" type="int16_t" dst="intin" />
@@ -1230,20 +1230,20 @@
 			<arg name="ox" type="int16_t" dst="intin" />
 			<arg name="oy" type="int16_t" dst="intin" />
 		</function>
-		<function id="44" name="objc_offset" nvdi_style="1">
+		<function id="44" name="objc_offset" threaded="1">
 			<return type="int16_t" />
 			<arg name="tree" type="OBJECT*" dst="addrin" />
 			<arg name="obj" type="int16_t" dst="intin" />
 			<arg name="ox" type="int16_t*" src="intout" />
 			<arg name="oy" type="int16_t*" src="intout" />
 		</function>
-		<function id="45" name="objc_order" nvdi_style="1">
+		<function id="45" name="objc_order" threaded="1">
 			<return type="int16_t" />
 			<arg name="tree" type="OBJECT*" dst="addrin" />
 			<arg name="obj" type="int16_t" dst="intin" />
 			<arg name="pos" type="int16_t" dst="intin" />
 		</function>
-		<function id="46" name="objc_edit" nvdi_style="1">
+		<function id="46" name="objc_edit" threaded="1">
 			<return type="int16_t" />
 			<arg name="tree" type="OBJECT*" dst="addrin" />
 			<arg name="obj" type="int16_t" dst="intin" />
@@ -1251,7 +1251,7 @@
 			<arg name="idx" type="int16_t*" src="intout" dst="intin" />
 			<arg name="mode" type="int16_t" dst="intin" />
 		</function>
-		<function id="47" name="objc_change" nvdi_style="1">
+		<function id="47" name="objc_change" threaded="1">
 			<return type="int16_t" />
 			<arg name="tree" type="OBJECT*" dst="addrin" />
 			<arg name="obj" type="int16_t" dst="intin" />
@@ -1263,7 +1263,7 @@
 			<arg name="newstate" type="int16_t" dst="intin" />
 			<arg name="drawflag" type="int16_t" dst="intin" />
 		</function>
-		<function id="48" name="objc_sysvar" nvdi_style="1">
+		<function id="48" name="objc_sysvar" threaded="1">
 			<return type="int16_t" />
 			<arg name="mode" type="int16_t" dst="intin" />
 			<arg name="which" type="int16_t" dst="intin" />
@@ -1274,12 +1274,12 @@
 		</function>
 	</functions>
 	<functions grpid="2" category="Forms">
-		<function id="50" name="form_do" nvdi_style="1">
+		<function id="50" name="form_do" threaded="1">
 			<return type="int16_t" />
 			<arg name="tree" type="OBJECT*" dst="addrin" />
 			<arg name="obj" type="int16_t" dst="intin" />
 		</function>
-		<function id="51" name="form_dial" nvdi_style="1">
+		<function id="51" name="form_dial" threaded="1">
 			<return type="int16_t" />
 			<arg name="mode" type="int16_t" dst="intin" />
 			<arg name="x1" type="int16_t" dst="intin" />
@@ -1291,16 +1291,16 @@
 			<arg name="w2" type="int16_t" dst="intin" />
 			<arg name="h2" type="int16_t" dst="intin" />
 		</function>
-		<function id="52" name="form_alert" nvdi_style="1">
+		<function id="52" name="form_alert" threaded="1">
 			<return type="int16_t" />
 			<arg name="defbtn" type="int16_t" dst="intin" />
 			<arg name="text" type="cint8_t*" dst="addrin" />
 		</function>
-		<function id="53" name="form_error" nvdi_style="1">
+		<function id="53" name="form_error" threaded="1">
 			<return type="int16_t" />
 			<arg name="error" type="int16_t" dst="intin" />
 		</function>
-		<function id="54" name="form_center" nvdi_style="1">
+		<function id="54" name="form_center" threaded="1">
 			<return type="int16_t" />
 			<arg name="tree" type="OBJECT*" dst="addrin" />
 			<arg name="ox" type="int16_t*" src="intout" />
@@ -1308,7 +1308,7 @@
 			<arg name="ow" type="int16_t*" src="intout" />
 			<arg name="oh" type="int16_t*" src="intout" />
 		</function>
-		<function id="55" name="form_keybd" nvdi_style="1">
+		<function id="55" name="form_keybd" threaded="1">
 			<return type="int16_t" />
 			<arg name="tree" type="OBJECT*" dst="addrin" />
 			<arg name="obj" type="int16_t" dst="intin" />
@@ -1317,7 +1317,7 @@
 			<arg name="newobj" type="int16_t*" src="intout" />
 			<arg name="keyout" type="int16_t*" src="intout" />
 		</function>
-		<function id="56" name="form_button" nvdi_style="1">
+		<function id="56" name="form_button" threaded="1">
 			<return type="int16_t" />
 			<arg name="tree" type="OBJECT*" dst="addrin" />
 			<arg name="obj" type="int16_t" dst="intin" />
@@ -1326,7 +1326,7 @@
 		</function>
 	</functions>
 	<functions grpid="2" category="Graph">
-		<function id="70" name="graf_rubberbox" nvdi_style="1">
+		<function id="70" name="graf_rubberbox" threaded="1">
 			<return type="int16_t" />
 			<arg name="bx" type="int16_t" dst="intin" />
 			<arg name="by" type="int16_t" dst="intin" />
@@ -1335,7 +1335,7 @@
 			<arg name="lastwidth" type="int16_t*" src="intout" />
 			<arg name="lastheight" type="int16_t*" src="intout" />
 		</function>
-		<function id="71" name="graf_dragbox" nvdi_style="1">
+		<function id="71" name="graf_dragbox" threaded="1">
 			<return type="int16_t" />
 			<arg name="width" type="int16_t" dst="intin" />
 			<arg name="height" type="int16_t" dst="intin" />
@@ -1357,7 +1357,7 @@
 			<arg name="endx" type="int16_t" dst="intin" />
 			<arg name="endy" type="int16_t" dst="intin" />
 		</function>
-		<function id="72" name="graf_mbox" nvdi_style="1">
+		<function id="72" name="graf_mbox" threaded="1">
 			<return type="int16_t" />
 			<arg name="width" type="int16_t" dst="intin" />
 			<arg name="height" type="int16_t" dst="intin" />
@@ -1366,7 +1366,7 @@
 			<arg name="endx" type="int16_t" dst="intin" />
 			<arg name="endy" type="int16_t" dst="intin" />
 		</function>
-		<function id="73" name="graf_growbox" nvdi_style="1">
+		<function id="73" name="graf_growbox" threaded="1">
 			<return type="int16_t" />
 			<arg name="startx" type="int16_t" dst="intin" />
 			<arg name="starty" type="int16_t" dst="intin" />
@@ -1377,7 +1377,7 @@
 			<arg name="endw" type="int16_t" dst="intin" />
 			<arg name="endh" type="int16_t" dst="intin" />
 		</function>
-		<function id="74" name="graf_shrinkbox" nvdi_style="1">
+		<function id="74" name="graf_shrinkbox" threaded="1">
 			<return type="int16_t" />
 			<arg name="endx" type="int16_t" dst="intin" />
 			<arg name="endy" type="int16_t" dst="intin" />
@@ -1388,7 +1388,7 @@
 			<arg name="startw" type="int16_t" dst="intin" />
 			<arg name="starth" type="int16_t" dst="intin" />
 		</function>
-		<function id="75" name="graf_watchbox" nvdi_style="1">
+		<function id="75" name="graf_watchbox" threaded="1">
 			<return type="int16_t" />
 			<arg name="tree" type="OBJECT*" dst="addrin" />
 			<arg value="0" type="int16_t" dst="intin" />
@@ -1396,26 +1396,26 @@
 			<arg name="instate" type="int16_t" dst="intin" />
 			<arg name="outstate" type="int16_t" dst="intin" />
 		</function>
-		<function id="76" name="graf_slidebox" nvdi_style="1">
+		<function id="76" name="graf_slidebox" threaded="1">
 			<return type="int16_t" />
 			<arg name="tree" type="OBJECT*" dst="addrin" />
 			<arg name="parent" type="int16_t" dst="intin" />
 			<arg name="obj" type="int16_t" dst="intin" />
 			<arg name="orient" type="int16_t" dst="intin" />
 		</function>
-		<function id="77" name="graf_handle" nvdi_style="1">
+		<function id="77" name="graf_handle" threaded="1">
 			<return type="int16_t" />
 			<arg name="wchar" type="int16_t*" src="intout" />
 			<arg name="hchar" type="int16_t*" src="intout" />
 			<arg name="wbox" type="int16_t*" src="intout" />
 			<arg name="hbox" type="int16_t*" src="intout" />
 		</function>
-		<function id="78" name="graf_mouse" nvdi_style="1">
+		<function id="78" name="graf_mouse" threaded="1">
 			<return type="int16_t" />
 			<arg name="mode" type="int16_t" dst="intin" />
 			<arg name="form" type="cMFORM*" dst="addrin" />
 		</function>
-		<function id="79" name="graf_mkstate" nvdi_style="1">
+		<function id="79" name="graf_mkstate" threaded="1">
 			<return type="int16_t" />
 			<arg name="mx" type="int16_t*" src="intout" />
 			<arg name="my" type="int16_t*" src="intout" />
@@ -1424,23 +1424,23 @@
 		</function>
 	</functions>
 	<functions grpid="2" category="Scrap">
-		<function id="80" name="scrp_read" nvdi_style="1">
+		<function id="80" name="scrp_read" threaded="1">
 			<return type="int16_t" />
 			<arg name="path" type="int8_t*" dst="addrin" />
 		</function>
-		<function id="81" name="scrp_write" nvdi_style="1">
+		<function id="81" name="scrp_write" threaded="1">
 			<return type="int16_t" />
 			<arg name="path" type="cint8_t*" dst="addrin" />
 		</function>
 	</functions>
 	<functions grpid="2" category="File">
-		<function id="90" name="fsel_input" nvdi_style="1">
+		<function id="90" name="fsel_input" threaded="1">
 			<return type="int16_t" />
 			<arg name="path" type="int8_t*" dst="addrin" />
 			<arg name="file" type="int8_t*" dst="addrin" />
 			<arg name="button" type="int16_t*" src="intout" />
 		</function>
-		<function id="91" name="fsel_exinput" nvdi_style="1">
+		<function id="91" name="fsel_exinput" threaded="1">
 			<return type="int16_t" />
 			<arg name="path" type="int8_t*" dst="addrin" />
 			<arg name="file" type="int8_t*" dst="addrin" />
@@ -1449,7 +1449,7 @@
 		</function>
 	</functions>
 	<functions grpid="2" category="Windows">
-		<function id="100" name="wind_create" nvdi_style="1">
+		<function id="100" name="wind_create" threaded="1">
 			<return type="int16_t" />
 			<arg name="kind" type="int16_t" dst="intin" />
 			<arg name="x" type="int16_t" dst="intin" />
@@ -1457,7 +1457,7 @@
 			<arg name="w" type="int16_t" dst="intin" />
 			<arg name="h" type="int16_t" dst="intin" />
 		</function>
-		<function id="101" name="wind_open" nvdi_style="1">
+		<function id="101" name="wind_open" threaded="1">
 			<return type="int16_t" />
 			<arg name="handle" type="int16_t" dst="intin" />
 			<arg name="x" type="int16_t" dst="intin" />
@@ -1465,15 +1465,15 @@
 			<arg name="w" type="int16_t" dst="intin" />
 			<arg name="h" type="int16_t" dst="intin" />
 		</function>
-		<function id="102" name="wind_close" nvdi_style="1">
+		<function id="102" name="wind_close" threaded="1">
 			<return type="int16_t" />
 			<arg name="handle" type="int16_t" dst="intin" />
 		</function>
-		<function id="103" name="wind_delete" nvdi_style="1">
+		<function id="103" name="wind_delete" threaded="1">
 			<return type="int16_t" />
 			<arg name="handle" type="int16_t" dst="intin" />
 		</function>
-		<function id="104" name="wind_get" onlyheader="1" nvdi_style="1">
+		<function id="104" name="wind_get" onlyheader="1" threaded="1">
 			<reserve dst="intout" count="5" />
 			<return type="int16_t" />
 			<arg name="handle" type="int16_t" dst="intin" />
@@ -1483,7 +1483,7 @@
 			<arg name="parm3" type="int16_t*" src="intout" />
 			<arg name="parm4" type="int16_t*" src="intout" />
 		</function>
-		<function id="105" name="wind_set" nvdi_style="1">
+		<function id="105" name="wind_set" threaded="1">
 			<return type="int16_t" />
 			<arg name="handle" type="int16_t" dst="intin" />
 			<arg name="mode" type="int16_t" dst="intin" />
@@ -1492,16 +1492,16 @@
 			<arg name="parm3" type="int16_t" dst="intin" />
 			<arg name="parm4" type="int16_t" dst="intin" />
 		</function>
-		<function id="106" name="wind_find" nvdi_style="1">
+		<function id="106" name="wind_find" threaded="1">
 			<return type="int16_t" />
 			<arg name="x" type="int16_t" dst="intin" />
 			<arg name="y" type="int16_t" dst="intin" />
 		</function>
-		<function id="107" name="wind_update" nvdi_style="1">
+		<function id="107" name="wind_update" threaded="1">
 			<return type="int16_t" />
 			<arg name="mode" type="int16_t" dst="intin" />
 		</function>
-		<function id="108" name="wind_calc" nvdi_style="1">
+		<function id="108" name="wind_calc" threaded="1">
 			<return type="int16_t" />
 			<arg name="request" type="int16_t" dst="intin" />
 			<arg name="kind" type="int16_t" dst="intin" />
@@ -1514,47 +1514,47 @@
 			<arg name="outw" type="int16_t*" src="intout" />
 			<arg name="outh" type="int16_t*" src="intout" />
 		</function>
-		<function id="109" name="wind_new" nvdi_style="1">
+		<function id="109" name="wind_new" threaded="1">
 			<return value="1" type="int16_t" />
 		</function>
 	</functions>
 	<functions grpid="2" category="Recources">
-		<function id="110" name="rsrc_load" nvdi_style="1">
+		<function id="110" name="rsrc_load" threaded="1">
 			<return type="int16_t" />
 			<arg name="file" type="cint8_t*" dst="addrin" />
 		</function>
-		<function id="111" name="rsrc_free" nvdi_style="1">
+		<function id="111" name="rsrc_free" threaded="1">
 			<return type="int16_t" />
 		</function>
-		<function id="112" name="rsrc_gaddr" nvdi_style="1">
+		<function id="112" name="rsrc_gaddr" threaded="1">
 			<return type="int16_t" />
 			<arg name="type" type="int16_t" dst="intin" />
 			<arg name="index" type="int16_t" dst="intin" />
 			<arg name="addr" type="void**" src="addrout" />
 		</function>
-		<function id="113" name="rsrc_saddr" nvdi_style="1">
+		<function id="113" name="rsrc_saddr" threaded="1">
 			<return type="int16_t" />
 			<arg name="type" type="int16_t" dst="intin" />
 			<arg name="index" type="int16_t" dst="intin" />
 			<arg name="addr" type="void*" dst="addrin" />
 		</function>
-		<function id="114" name="rsrc_obfix" nvdi_style="1">
+		<function id="114" name="rsrc_obfix" threaded="1">
 			<return type="int16_t" />
 			<arg name="tree" type="OBJECT*" dst="addrin" />
 			<arg name="obj" type="int16_t" dst="intin" />
 		</function>
-		<function id="115" name="rsrc_rcfix" nvdi_style="1">
+		<function id="115" name="rsrc_rcfix" threaded="1">
 			<return type="int16_t" />
 			<arg name="header" type="RSHDR*" dst="addrin" />
 		</function>
 	</functions>
 	<functions grpid="2" category="Shell">
-		<function id="120" name="shel_read" nvdi_style="1">
+		<function id="120" name="shel_read" threaded="1">
 			<return type="int16_t" />
 			<arg name="name" type="int8_t*" dst="addrin" />
 			<arg name="tail" type="int8_t*" dst="addrin" />
 		</function>
-		<function id="121" name="shel_write" nvdi_style="1">
+		<function id="121" name="shel_write" threaded="1">
 			<return type="int16_t" />
 			<arg name="mode" type="int16_t" dst="intin" />
 			<arg name="wisgr" type="int16_t" dst="intin" />
@@ -1562,45 +1562,45 @@
 			<arg name="cmd" type="cint8_t*" dst="addrin" />
 			<arg name="tail" type="cint8_t*" dst="addrin" />
 		</function>
-		<function id="122" name="shel_get" nvdi_style="1">
+		<function id="122" name="shel_get" threaded="1">
 			<return type="int16_t" />
 			<arg name="buf" type="int8_t*" dst="addrin" />
 			<arg name="length" type="int16_t" dst="intin" />
 		</function>
-		<function id="123" name="shel_put" nvdi_style="1">
+		<function id="123" name="shel_put" threaded="1">
 			<return type="int16_t" />
 			<arg name="buf" type="cint8_t*" dst="addrin" />
 			<arg name="length" type="int16_t" dst="intin" />
 		</function>
-		<function id="124" name="shel_find" nvdi_style="1">
+		<function id="124" name="shel_find" threaded="1">
 			<return type="int16_t" />
 			<arg name="buf" type="int8_t*" dst="addrin" />
 		</function>
-		<function id="125" name="shel_envrn" nvdi_style="1">
+		<function id="125" name="shel_envrn" threaded="1">
 			<return type="int16_t" />
 			<arg name="value" type="int8_t**" dst="addrin" />
 			<arg name="name" type="cint8_t*" dst="addrin" />
 		</function>
 	</functions>
 	<functions grpid="2" category="NVDI">
-		<function name="appl_yield" id="17" nvdi_style="1">
+		<function name="appl_yield" id="17" threaded="1">
 			<return type="int16_t" />
 		</function>
-		<function name="evnt_dclicks" id="26" nvdi_style="1">
+		<function name="evnt_dclicks" id="26" threaded="1">
 			<return type="int16_t" />
 			<arg name="val" type="int16_t" dst="intin" />
 			<arg name="setflg" type="int16_t" dst="intin" />
 		</function>
-		<function name="menu_unregister" id="36" nvdi_style="1">
+		<function name="menu_unregister" id="36" threaded="1">
 			<return type="int16_t" />
 			<arg name="menuid" type="int16_t" dst="intin" />
 		</function>
-		<function name="menu_click" id="37" nvdi_style="1">
+		<function name="menu_click" id="37" threaded="1">
 			<return type="int16_t" />
 			<arg name="val" type="int16_t" dst="intin" />
 			<arg name="setflag" type="int16_t" dst="intin" />
 		</function>
-		<function name="objc_xedit" id="46" nvdi_style="1">
+		<function name="objc_xedit" id="46" threaded="1">
 			<return type="int16_t" />
 			<arg name="tree" type="OBJECT*" dst="addrin" />
 			<arg name="objnr" type="int16_t" dst="intin" />
@@ -1609,7 +1609,7 @@
 			<arg name="subfn" type="int16_t" dst="intin" />
 			<arg name="r" type="GRECT*" dst="addrin" />
 		</function>
-		<function name="form_xdo" id="50" nvdi_style="1">
+		<function name="form_xdo" id="50" threaded="1">
 			<return type="int16_t" />
 			<arg name="tree" type="OBJECT*" dst="addrin" />
 			<arg name="startob" type="int16_t" dst="intin" />
@@ -1617,7 +1617,7 @@
 			<arg name="scantab" type="XDO_INF*" dst="addrin" />
 			<arg name="flyinf" type="void*" dst="addrin" />
 		</function>
-		<function name="form_xdial" id="51" nvdi_style="1">
+		<function name="form_xdial" id="51" threaded="1">
 			<return type="int16_t" />
 			<arg name="subfn" type="int16_t" dst="intin" />
 			<arg name="lg" type="GRECT*" dst="intin" nullchk="1" />
@@ -1625,7 +1625,7 @@
 			<arg name="flyinf" type="void**" dst="addrin" />
 			<arg value="0" type="void*" dst="addrin" />
 		</function>
-		<function name="objc_wdraw" id="60" nvdi_style="1">
+		<function name="objc_wdraw" id="60" threaded="1">
 			<return type="void" />
 			<arg name="tree" type="OBJECT*" dst="addrin" />
 			<arg name="object" type="int16_t" dst="intin" />
@@ -1633,7 +1633,7 @@
 			<arg name="clip" type="GRECT*" dst="addrin" />
 			<arg name="windowhandle" type="int16_t" dst="intin" />
 		</function>
-		<function name="objc_wchange" id="61" nvdi_style="1">
+		<function name="objc_wchange" id="61" threaded="1">
 			<return type="void" />
 			<arg name="tree" type="OBJECT*" dst="addrin" />
 			<arg name="object" type="int16_t" dst="intin" />
@@ -1641,7 +1641,7 @@
 			<arg name="clip" type="GRECT*" dst="addrin" />
 			<arg name="windowhandle" type="int16_t" dst="intin" />
 		</function>
-		<function name="graf_wwatchbox" id="62" nvdi_style="1">
+		<function name="graf_wwatchbox" id="62" threaded="1">
 			<return type="int16_t" />
 			<arg name="tree" type="OBJECT*" dst="addrin" />
 			<arg name="object" type="int16_t" dst="intin" />
@@ -1649,7 +1649,7 @@
 			<arg name="outstate" type="int16_t" dst="intin" />
 			<arg name="windowhandle" type="int16_t" dst="intin" />
 		</function>
-		<function name="form_wbutton" id="63" nvdi_style="1">
+		<function name="form_wbutton" id="63" threaded="1">
 			<return type="int16_t" />
 			<arg name="tree" type="OBJECT*" dst="addrin" />
 			<arg name="object" type="int16_t" dst="intin" />
@@ -1657,7 +1657,7 @@
 			<arg name="nextob" type="int16_t*" src="intout" />
 			<arg name="windowhandle" type="int16_t" dst="intin" />
 		</function>
-		<function name="form_wkeybd" id="64" nvdi_style="1" onlyheader="1">
+		<function name="form_wkeybd" id="64" threaded="1" onlyheader="1">
 			<return type="int16_t" />
 			<arg name="tree" type="OBJECT*" dst="addrin" />
 			<arg name="object" type="int16_t" dst="intin" />
@@ -1667,7 +1667,7 @@
 			<arg name="ochar" type="int16_t*" src="intout" />
 			<arg name="windowhandle" type="int16_t" dst="intin" />
 		</function>
-		<function name="objc_wedit" id="65" nvdi_style="1">
+		<function name="objc_wedit" id="65" threaded="1">
 			<return type="int16_t" />
 			<arg name="tree" type="OBJECT*" dst="addrin" />
 			<arg name="object" type="int16_t" dst="intin" />
@@ -1676,7 +1676,7 @@
 			<arg name="kind" type="int16_t" dst="intin" />
 			<arg name="windowhandle" type="int16_t" dst="intin" />
 		</function>
-		<function name="graf_xhandle" id="77" nvdi_style="1">
+		<function name="graf_xhandle" id="77" threaded="1">
 			<return type="int16_t" />
 			<arg name="wchar" type="int16_t*" src="intout" />
 			<arg name="hchar" type="int16_t*" src="intout" />
@@ -1684,31 +1684,31 @@
 			<arg name="hbox" type="int16_t*" src="intout" />
 			<arg name="device" type="int16_t*" src="intout" />
 		</function>
-		<function name="scrp_clear" id="82" nvdi_style="1">
+		<function name="scrp_clear" id="82" threaded="1">
 			<return type="int16_t" />
 		</function>
-		<function name="wind_get_grect" id="104" nvdi_style="1">
+		<function name="wind_get_grect" id="104" threaded="1">
 			<reserve dst="intout" count="5" />
 			<return type="int16_t" />
 			<arg name="whdl" type="int16_t" dst="intin" />
 			<arg name="subfn" type="int16_t" dst="intin" />
 			<arg name="g" type="GRECT*" src="intout" />
 		</function>
-		<function name="wind_get_ptr" id="104" nvdi_style="1">
+		<function name="wind_get_ptr" id="104" threaded="1">
 			<reserve dst="intout" count="5" />
 			<return type="int16_t" />
 			<arg name="whdl" type="int16_t" dst="intin" />
 			<arg name="subfn" type="int16_t" dst="intin" />
 			<arg name="v" type="void**" src="intout" />
 		</function>
-		<function name="wind_get_int" id="104" nvdi_style="1">
+		<function name="wind_get_int" id="104" threaded="1">
 			<reserve dst="intout" count="5" />
 			<return type="int16_t" />
 			<arg name="whdl" type="int16_t" dst="intin" />
 			<arg name="subfn" type="int16_t" dst="intin" />
 			<arg name="g1" type="int16_t*" src="intout" nullchk="1" />
 		</function>
-		<function name="wind_set_string" id="105" nvdi_style="1">
+		<function name="wind_set_string" id="105" threaded="1">
 			<return type="int16_t" />
 			<arg name="whdl" type="int16_t" dst="intin" />
 			<arg name="subfn" type="int16_t" dst="intin" />
@@ -1716,13 +1716,13 @@
 			<arg value="0" type="int16_t" dst="intin" />
 			<arg value="0" type="int16_t" dst="intin" />
 		</function>
-		<function name="wind_set_grect" id="105" nvdi_style="1">
+		<function name="wind_set_grect" id="105" threaded="1">
 			<return type="int16_t" />
 			<arg name="whdl" type="int16_t" dst="intin" />
 			<arg name="subfn" type="int16_t" dst="intin" />
 			<arg name="g" type="cGRECT*" dst="intin" />
 		</function>
-		<function name="wind_set_int" id="105" nvdi_style="1">
+		<function name="wind_set_int" id="105" threaded="1">
 			<return type="int16_t" />
 			<arg name="whdl" type="int16_t" dst="intin" />
 			<arg name="subfn" type="int16_t" dst="intin" />
@@ -1731,7 +1731,7 @@
 			<arg value="0" type="int16_t" dst="intin" />
 			<arg value="0" type="int16_t" dst="intin" />
 		</function>
-		<function name="wind_set_ptr_int" id="105" nvdi_style="1">
+		<function name="wind_set_ptr_int" id="105" threaded="1">
 			<return type="int16_t" />
 			<arg name="whdl" type="int16_t" dst="intin" />
 			<arg name="subfn" type="int16_t" dst="intin" />
@@ -1739,23 +1739,23 @@
 			<arg name="g3" type="int16_t" dst="intin" />
 			<arg value="0" type="int16_t" dst="intin" />
 		</function>
-		<function name="shel_rdef" id="126" nvdi_style="1">
+		<function name="shel_rdef" id="126" threaded="1">
 			<return type="void" />
 			<arg name="fname" type="int8_t*" dst="addrin" />
 			<arg name="dir" type="int8_t*" dst="addrin" />
 		</function>
-		<function name="shel_wdef" id="127" nvdi_style="1">
+		<function name="shel_wdef" id="127" threaded="1">
 			<return type="void" />
 			<arg name="fname" type="cint8_t*" dst="addrin" />
 			<arg name="dir" type="cint8_t*" dst="addrin" />
 		</function>
-		<function name="form_popup" id="135" nvdi_style="1">
+		<function name="form_popup" id="135" threaded="1">
 			<return type="int16_t" />
 			<arg name="tree" type="OBJECT*" dst="addrin" />
 			<arg name="x" type="int16_t" dst="intin" />
 			<arg name="y" type="int16_t" dst="intin" />
 		</function>
-		<function name="xfrm_popup" id="135" nvdi_style="1" onlyheader="1">
+		<function name="xfrm_popup" id="135" threaded="1" onlyheader="1">
 			<return type="int16_t" />
 			<arg name="tree" type="OBJECT*" dst="addrin" />
 			<arg name="x" type="int16_t" dst="intin" />
@@ -1767,12 +1767,12 @@
 			<arg name="param" type="void*" dst="addrin" />
 			<arg name="lastscrlpos" type="int16_t*" src="intout" dst="intin" />
 		</function>
-		<function name="form_xerr" id="136" nvdi_style="1">
+		<function name="form_xerr" id="136" threaded="1">
 			<return type="int16_t" />
 			<arg name="errcode" type="int32_t" dst="intin" />
 			<arg name="errfile" type="cint8_t*" dst="addrin" />
 		</function>
-		<function name="wdlg_create" id="160" nvdi_style="1">
+		<function name="wdlg_create" id="160" threaded="1">
 			<return type="DIALOG*" src="addrout" />
 			<arg name="handle_exit" type="HNDL_OBJ" dst="addrin" />
 			<arg name="tree" type="OBJECT*" dst="addrin" />
@@ -1781,7 +1781,7 @@
 			<arg name="data" type="void*" dst="addrin" />
 			<arg name="flags" type="int16_t" dst="intin" />
 		</function>
-		<function name="wdlg_open" id="161" nvdi_style="1">
+		<function name="wdlg_open" id="161" threaded="1">
 			<return type="int16_t" />
 			<arg name="dialog" type="DIALOG*" dst="addrin" />
 			<arg name="title" type="cint8_t*" dst="addrin" />
@@ -1791,58 +1791,58 @@
 			<arg name="code" type="int16_t" dst="intin" />
 			<arg name="data" type="void*" dst="addrin" />
 		</function>
-		<function name="wdlg_close" id="162" nvdi_style="1">
+		<function name="wdlg_close" id="162" threaded="1">
 			<return type="int16_t" />
 			<arg name="dialog" type="DIALOG*" dst="addrin" />
 			<arg name="x" type="int16_t*" src="intout" nullchk="1" />
 			<arg name="y" type="int16_t*" src="intout" nullchk="1" />
 		</function>
-		<function name="wdlg_delete" id="163" nvdi_style="1">
+		<function name="wdlg_delete" id="163" threaded="1">
 			<return type="int16_t" />
 			<arg name="dialog" type="DIALOG*" dst="addrin" />
 		</function>
-		<function name="wdlg_get_tree" id="164" nvdi_style="1">
+		<function name="wdlg_get_tree" id="164" threaded="1">
 			<return type="int16_t" />
 			<arg dst="intin" type="int16_t" value="0" />
 			<arg name="dialog" type="DIALOG*" dst="addrin" />
 			<arg name="tree" type="OBJECT**" dst="addrin" />
 			<arg name="r" type="GRECT*" dst="addrin" />
 		</function>
-		<function name="wdlg_get_edit" id="164" nvdi_style="1">
+		<function name="wdlg_get_edit" id="164" threaded="1">
 			<return type="int16_t" />
 			<arg dst="intin" type="int16_t" value="1" />
 			<arg name="dialog" type="DIALOG*" dst="addrin" />
 			<arg name="cursor" type="int16_t*" src="intout" />
 		</function>
-		<function name="wdlg_get_udata" id="164" nvdi_style="1">
+		<function name="wdlg_get_udata" id="164" threaded="1">
 			<return type="void*" src="addrout" />
 			<arg dst="intin" type="int16_t" value="2" />
 			<arg name="dialog" type="DIALOG*" dst="addrin" />
 		</function>
-		<function name="wdlg_get_handle" id="164" nvdi_style="1">
+		<function name="wdlg_get_handle" id="164" threaded="1">
 			<return type="int16_t" />
 			<arg dst="intin" type="int16_t" value="3" />
 			<arg name="dialog" type="DIALOG*" dst="addrin" />
 		</function>
-		<function name="wdlg_set_edit" id="165" nvdi_style="1">
+		<function name="wdlg_set_edit" id="165" threaded="1">
 			<return type="int16_t" />
 			<arg dst="intin" type="int16_t" value="0" />
 			<arg name="dialog" type="DIALOG*" dst="addrin" />
 			<arg name="obj" type="int16_t" dst="intin" />
 		</function>
-		<function name="wdlg_set_tree" id="165" nvdi_style="1">
+		<function name="wdlg_set_tree" id="165" threaded="1">
 			<return type="int16_t" />
 			<arg dst="intin" type="int16_t" value="1" />
 			<arg name="dialog" type="DIALOG*" dst="addrin" />
 			<arg name="new_tree" type="OBJECT*" dst="addrin" />
 		</function>
-		<function name="wdlg_set_size" id="165" nvdi_style="1">
+		<function name="wdlg_set_size" id="165" threaded="1">
 			<return type="int16_t" />
 			<arg dst="intin" type="int16_t" value="2" />
 			<arg name="dialog" type="DIALOG*" dst="addrin" />
 			<arg name="new_size" type="GRECT*" dst="addrin" />
 		</function>
-		<function name="wdlg_set_iconify" id="165" nvdi_style="1">
+		<function name="wdlg_set_iconify" id="165" threaded="1">
 			<return type="int16_t" />
 			<arg dst="intin" type="int16_t" value="3" />
 			<arg name="dialog" type="DIALOG*" dst="addrin" />
@@ -1851,7 +1851,7 @@
 			<arg name="tree" type="OBJECT*" dst="addrin" />
 			<arg name="obj" type="int16_t" dst="intin" />
 		</function>
-		<function name="wdlg_set_uniconify" id="165" nvdi_style="1">
+		<function name="wdlg_set_uniconify" id="165" threaded="1">
 			<return type="int16_t" />
 			<arg dst="intin" type="int16_t" value="4" />
 			<arg name="dialog" type="DIALOG*" dst="addrin" />
@@ -1859,19 +1859,19 @@
 			<arg name="title" type="cint8_t*" dst="addrin" />
 			<arg name="tree" type="OBJECT*" dst="addrin" />
 		</function>
-		<function name="wdlg_evnt" id="166" nvdi_style="1">
+		<function name="wdlg_evnt" id="166" threaded="1">
 			<return type="int16_t" />
 			<arg name="dialog" type="DIALOG*" dst="addrin" />
 			<arg name="events" type="EVNT*" dst="addrin" />
 		</function>
-		<function name="wdlg_redraw" id="167" nvdi_style="1">
+		<function name="wdlg_redraw" id="167" threaded="1">
 			<return type="void" />
 			<arg name="dialog" type="DIALOG*" dst="addrin" />
 			<arg name="rect" type="GRECT*" dst="addrin" />
 			<arg name="obj" type="int16_t" dst="intin" />
 			<arg name="depth" type="int16_t" dst="intin" />
 		</function>
-		<function name="lbox_create" id="170" nvdi_style="1">
+		<function name="lbox_create" id="170" threaded="1">
 			<return type="LIST_BOX*" src="addrout" />
 			<arg name="tree" type="OBJECT*" dst="addrin" />
 			<arg name="slct" type="SLCT_ITEM" dst="addrin" />
@@ -1890,132 +1890,112 @@
 			<arg name="entries_b" type="int16_t" dst="intin" />
 			<arg name="pause_b" type="int16_t" dst="intin" />
 		</function>
-		<function name="lbox_update" id="171" nvdi_style="1">
+		<function name="lbox_update" id="171" threaded="1">
 			<return type="void" />
 			<arg name="box" type="LIST_BOX*" dst="addrin" />
 			<arg name="rect" type="GRECT*" dst="addrin" />
 		</function>
-		<function name="lbox_do" id="172" nvdi_style="1">
+		<function name="lbox_do" id="172" threaded="1">
 			<return type="int16_t" />
 			<arg name="box" type="LIST_BOX*" dst="addrin" />
 			<arg name="obj" type="int16_t" dst="intin" />
 		</function>
-		<function name="lbox_delete" id="173" nvdi_style="1">
+		<function name="lbox_delete" id="173" threaded="1">
 			<return type="int16_t" />
 			<arg name="box" type="LIST_BOX*" dst="addrin" />
 		</function>
-		<function name="lbox_cnt_items" id="174" nvdi_style="1">
+		<function name="lbox_cnt_items" id="174" threaded="1">
 			<return type="int16_t" />
 			<arg dst="intin" type="int16_t" value="0" />
 			<arg name="box" type="LIST_BOX*" dst="addrin" />
 		</function>
-		<function name="lbox_get_tree" id="174" nvdi_style="1">
+		<function name="lbox_get_tree" id="174" threaded="1">
 			<return type="OBJECT*" src="addrout" />
 			<arg dst="intin" type="int16_t" value="1" />
 			<arg name="box" type="LIST_BOX*" dst="addrin" />
 		</function>
-		<function name="box_get_visible" id="174" nvdi_style="1">
+		<function name="box_get_visible" id="174" threaded="1">
 			<return type="int16_t" />
 			<arg dst="intin" type="int16_t" value="2" />
 			<arg name="box" type="LIST_BOX*" dst="addrin" />
 		</function>
-		<function name="lbox_get_udata" id="174" nvdi_style="1">
+		<function name="lbox_get_udata" id="174" threaded="1">
 			<return type="void*" src="addrout" />
 			<arg dst="intin" type="int16_t" value="3" />
 			<arg name="box" type="LIST_BOX*" dst="addrin" />
 		</function>
-		<function name="lbox_get_afirst" id="174" nvdi_style="1">
-			<return type="int16_t" />
-			<arg dst="intin" type="int16_t" value="4" />
-			<arg name="box" type="LIST_BOX*" dst="addrin" />
-		</function>
-		<function name="lbox_get_slct_idx" id="174" nvdi_style="1">
+		<function name="lbox_get_slct_idx" id="174" threaded="1">
 			<return type="int16_t" />
 			<arg dst="intin" type="int16_t" value="5" />
 			<arg name="box" type="LIST_BOX*" dst="addrin" />
 		</function>
-		<function name="lbox_get_items" id="174" nvdi_style="1">
+		<function name="lbox_get_items" id="174" threaded="1">
 			<return type="LBOX_ITEM*" src="addrout" />
 			<arg dst="intin" type="int16_t" value="6" />
 			<arg name="box" type="LIST_BOX*" dst="addrin" />
 		</function>
-		<function name="lbox_get_item" id="174" nvdi_style="1">
+		<function name="lbox_get_item" id="174" threaded="1">
 			<return type="LBOX_ITEM*" src="addrout" />
 			<arg dst="intin" type="int16_t" value="7" />
 			<arg name="box" type="LIST_BOX*" dst="addrin" />
 			<arg name="n" type="int16_t" dst="intin" />
 		</function>
-		<function name="lbox_get_slct_item" id="174" nvdi_style="1">
+		<function name="lbox_get_slct_item" id="174" threaded="1">
 			<return type="LBOX_ITEM*" src="addrout" />
 			<arg dst="intin" type="int16_t" value="8" />
 			<arg name="box" type="LIST_BOX*" dst="addrin" />
 		</function>
-		<function name="lbox_get_idx" id="174" nvdi_style="1">
+		<function name="lbox_get_idx" id="174" threaded="1">
 			<return type="int16_t" />
 			<arg dst="intin" type="int16_t" value="9" />
 			<arg name="items" type="LBOX_ITEM*" dst="addrin" />
 			<arg name="search" type="LBOX_ITEM*" dst="addrin" />
 		</function>
-		<function name="lbox_get_bvis" id="174" nvdi_style="1">
+		<function name="lbox_get_bvis" id="174" threaded="1">
 			<return type="int16_t" />
-			<arg dst="intin" type="int16_t" value="1" />
+			<arg dst="intin" type="int16_t" value="10" />
 			<arg name="box" type="LIST_BOX*" dst="addrin" />
 		</function>
-		<function name="lbox_get_bentries" id="174" nvdi_style="1">
+		<function name="lbox_get_bentries" id="174" threaded="1">
 			<return type="int16_t" />
-			<arg dst="intin" type="int16_t" value="1" />
+			<arg dst="intin" type="int16_t" value="11" />
 			<arg name="box" type="LIST_BOX*" dst="addrin" />
 		</function>
-		<function name="lbox_get_bfirst" id="174" nvdi_style="1">
+		<function name="lbox_get_bfirst" id="174" threaded="1">
 			<return type="int16_t" />
-			<arg dst="intin" type="int16_t" value="1" />
+			<arg dst="intin" type="int16_t" value="12" />
 			<arg name="box" type="LIST_BOX*" dst="addrin" />
 		</function>
-		<function name="lbox_set_asldr" id="175" nvdi_style="1">
-			<return type="void" />
-			<arg dst="intin" type="int16_t" value="0" />
-			<arg name="box" type="LIST_BOX*" dst="addrin" />
-			<arg name="first" type="int16_t" dst="intin" />
-			<arg name="rect" type="GRECT*" dst="addrin" />
-		</function>
-		<function name="lbox_set_items" id="175" nvdi_style="1">
+		<function name="lbox_set_items" id="175" threaded="1">
 			<return type="void" />
 			<arg dst="intin" type="int16_t" value="1" />
 			<arg name="box" type="LIST_BOX*" dst="addrin" />
 			<arg name="items" type="LBOX_ITEM*" dst="addrin" />
 		</function>
-		<function name="lbox_free_items" id="175" nvdi_style="1">
+		<function name="lbox_free_items" id="175" threaded="1">
 			<return type="void" />
 			<arg dst="intin" type="int16_t" value="2" />
 			<arg name="box" type="LIST_BOX*" dst="addrin" />
 		</function>
-		<function name="lbox_free_list" id="175" nvdi_style="1">
+		<function name="lbox_free_list" id="175" threaded="1">
 			<return type="void" />
 			<arg dst="intin" type="int16_t" value="3" />
 			<arg name="items" type="LBOX_ITEM*" dst="addrin" />
 		</function>
-		<function name="lbox_ascroll_to" id="175" nvdi_style="1">
-			<return type="void" />
-			<arg dst="intin" type="int16_t" value="4" />
-			<arg name="box" type="LIST_BOX*" dst="addrin" />
-			<arg name="first" type="int16_t" dst="intin" />
-			<arg name="box_rect" type="GRECT*" dst="addrin" />
-			<arg name="slider_rect" type="GRECT*" dst="addrin" />
-		</function>
-		<function name="lbox_set_bsldr" id="175" nvdi_style="1">
+		<function name="lbox_set_bsldr" id="175" threaded="1">
 			<return type="void" />
 			<arg dst="intin" type="int16_t" value="5" />
 			<arg name="box" type="LIST_BOX*" dst="addrin" />
 			<arg name="first" type="int16_t" dst="intin" />
 			<arg name="rect" type="GRECT*" dst="addrin" />
 		</function>
-		<function name="lbox_set_bentries" id="175" nvdi_style="1">
+		<function name="lbox_set_bentries" id="175" threaded="1">
 			<return type="void" />
 			<arg dst="intin" type="int16_t" value="6" />
 			<arg name="box" type="LIST_BOX*" dst="addrin" />
 			<arg name="entries" type="int16_t" dst="intin" />
 		</function>
-		<function name="lbox_bscroll_to" id="175" nvdi_style="1">
+		<function name="lbox_bscroll_to" id="175" threaded="1">
 			<return type="void" />
 			<arg dst="intin" type="int16_t" value="7" />
 			<arg name="box" type="LIST_BOX*" dst="addrin" />
@@ -2023,7 +2003,7 @@
 			<arg name="box_rect" type="GRECT*" dst="addrin" />
 			<arg name="slider_rect" type="GRECT*" dst="addrin" />
 		</function>
-		<function name="fnts_create" id="180" nvdi_style="1">
+		<function name="fnts_create" id="180" threaded="1">
 			<return type="FNT_DIALOG*" src="addrout" />
 			<arg name="vdi_handle" type="int16_t" dst="intin" />
 			<arg name="no_fonts" type="int16_t" dst="intin" />
@@ -2032,12 +2012,12 @@
 			<arg name="sample" type="cint8_t*" dst="addrin" />
 			<arg name="opt_button" type="cint8_t*" dst="addrin" />
 		</function>
-		<function name="fnts_delete" id="181" nvdi_style="1">
+		<function name="fnts_delete" id="181" threaded="1">
 			<return type="int16_t" />
 			<arg name="fnt_dialog" type="FNT_DIALOG*" dst="addrin" />
 			<arg name="vdi_handle" type="int16_t" dst="intin" />
 		</function>
-		<function name="fnts_open" id="182" nvdi_style="1">
+		<function name="fnts_open" id="182" threaded="1">
 			<return type="int16_t" />
 			<arg name="fnt_dialog" type="FNT_DIALOG*" dst="addrin" />
 			<arg name="button_flags" type="int16_t" dst="intin" />
@@ -2047,30 +2027,26 @@
 			<arg name="pt" type="int32_t" dst="intin" />
 			<arg name="ratio" type="int32_t" dst="intin" />
 		</function>
-		<function name="fnts_close" id="183" nvdi_style="1">
-			<return type="int16_t" />
-			<arg name="fnt_dialog" type="FNT_DIALOG*" dst="addrin" />
-		</function>
-		<function name="fnts_close" id="183" nvdi_style="1">
+		<function name="fnts_close" id="183" threaded="1">
 			<return type="int16_t" />
 			<arg name="fnt_dialog" type="FNT_DIALOG*" dst="addrin" />
 			<arg name="x" type="int16_t*" src="intout" nullchk="1" />
 			<arg name="y" type="int16_t*" src="intout" nullchk="1" />
 		</function>
-		<function name="fnts_get_no_styles" id="184" nvdi_style="1">
+		<function name="fnts_get_no_styles" id="184" threaded="1">
 			<return type="int16_t" />
 			<arg dst="intin" type="int16_t" value="0" />
 			<arg name="fnt_dialog" type="FNT_DIALOG*" dst="addrin" />
 			<arg name="id" type="int32_t" dst="intin" />
 		</function>
-		<function name="fnts_get_style" id="184" nvdi_style="1">
+		<function name="fnts_get_style" id="184" threaded="1">
 			<return type="int32_t" src="intout" />
 			<arg dst="intin" type="int16_t" value="1" />
 			<arg name="fnt_dialog" type="FNT_DIALOG*" dst="addrin" />
 			<arg name="id" type="int32_t" dst="intin" />
 			<arg name="index" type="int16_t" dst="intin" />
 		</function>
-		<function name="fnts_get_name" id="184" nvdi_style="1">
+		<function name="fnts_get_name" id="184" threaded="1">
 			<return type="int16_t" />
 			<arg dst="intin" type="int16_t" value="2" />
 			<arg name="fnt_dialog" type="FNT_DIALOG*" dst="addrin" />
@@ -2079,7 +2055,7 @@
 			<arg name="family_name" type="int8_t*" dst="addrin" />
 			<arg name="style_name" type="int8_t*" dst="addrin" />
 		</function>
-		<function name="fnts_get_info" id="184" nvdi_style="1">
+		<function name="fnts_get_info" id="184" threaded="1">
 			<return type="int16_t" />
 			<arg dst="intin" type="int16_t" value="3" />
 			<arg name="fnt_dialog" type="FNT_DIALOG*" dst="addrin" />
@@ -2087,18 +2063,18 @@
 			<arg name="mono" type="int16_t*" src="intout" />
 			<arg name="outline" type="int16_t*" src="intout" />
 		</function>
-		<function name="fnts_add" id="185" nvdi_style="1">
+		<function name="fnts_add" id="185" threaded="1">
 			<return type="int16_t" />
 			<arg dst="intin" type="int16_t" value="0" />
 			<arg name="fnt_dialog" type="FNT_DIALOG*" dst="addrin" />
 			<arg name="user_fonts" type="FNTS_ITEM*" dst="addrin" />
 		</function>
-		<function name="fnts_remove" id="185" nvdi_style="1">
+		<function name="fnts_remove" id="185" threaded="1">
 			<return type="void" />
 			<arg dst="intin" type="int16_t" value="1" />
 			<arg name="fnt_dialog" type="FNT_DIALOG*" dst="addrin" />
 		</function>
-		<function name="fnts_update" id="185" nvdi_style="1">
+		<function name="fnts_update" id="185" threaded="1">
 			<return type="int16_t" />
 			<arg dst="intin" type="int16_t" value="2" />
 			<arg name="fnt_dialog" type="FNT_DIALOG*" dst="addrin" />
@@ -2107,7 +2083,7 @@
 			<arg name="pt" type="int32_t" dst="intin" />
 			<arg name="ratio" type="int32_t" dst="intin" />
 		</function>
-		<function name="fnts_evnt" id="186" nvdi_style="1">
+		<function name="fnts_evnt" id="186" threaded="1">
 			<return type="int16_t" />
 			<arg name="fnt_dialog" type="FNT_DIALOG*" dst="addrin" />
 			<arg name="events" type="EVNT*" dst="addrin" />
@@ -2117,7 +2093,7 @@
 			<arg name="pt" type="int32_t*" src="intout" />
 			<arg name="ratio" type="int32_t*" src="intout" />
 		</function>
-		<function name="fnts_do" id="187" nvdi_style="1">
+		<function name="fnts_do" id="187" threaded="1">
 			<return type="int16_t" />
 			<arg name="fnt_dialog" type="FNT_DIALOG*" dst="addrin" />
 			<arg name="button_flags" type="int16_t" dst="intin" />
@@ -2129,7 +2105,7 @@
 			<arg name="pt" type="int32_t*" src="intout" />
 			<arg name="ratio" type="int32_t*" src="intout" />
 		</function>
-		<function name="fslx_open" id="190" nvdi_style="1">
+		<function name="fslx_open" id="190" threaded="1">
 			<return type="XFSL_DIALOG*" src="addrout" />
 			<arg name="title" type="cint8_t*" dst="addrin" />
 			<arg name="x" type="int16_t" dst="intin" />
@@ -2145,16 +2121,16 @@
 			<arg name="sort_mode" type="int16_t" dst="intin" />
 			<arg name="flags" type="int16_t" dst="intin" />
 		</function>
-		<function name="fslx_close" id="191" nvdi_style="1">
+		<function name="fslx_close" id="191" threaded="1">
 			<return type="int16_t" />
 			<arg name="fsd" type="XFSL_DIALOG*" dst="addrin" />
 		</function>
-		<function name="fslx_getnxtfile" id="192" nvdi_style="1">
+		<function name="fslx_getnxtfile" id="192" threaded="1">
 			<return type="int16_t" />
 			<arg name="fsd" type="XFSL_DIALOG*" dst="addrin" />
 			<arg name="fname" type="int8_t*" dst="addrin" />
 		</function>
-		<function name="fslx_evnt" id="193" nvdi_style="1">
+		<function name="fslx_evnt" id="193" threaded="1">
 			<return type="int16_t" />
 			<arg name="fsd" type="XFSL_DIALOG*" dst="addrin" />
 			<arg name="events" type="EVNT*" dst="addrin" />
@@ -2165,7 +2141,7 @@
 			<arg name="sort_mode" type="int16_t*" src="intout" />
 			<arg name="pattern" type="int8_t**" src="addrout" />
 		</function>
-		<function name="fslx_do" id="194" nvdi_style="1" onlyheader="1">
+		<function name="fslx_do" id="194" threaded="1" onlyheader="1">
 			<return type="XFSL_DIALOG*" src="addrout" />
 			<arg name="title" type="cint8_t*" dst="addrin" />
 			<arg name="path" type="int8_t*" dst="addrin" />
@@ -2181,21 +2157,21 @@
 			<arg name="nfiles" type="int16_t*" src="intout" />
 			<arg name="pattern" type="int8_t**" src="addrout" />
 		</function>
-		<function name="fslx_set_flags" id="195" nvdi_style="1">
+		<function name="fslx_set_flags" id="195" threaded="1">
 			<return type="int16_t" />
 			<arg dst="intin" type="int16_t" value="0" />
 			<arg name="flags" type="int16_t" dst="intin" />
 			<arg name="oldval" type="int16_t*" src="intout" />
 		</function>
-		<function name="pdlg_create" id="200" nvdi_style="1">
+		<function name="pdlg_create" id="200" threaded="1">
 			<return type="PRN_DIALOG*" src="addrout" />
 			<arg name="dialog_flags" type="int16_t" dst="intin" />
 		</function>
-		<function name="pdlg_delete" id="201" nvdi_style="1">
+		<function name="pdlg_delete" id="201" threaded="1">
 			<return type="int16_t" />
 			<arg name="prn_dialog" type="PRN_DIALOG*" dst="addrin" />
 		</function>
-		<function name="pdlg_open" id="202" nvdi_style="1">
+		<function name="pdlg_open" id="202" threaded="1">
 			<return type="int16_t" />
 			<arg name="prn_dialog" type="PRN_DIALOG*" dst="addrin" />
 			<arg name="settings" type="PRN_SETTINGS*" dst="addrin" />
@@ -2204,125 +2180,125 @@
 			<arg name="x" type="int16_t" dst="intin" />
 			<arg name="y" type="int16_t" dst="intin" />
 		</function>
-		<function name="pdlg_close" id="203" nvdi_style="1">
+		<function name="pdlg_close" id="203" threaded="1">
 			<return type="int16_t" />
 			<arg name="prn_dialog" type="PRN_DIALOG*" dst="addrin" />
 			<arg name="x" type="int16_t*" src="intout" nullchk="1" />
 			<arg name="y" type="int16_t*" src="intout" nullchk="1" />
 		</function>
-		<function name="pdlg_get_setsize" id="204" nvdi_style="1">
+		<function name="pdlg_get_setsize" id="204" threaded="1">
 			<return type="int32_t" src="intout" />
 			<arg dst="intin" type="int16_t" value="0" />
 		</function>
-		<function name="pdlg_add_printers" id="205" nvdi_style="1">
+		<function name="pdlg_add_printers" id="205" threaded="1">
 			<return type="int16_t" />
 			<arg dst="intin" type="int16_t" value="0" />
 			<arg name="prn_dialog" type="PRN_DIALOG*" dst="addrin" />
 			<arg name="drv_info" type="DRV_INFO*" dst="addrin" />
 		</function>
-		<function name="pdlg_remove_printers" id="205" nvdi_style="1">
+		<function name="pdlg_remove_printers" id="205" threaded="1">
 			<return type="int16_t" />
 			<arg dst="intin" type="int16_t" value="1" />
 			<arg name="prn_dialog" type="PRN_DIALOG*" dst="addrin" />
 		</function>
-		<function name="pdlg_update" id="205" nvdi_style="1">
+		<function name="pdlg_update" id="205" threaded="1">
 			<return type="int16_t" />
 			<arg dst="intin" type="int16_t" value="2" />
 			<arg name="prn_dialog" type="PRN_DIALOG*" dst="addrin" />
 			<arg value="0" type="void*" dst="addrin" />
 			<arg name="document_name" type="cint8_t*" dst="addrin" />
 		</function>
-		<function name="pdlg_add_sub_dialogs" id="205" nvdi_style="1">
+		<function name="pdlg_add_sub_dialogs" id="205" threaded="1">
 			<return type="int16_t" />
 			<arg dst="intin" type="int16_t" value="3" />
 			<arg name="prn_dialog" type="PRN_DIALOG*" dst="addrin" />
 			<arg name="sub_dialogs" type="PDLG_SUB*" dst="addrin" />
 		</function>
-		<function name="pdlg_remove_sub_dialogs" id="205" nvdi_style="1">
+		<function name="pdlg_remove_sub_dialogs" id="205" threaded="1">
 			<return type="int16_t" />
 			<arg dst="intin" type="int16_t" value="4" />
 			<arg name="prn_dialog" type="PRN_DIALOG*" dst="addrin" />
 		</function>
-		<function name="pdlg_new_settings" id="205" nvdi_style="1">
+		<function name="pdlg_new_settings" id="205" threaded="1">
 			<return type="PRN_SETTINGS*" src="addrout" />
 			<arg dst="intin" type="int16_t" value="5" />
 			<arg name="prn_dialog" type="PRN_DIALOG*" dst="addrin" />
 		</function>
-		<function name="pdlg_free_settings" id="205" nvdi_style="1">
+		<function name="pdlg_free_settings" id="205" threaded="1">
 			<return type="int16_t" />
 			<arg dst="intin" type="int16_t" value="6" />
 			<arg name="settings" type="PRN_SETTINGS*" dst="addrin" />
 		</function>
-		<function name="pdlg_dflt_settings" id="205" nvdi_style="1">
+		<function name="pdlg_dflt_settings" id="205" threaded="1">
 			<return type="int16_t" />
 			<arg dst="intin" type="int16_t" value="7" />
 			<arg name="prn_dialog" type="PRN_DIALOG*" dst="addrin" />
 			<arg name="settings" type="PRN_SETTINGS*" dst="addrin" />
 		</function>
-		<function name="pdlg_validate_settings" id="205" nvdi_style="1">
+		<function name="pdlg_validate_settings" id="205" threaded="1">
 			<return type="int16_t" />
 			<arg dst="intin" type="int16_t" value="8" />
 			<arg name="prn_dialog" type="PRN_DIALOG*" dst="addrin" />
 			<arg name="settings" type="PRN_SETTINGS*" dst="addrin" />
 		</function>
-		<function name="pdlg_use_settings" id="205" nvdi_style="1">
+		<function name="pdlg_use_settings" id="205" threaded="1">
 			<return type="int16_t" />
 			<arg dst="intin" type="int16_t" value="9" />
 			<arg name="prn_dialog" type="PRN_DIALOG*" dst="addrin" />
 			<arg name="settings" type="PRN_SETTINGS*" dst="addrin" />
 		</function>
-		<function name="pdlg_save_default_settings" id="205" nvdi_style="1">
+		<function name="pdlg_save_default_settings" id="205" threaded="1">
 			<return type="int16_t" />
 			<arg dst="intin" type="int16_t" value="1" />
 			<arg name="prn_dialog" type="PRN_DIALOG*" dst="addrin" />
 			<arg name="settings" type="PRN_SETTINGS*" dst="addrin" />
 		</function>
-		<function name="pdlg_evnt" id="206" nvdi_style="1">
+		<function name="pdlg_evnt" id="206" threaded="1">
 			<return type="int16_t" />
 			<arg name="prn_dialog" type="PRN_DIALOG*" dst="addrin" />
 			<arg name="settings" type="PRN_SETTINGS*" dst="addrin" />
 			<arg name="events" type="EVNT*" dst="addrin" />
 			<arg name="button" type="int16_t*" src="intout" />
 		</function>
-		<function name="pdlg_do" id="207" nvdi_style="1">
+		<function name="pdlg_do" id="207" threaded="1">
 			<return type="int16_t" />
 			<arg name="prn_dialog" type="PRN_DIALOG*" dst="addrin" />
 			<arg name="settings" type="PRN_SETTINGS*" dst="addrin" />
 			<arg name="document_name" type="cint8_t*" dst="addrin" />
 			<arg name="option_flags" type="int16_t" dst="intin" />
 		</function>
-		<function name="edit_create" id="210" nvdi_style="1">
+		<function name="edit_create" id="210" threaded="1">
 			<return type="XEDITINFO*" src="addrout" />
 		</function>
-		<function name="edit_open" id="211" nvdi_style="1">
+		<function name="edit_open" id="211" threaded="1">
 			<return type="int16_t" src="intout" />
 			<arg name="tree" type="OBJECT*" dst="addrin" />
 			<arg name="obj" type="int16_t" dst="intin" />
 		</function>
-		<function name="edit_close" id="212" nvdi_style="1">
+		<function name="edit_close" id="212" threaded="1">
 			<return type="void" />
 			<arg name="tree" type="OBJECT*" dst="addrin" />
 			<arg name="obj" type="int16_t" dst="intin" />
 		</function>
-		<function name="edit_delete" id="213" nvdi_style="1">
+		<function name="edit_delete" id="213" threaded="1">
 			<return type="void" />
 			<arg name="xi" type="XEDITINFO*" dst="addrin" />
 		</function>
-		<function name="edit_cursor" id="214" nvdi_style="1">
+		<function name="edit_cursor" id="214" threaded="1">
 			<return type="int16_t" src="intout" />
 			<arg name="tree" type="OBJECT*" dst="addrin" />
 			<arg name="obj" type="int16_t" dst="intin" />
 			<arg name="whdl" type="int16_t" dst="intin" />
 			<arg name="show" type="int16_t" dst="intin" />
 		</function>
-		<function name="edit_evnt" id="215" nvdi_style="1">
+		<function name="edit_evnt" id="215" threaded="1">
 			<return type="int32_t" src="intout" />
 			<arg name="tree" type="OBJECT*" dst="addrin" />
 			<arg name="obj" type="int16_t" dst="intin" />
 			<arg name="whdl" type="int16_t" dst="intin" />
 			<arg name="ev" type="EVNT*" dst="addrin" />
 		</function>
-		<function name="edit_get_buf" id="216" nvdi_style="1">
+		<function name="edit_get_buf" id="216" threaded="1">
 			<return type="int16_t" src="intout" />
 			<arg name="tree" type="OBJECT*" dst="addrin" />
 			<arg name="obj" type="int16_t" dst="intin" />
@@ -2331,7 +2307,7 @@
 			<arg name="buflen" type="int32_t*" src="intout" />
 			<arg name="txtlen" type="int32_t*" src="intout" />
 		</function>
-		<function name="edit_get_format" id="216" nvdi_style="1">
+		<function name="edit_get_format" id="216" threaded="1">
 			<return type="int16_t" src="intout" />
 			<arg name="tree" type="OBJECT*" dst="addrin" />
 			<arg name="obj" type="int16_t" dst="intin" />
@@ -2339,7 +2315,7 @@
 			<arg name="tabwidth" type="int16_t*" src="intout" />
 			<arg name="autowrap" type="int16_t*" src="intout" />
 		</function>
-		<function name="edit_get_colour" id="216" nvdi_style="1">
+		<function name="edit_get_colour" id="216" threaded="1">
 			<return type="int16_t" src="intout" />
 			<arg name="tree" type="OBJECT*" dst="addrin" />
 			<arg name="obj" type="int16_t" dst="intin" />
@@ -2347,7 +2323,7 @@
 			<arg name="tcolour" type="int16_t*" src="intout" />
 			<arg name="bcolour" type="int16_t*" src="intout" />
 		</function>
-		<function name="edit_get_font" id="216" nvdi_style="1">
+		<function name="edit_get_font" id="216" threaded="1">
 			<return type="int16_t" src="intout" />
 			<arg name="tree" type="OBJECT*" dst="addrin" />
 			<arg name="obj" type="int16_t" dst="intin" />
@@ -2356,14 +2332,14 @@
 			<arg name="fontH" type="int16_t*" src="intout" />
 			<arg name="mono" type="int16_t*" src="intout" />
 		</function>
-		<function name="edit_get_cursor" id="216" nvdi_style="1">
+		<function name="edit_get_cursor" id="216" threaded="1">
 			<return type="int16_t" src="intout" />
 			<arg name="tree" type="OBJECT*" dst="addrin" />
 			<arg name="obj" type="int16_t" dst="intin" />
 			<arg dst="intin" type="int16_t" value="4" />
 			<arg name="cursorpos" type="int8_t**" src="addrout" />
 		</function>
-		<function name="edit_get_pos" id="216" nvdi_style="1">
+		<function name="edit_get_pos" id="216" threaded="1">
 			<return type="void" />
 			<arg name="tree" type="OBJECT*" dst="addrin" />
 			<arg name="obj" type="int16_t" dst="intin" />
@@ -2375,13 +2351,13 @@
 			<arg name="cx" type="int16_t*" src="intout" />
 			<arg name="cy" type="int16_t*" src="intout" />
 		</function>
-		<function name="edit_get_dirty" id="216" nvdi_style="1">
+		<function name="edit_get_dirty" id="216" threaded="1">
 			<return type="int16_t" src="intout" />
 			<arg name="tree" type="OBJECT*" dst="addrin" />
 			<arg name="obj" type="int16_t" dst="intin" />
 			<arg dst="intin" type="int16_t" value="7" />
 		</function>
-		<function name="edit_get_sel" id="216" nvdi_style="1">
+		<function name="edit_get_sel" id="216" threaded="1">
 			<return type="void" />
 			<arg name="tree" type="OBJECT*" dst="addrin" />
 			<arg name="obj" type="int16_t" dst="intin" />
@@ -2389,7 +2365,7 @@
 			<arg name="bsel" type="int8_t**" src="addrout" />
 			<arg name="esel" type="int8_t**" src="addrout" />
 		</function>
-		<function name="edit_get_scrollinfo" id="216" nvdi_style="1">
+		<function name="edit_get_scrollinfo" id="216" threaded="1">
 			<return type="void" />
 			<arg name="tree" type="OBJECT*" dst="addrin" />
 			<arg name="obj" type="int16_t" dst="intin" />
@@ -2402,7 +2378,7 @@
 			<arg name="xscroll" type="int16_t*" src="intout" />
 			<arg name="xvis" type="int16_t*" src="intout" />
 		</function>
-		<function name="edit_set_buf" id="217" nvdi_style="1">
+		<function name="edit_set_buf" id="217" threaded="1">
 			<return type="void" />
 			<arg name="tree" type="OBJECT*" dst="addrin" />
 			<arg name="obj" type="int16_t" dst="intin" />
@@ -2410,7 +2386,7 @@
 			<arg name="buf" type="int8_t*" dst="addrin" />
 			<arg name="buflen" type="int32_t" dst="intin" />
 		</function>
-		<function name="edit_set_format" id="217" nvdi_style="1">
+		<function name="edit_set_format" id="217" threaded="1">
 			<return type="void" />
 			<arg name="tree" type="OBJECT*" dst="addrin" />
 			<arg name="obj" type="int16_t" dst="intin" />
@@ -2418,7 +2394,7 @@
 			<arg name="tabwidth" type="int16_t" dst="intin" />
 			<arg name="autowrap" type="int16_t" dst="intin" />
 		</function>
-		<function name="edit_set_colour" id="217" nvdi_style="1">
+		<function name="edit_set_colour" id="217" threaded="1">
 			<return type="void" />
 			<arg name="tree" type="OBJECT*" dst="addrin" />
 			<arg name="obj" type="int16_t" dst="intin" />
@@ -2426,7 +2402,7 @@
 			<arg name="tcolour" type="int16_t" dst="intin" />
 			<arg name="bcolour" type="int16_t" dst="intin" />
 		</function>
-		<function name="edit_set_font" id="217" nvdi_style="1">
+		<function name="edit_set_font" id="217" threaded="1">
 			<return type="void" />
 			<arg name="tree" type="OBJECT*" dst="addrin" />
 			<arg name="obj" type="int16_t" dst="intin" />
@@ -2435,14 +2411,14 @@
 			<arg name="fontH" type="int16_t" dst="intin" />
 			<arg name="mono" type="int16_t" dst="intin" />
 		</function>
-		<function name="edit_set_cursor" id="217" nvdi_style="1">
+		<function name="edit_set_cursor" id="217" threaded="1">
 			<return type="void" />
 			<arg name="tree" type="OBJECT*" dst="addrin" />
 			<arg name="obj" type="int16_t" dst="intin" />
 			<arg dst="intin" type="int16_t" value="4" />
 			<arg name="cursorpos" type="int8_t*" dst="addrin" />
 		</function>
-		<function name="edit_set_pos" id="217" nvdi_style="1">
+		<function name="edit_set_pos" id="217" threaded="1">
 			<return type="void" />
 			<arg name="tree" type="OBJECT*" dst="addrin" />
 			<arg name="obj" type="int16_t" dst="intin" />
@@ -2454,7 +2430,7 @@
 			<arg name="cx" type="int16_t" dst="intin" />
 			<arg name="cy" type="int16_t" dst="intin" />
 		</function>
-		<function name="edit_resized" id="217" nvdi_style="1">
+		<function name="edit_resized" id="217" threaded="1">
 			<return type="int16_t" src="intout" />
 			<arg name="tree" type="OBJECT*" dst="addrin" />
 			<arg name="obj" type="int16_t" dst="intin" />
@@ -2462,14 +2438,14 @@
 			<arg name="oldrh" type="int16_t*" src="intout" />
 			<arg name="newrh" type="int16_t*" src="intout" />
 		</function>
-		<function name="edit_set_dirty" id="217" nvdi_style="1">
+		<function name="edit_set_dirty" id="217" threaded="1">
 			<return type="void" />
 			<arg name="tree" type="OBJECT*" dst="addrin" />
 			<arg name="obj" type="int16_t" dst="intin" />
 			<arg dst="intin" type="int16_t" value="7" />
 			<arg name="dirty" type="int16_t" dst="intin" />
 		</function>
-		<function name="edit_scroll" id="217" nvdi_style="1">
+		<function name="edit_scroll" id="217" threaded="1">
 			<return type="int16_t" src="intout" />
 			<arg name="tree" type="OBJECT*" dst="addrin" />
 			<arg name="obj" type="int16_t" dst="intin" />
@@ -2478,41 +2454,41 @@
 			<arg name="yscroll" type="int32_t" dst="intin" />
 			<arg name="xscroll" type="int16_t" dst="intin" />
 		</function>
-		<function name="lbox_get_avis" id="174" nvdi_style="1">
+		<function name="lbox_get_avis" id="174" threaded="1">
 			<return type="int16_t" src="intout" />
 			<arg name="box" type="LIST_BOX*" dst="addrin" />
 			<arg value="2" type="int16_t" dst="intin" />
 		</function>
-		<function name="lbox_get_visible" id="174" nvdi_style="1">
+		<function name="lbox_get_visible" id="174" threaded="1">
 			<return type="int16_t" src="intout" />
 			<arg name="box" type="LIST_BOX*" dst="addrin" />
 			<arg value="2" type="int16_t" dst="intin" />
 		</function>
-		<function name="lbox_get_afirst" id="174" nvdi_style="1">
+		<function name="lbox_get_afirst" id="174" threaded="1">
 			<return type="int16_t" src="intout" />
 			<arg name="box" type="LIST_BOX*" dst="addrin" />
 			<arg value="4" type="int16_t" dst="intin" />
 		</function>
-		<function name="lbox_get_first" id="174" nvdi_style="1">
+		<function name="lbox_get_first" id="174" threaded="1">
 			<return type="int16_t" src="intout" />
 			<arg name="box" type="LIST_BOX*" dst="addrin" />
 			<arg value="4" type="int16_t" dst="intin" />
 		</function>
-		<function name="lbox_set_asldr" id="175" nvdi_style="1">
+		<function name="lbox_set_asldr" id="175" threaded="1">
 			<return type="void" />
 			<arg name="box" type="LIST_BOX*" dst="addrin" />
 			<arg value="0" type="int16_t" dst="intin" />
 			<arg name="first" type="int16_t" dst="intin" />
 			<arg name="rect" type="GRECT*" dst="addrin" />
 		</function>
-		<function name="lbox_set_slider" id="175" nvdi_style="1">
+		<function name="lbox_set_slider" id="175" threaded="1">
 			<return type="void" />
 			<arg name="box" type="LIST_BOX*" dst="addrin" />
 			<arg value="0" type="int16_t" dst="intin" />
 			<arg name="first" type="int16_t" dst="intin" />
 			<arg name="rect" type="GRECT*" dst="addrin" />
 		</function>
-		<function name="lbox_ascroll_to" id="175" nvdi_style="1">
+		<function name="lbox_ascroll_to" id="175" threaded="1">
 			<return type="void" />
 			<arg name="box" type="LIST_BOX*" dst="addrin" />
 			<arg value="4" type="int16_t" dst="intin" />
@@ -2520,7 +2496,7 @@
 			<arg name="box_rect" type="GRECT*" dst="addrin" />
 			<arg name="slider_rect" type="GRECT*" dst="addrin" />
 		</function>
-		<function name="lbox_scroll_to" id="175" nvdi_style="1">
+		<function name="lbox_scroll_to" id="175" threaded="1">
 			<return type="void" />
 			<arg name="box" type="LIST_BOX*" dst="addrin" />
 			<arg value="4" type="int16_t" dst="intin" />

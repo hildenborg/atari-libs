@@ -1988,7 +1988,7 @@
 					<arg name="handle" dst="contrl" idx="6" type="int16_t" />
 					<arg name="font_header" dst="intin" idx="0" longs="0" type="cvoid*" />
 				</override>
-				<override id="248" name="vqt_devinfo">
+				<override name="vqt_devinfo">
 					<return type="void" />
 					<arg name="handle" dst="contrl" idx="6" type="int16_t" />
 					<arg name="devnum" dst="intin" type="int16_t" />

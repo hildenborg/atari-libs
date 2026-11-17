@@ -188,9 +188,9 @@ def MT_styleDefine(f, ff, name, dicts):
 def HeaderFunctions(f, functions, dicts):
 	for _, ff in functions.items():
 		name = ff.attrib.get("name")
-		nvdi_style = ff.attrib.get("nvdi_style")
+		threaded = ff.attrib.get("threaded")
 		HeaderFunction(f, ff, name, None, dicts)
-		if nvdi_style:
+		if threaded:
 			MT_styleDefine(f, ff, name, dicts)
 
 	f.write("\n\n")
