@@ -23,6 +23,7 @@ class ArrayUse:
 	ff: ET.Element = None				# Function element
 	arraySize: str = ""					# array size in words needed
 	ctrlCount: str = ""					# Size to put in contrl array
+	padIdx: int = -1					# Index of padding word added to make a pts array whole points, or -1
 
 @dataclass
 class FuncUse:
@@ -118,7 +119,20 @@ def GetArraySize(arrUse: ArrayUse):
 	else:
 		arrUse.ctrlCount = str(topIdx)
 		arrUse.arraySize = str(topIdxW)
-	
+
+# ptsin/ptsout are counted in points (2 words) in contrl, so VDI reads/writes
+# an even number of words. Round the local array size up to match.
+def PadPtsArraySize(arrUse: ArrayUse):
+	if "pts" not in arrUse.name:
+		return
+	size = str(arrUse.arraySize)
+	if size.isnumeric():
+		if int(size) & 1:
+			arrUse.padIdx = int(size)
+			arrUse.arraySize = str(int(size) + 1)
+	elif size != "":
+		arrUse.arraySize = "((" + size + ") + 1) & ~1"
+
 def CombineIntWithStr(i, s):
 	if s != "":
 		if i != 0:
@@ -253,6 +267,7 @@ def PreprocessInArray(ff, chkarr, arrUse: ArrayUse, dicts):
 	SetRetUsage(ff, arrUse)
 	PreprocessSizeAndIdx(ff, arrUse)
 	GetArraySize(arrUse)
+	PadPtsArraySize(arrUse)
 
 	SetTypeUsage(ff, arrUse, dicts)
 
@@ -285,6 +300,7 @@ def PreprocessOutArray(ff, chkarr, arrUse: ArrayUse, dicts):
 	PreprocessSizeAndIdx(ff, arrUse)
 	SetTypeUsage(ff, arrUse, dicts)
 	GetArraySize(arrUse)
+	PadPtsArraySize(arrUse)
 
 	if arrUse.ret == 0 and arrUse.pointers == 1 and arrUse.chars == 0:
 		# Simple case where we can use the ptr directly.
@@ -488,6 +504,9 @@ def WriteWorkInSetup(f, ff, arrUse : ArrayUse, dicts):
 		arrUse.vdipb = "lcl_" + arrUse.name
 		f.write("\t" + wordType + " " + arrUse.vdipb + "[" + count + "];\n")
 		WriteWorkInArgSetup(f, arrUse, dicts)
+		if arrUse.padIdx >= 0 and arrUse.padIdx not in arrUse.usedIndexes:
+			# Clear the padding word so VDI doesn't read uninitialized data.
+			f.write("\t" + arrUse.vdipb + "[" + str(arrUse.padIdx) + "] = 0;\n")
 	elif arrUse.directPointer:
 		argname = arrUse.xmlArgs[0].attrib.get("name")
 		idx = arrUse.xmlArgs[0].attrib.get("idx")

@@ -63,8 +63,11 @@ def OverrideFunction(oo, dicts):
 	c = FindFunctionCategory(n, dicts)
 	if c is not None:
 		f = functionDict[c][n]
-		oo.set("id", f.attrib.get("id"))
-		oo.set("grpid", f.attrib.get("grpid"))
+		for k, v in f.attrib.items():
+			# id, subid and grpid always come from the original function.
+			# Other attributes (threaded, onlyheader etc.) are inherited unless the override sets them.
+			if k in ("id", "subid", "grpid") or k not in oo.attrib:
+				oo.set(k, v)
 		functionDict[c][n] = oo
 	else:
 		print("Cannot override function: " + n + " as no such function exists.")

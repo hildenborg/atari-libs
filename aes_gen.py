@@ -69,6 +69,8 @@ def CodeAESFunction(iname, build_dir, ff, dicts):
 			src = a.attrib.get("src")
 			dst = a.attrib.get("dst")
 			t = a.attrib.get("type")
+			# Base type without the leading "c" (const) marker, for type comparisons below.
+			bt = t[1:] if t and t[0] == 'c' else t
 			nc = a.attrib.get("nullchk")
 			if not n:
 				n = a.attrib.get("value")
@@ -86,10 +88,10 @@ def CodeAESFunction(iname, build_dir, ff, dicts):
 				endnc = "\t}\n"
 
 			if src == "intout":
-				if (t == "int16_t*" or t == "uint16_t*"):
+				if (bt == "int16_t*" or bt == "uint16_t*"):
 					s_intout += beginnc + "\t*" + n + " = " + "intout[" + str(intout) + "];\n" + endnc
 					intout = intout + 1
-				elif t == "GRECT*":
+				elif bt == "GRECT*":
 					s_intout += beginnc + "\t*" + n + " = " + "*(GRECT*)(&intout[" + str(intout) + "]);\n" + endnc
 					intout = intout + 4
 				else:
@@ -100,14 +102,14 @@ def CodeAESFunction(iname, build_dir, ff, dicts):
 				s_addrout += beginnc + "\t*" + n + " = " + "addrout[" + str(addrout) + "];\n" + endnc
 				addrout = addrout + 1
 			if dst == "intin":
-				if (t == "int32_t" or t == "uint32_t"):
+				if (bt == "int32_t" or bt == "uint32_t"):
 					[_, longType, _, _, _] = header_gen.GetTypeName("int32_t", dicts)
 					s_intin += beginnc + "\tAES_COPY_LONG(&" + n + ", &intin[" + str(intin) + "]);\n" + endnc
 					intin = intin + 2
-				elif t == "GRECT*":
+				elif bt == "GRECT*":
 					s_intin += beginnc + "\t*(GRECT*)(&" + "intin[" + str(intin) + "]) = " + isPtr + n + ";\n" + endnc
 					intin = intin + 4
-				elif (t != "int16_t*" and t != "uint16_t*") and isPtr:
+				elif (bt != "int16_t*" and bt != "uint16_t*") and isPtr:
 					s_intin += beginnc + "\tAES_COPY_LONG(&" + n + ", &intin[" + str(intin) + "]);\n" + endnc
 					intin = intin + 2
 				else:
