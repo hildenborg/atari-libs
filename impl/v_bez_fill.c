@@ -8,8 +8,8 @@ void v_bez_fill(INT16_T handle, INT16_T count, INT16_T* xyarray, INT8_T* bezarra
 	INT16_T lcl_intout[2];
 	INT16_T lcl_contrl[16];
 	lcl_contrl[0] = 9;
-	lcl_contrl[1] = lcl_intin_num;
-	lcl_contrl[3] = count;
+	lcl_contrl[1] = count;			// points
+	lcl_contrl[3] = lcl_intin_num;	// bytes packed two per word
 	lcl_contrl[5] = 13;
 	lcl_contrl[6] = handle;
 	VDIPB lcl_vdipb =

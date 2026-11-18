@@ -33,6 +33,10 @@ Also supports NVDI and other newer APIs.
   `impl/aes_tramp.c`; the functions that hand them to the AES are wrapped in `impl/` (marked `onlyheader` in aes.xml) and look the
   user function up by dialog/list box/sub dialog/font id. A new callback type with short parameters needs the same treatment.
 - ptsin/ptsout counts in contrl are in points (2 words); local pts arrays must be an even number of words.
+- A single output pointer is handed to the VDI directly, unless a `<reserve>` exists for that array: then a local array
+  of the reserved size is used and copied (the VDI may write more than the caller's array holds, e.g. `vql_attributes`).
+  Use `<reserve>` when a VDI writes more than the documented outputs (`vqt_name` writes 34 intout words).
+- An arg with `dst="contrl" idx="5"` replaces the subfunction in contrl[5] (`v_setrgb`).
 
 ## Verifying generator changes
 
@@ -63,3 +67,11 @@ Also supports NVDI and other newer APIs.
   while a modal call runs). Config ste-tos206-nvdi copies `$HOME/testhd` (NVDI + WDIALOG, needs 4 MB) for the wdlg/lbox/fnts/pdlg tests.
   The AES keyboard queue and button state survive between programs: mouse tracking tests live in `a_graf.c`, which runs
   before anything ends a dialog with simulated keys. NVDI ignores simulated mouse buttons.
+- VDI library tests: `test/vdi/run.sh -g <gen dir> [config ...]`, same configs as the AES tests (GEM helpers come from `test/aes/a_util.c`).
+  A trap #2 hook (`v_util.c`) records the contrl/intin/ptsin a binding builds, compared with the VDI spec. In fake mode the
+  call doesn't reach the VDI and known intout/ptsout/contrl values come back, so every binding is checked on every config.
+  In spy mode the real VDI writes into sentinel buffers of the hook, which counts the words actually written: TOS and
+  EmuTOS write more than `contrl[4]` says (e.g. 34 words for `vqt_name`). Real tests read the screen memory directly
+  (geometry from Line-A). ste-tos206-nvdi also tests GDOS/vector fonts, NVDI colour/bitmap calls and a META.SYS metafile.
+  The ROM VDIs (TOS, EmuTOS) corrupt memory in `vq_cellarray` and have quirks (0 based modes in `vqin_mode`, type-1 in
+  `vqm_attributes`); `v_show_c` with reset 0 shows at once, reset 1 undoes one `v_hide_c`.

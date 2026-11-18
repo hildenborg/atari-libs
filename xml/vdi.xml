@@ -383,7 +383,7 @@
 			<arg name="elements" dst="contrl" idx="8" type="int16_t" />
 			<arg name="num_rows" dst="contrl" idx="9" type="int16_t" />
 			<arg name="wrt_mode" dst="contrl" idx="10" type="int16_t" />
-			<arg name="colarray" dst="intin" words="elements*num_rows" type="int16_t*" />
+			<arg name="colarray" dst="intin" words="row_length*num_rows" type="int16_t*" />
 		</function>
 		<function id="103" name="v_contourfill">
 			<return type="void" />
@@ -844,11 +844,17 @@
 			Function id 35 and attrib[5] = ptsout[0].
 		-->
 		<function id="35" name="vql_attributes">
+			<reserve src="ptsout" longs="1" />
 			<return type="void" />
 			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
 			<arg name="attrib" type="int16_t*">
-				<sequence src="intout" words="5" />
-				<sequence src="ptsout" words="1" />
+				<!-- Copied from local arrays: ptsout is a whole point (2 words), attrib has 6 words. -->
+				<sequence src="intout" idx="0" />
+				<sequence src="intout" idx="1" />
+				<sequence src="intout" idx="2" />
+				<sequence src="intout" idx="3" />
+				<sequence src="intout" idx="4" />
+				<sequence src="ptsout" idx="0" />
 			</arg>
 		</function>
 		<function id="36" name="vqm_attributes">
@@ -882,11 +888,14 @@
 			<return src="intout" idx="0" type="int16_t" />
 			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
 			<arg name="character" dst="intin" type="int16_t" />
-			<arg name="cell_width" src="ptsout" longs="1" type="int16_t*" />
-			<arg name="left_delta" src="ptsout" longs="1" type="int16_t*" />
-			<arg name="right_delta" src="ptsout" longs="1" type="int16_t*" />
+			<reserve src="ptsout" longs="3" />
+			<arg name="cell_width" src="ptsout" idx="0" type="int16_t*" />
+			<arg name="left_delta" src="ptsout" idx="2" type="int16_t*" />
+			<arg name="right_delta" src="ptsout" idx="4" type="int16_t*" />
 		</function>
 		<function id="130" name="vqt_name">
+			<!-- All VDIs write intout[33] (vector font flag), also when contrl[4] says 33. -->
+			<reserve src="intout" words="34" />
 			<return src="intout" idx="0" type="int16_t" />
 			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
 			<arg name="element_num" dst="intin" type="int16_t" />
@@ -901,7 +910,7 @@
 			<arg name="el_used" src="contrl" idx="9" type="int16_t*" />
 			<arg name="rows_used" src="contrl" idx="10" type="int16_t*" />
 			<arg name="status" src="contrl" idx="11" type="int16_t*" />
-			<arg name="colarray" src="ptsout" longs="contrl[2]" type="int16_t*" />
+			<arg name="colarray" src="intout" words="row_length*num_rows" type="int16_t*" />
 		</function>
 		<function id="115" name="vqin_mode">
 			<return type="void" />
@@ -1288,7 +1297,7 @@
 			<arg value="32" dst="intin" type="int16_t" />
 			<arg value="1" dst="intin" type="int16_t" />
 			<arg name="prcnt" dst="intin" type="int16_t" />
-			<arg name="actual" src="intout" type="int16_t*" />
+			<arg name="actual" src="intout" idx="0" type="int16_t*" />
 		</function>
 	</functions>
 
@@ -1425,7 +1434,11 @@
 			<arg name="cellwd" src="ptsout" type="int16_t*" />
 			<arg name="cellht" src="ptsout" type="int16_t*" />
 		</function>
-		<function id="248" name="vq_devinfo">
+		<!--
+			vq_devinfo/vqt_devinfo are in impl/: the file name comes back in intout, the device name as a
+			C string packed in ptsout[1..] (NVDI returns 10 points), ptsout[0] is the open flag.
+		-->
+		<function id="248" name="vq_devinfo" onlyheader="1">
 			<return type="void" />
 			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
 			<arg name="devnum" dst="intin" type="int16_t" />
@@ -1433,7 +1446,7 @@
 			<arg name="filename" src="ptsout" words="contrl[2]" type="int8_t*" estimate="16" /> 
 			<arg name="devstr" src="intout" words="contrl[4]" type="int8_t*" estimate="16" /> 
 		</function>
-		<function id="248" name="vqt_devinfo">
+		<function id="248" name="vqt_devinfo" onlyheader="1">
 			<return type="void" />
 			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
 			<arg name="devnum" dst="intin" type="int16_t" />
@@ -1652,11 +1665,11 @@
 			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
 			<arg name="index" dst="intin" type="int16_t" />
 		</function>
-		<function id="206" subid="7" name="vq_dflt_ctab">
+		<function id="206" subid="7" name="vq_dflt_ctab" onlyheader="1">
 			<return type="int16_t" code="(contrl[4] != 0) ? 1 : 0" />
 			<arg name="handle" dst="contrl" idx="6" type="int16_t" />
 			<arg name="ctab_length" dst="intin" type="int32_t" longs="1" />
-			<arg name="ctab" src="intout" type="COLOR_TAB*" longs="0" />
+			<arg name="ctab" src="intout" type="COLOR_TAB*" longs="13" />
 		</function>
 		<function id="206" subid="8" name="v_create_ctab">
 			<return src="intout" idx="0" type="COLOR_TAB*" longs="0" />

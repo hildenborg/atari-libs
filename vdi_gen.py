@@ -324,7 +324,9 @@ def PreprocessOutArray(ff, chkarr, arrUse: ArrayUse, dicts):
 	GetArraySize(arrUse)
 	PadPtsArraySize(arrUse)
 
-	if arrUse.ret == 0 and arrUse.pointers == 1 and arrUse.chars == 0:
+	# A <reserve> says how much the VDI writes, the caller's pointer may have room for less (vql_attributes).
+	reserved = any((r.attrib.get("src") or r.attrib.get("dst")) == chkarr for r in ff.findall("reserve"))
+	if arrUse.ret == 0 and arrUse.pointers == 1 and arrUse.chars == 0 and not reserved:
 		# Simple case where we can use the ptr directly.
 		arrUse.directPointer = True
 	else:
@@ -604,7 +606,8 @@ def WriteWorkContrlSetup(f, ff, funcUse : FuncUse, dicts):
 	id = ff.attrib.get("id")
 	contrlIn.append(MakeContrlArg(id, 0))
 	subid = ff.attrib.get("subid")
-	if subid:
+	# An argument written to contrl[5] (e.g. v_setrgb type) replaces the sub function.
+	if subid and not any(a.attrib.get("idx") == "5" for a in contrlIn):
 		contrlIn.append(MakeContrlArg(subid, 5))
 	intinLen = funcUse.intin.ctrlCount
 	contrlIn.append(MakeContrlArg(intinLen, 3))

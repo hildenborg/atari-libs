@@ -52,15 +52,18 @@ void vdi_words_to_bytes(const INT16_T* src, INT8_T* dst, INT16_T len)
 
 void vdi_bytes_to_words(const INT8_T* src, INT16_T* dst, INT16_T len)
 {
-	for (INT16_T i = len; --i >= 0; *dst++ = (INT16_T)*src++) {}
+	// Characters are 0..255 in the VDI arrays, no sign extension.
+	const UINT8_T* s = (const UINT8_T*)src;
+	for (INT16_T i = len; --i >= 0; *dst++ = (INT16_T)*s++) {}
 }
 
-// v_bez and v_bez_fill endian swap
+// v_bez and v_bez_fill endian swap: two bytes per word, the first one in the low byte.
+// With an odd length the high byte of the last word is 0.
 void vdi_swap_bytes(const INT8_T* src, INT8_T* dst, INT16_T len)
 {
 	for (INT16_T i = 0; i < len; i += 2)
 	{
-		*dst++ = src[i + 1];
+		*dst++ = (i + 1 < len) ? src[i + 1] : 0;
 		*dst++ = src[i];
 	}
 }

@@ -13,7 +13,7 @@ INT16_T vsm_locator(INT16_T handle, INT16_T x, INT16_T y, INT16_T* xout, INT16_T
 	INT16_T lcl_ptsout[2];
 	INT16_T lcl_contrl[16];
 	lcl_contrl[0] = 28;
-	lcl_contrl[1] = 2;
+	lcl_contrl[1] = 1;
 	lcl_contrl[3] = 0;
 	lcl_contrl[5] = 0;
 	lcl_contrl[6] = handle;
