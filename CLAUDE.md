@@ -28,6 +28,10 @@ Also supports NVDI and other newer APIs.
   the word offset into the parent pointer is stored separately (`seqOffset`), and its `name` is a pointer expression to that data.
 - AES args take an optional `idx` (array index in intin/intout/addrin/addrout), used when the C prototype order
   differs from the AES array order (e.g. `form_keybd`). Without it, args fill the arrays in order.
+- WDIALOG/MagiC call callbacks with Pure C conventions (shorts are 2 bytes on the stack, gcc reads 4). Callback types with
+  short parameters (`HNDL_OBJ`, `SET_ITEM`, `SLCT_ITEM`, `XFRM_POPUP_CB`, `PDLG_HNDL`, `UTXT_FN`) go through trampolines in
+  `impl/aes_tramp.c`; the functions that hand them to the AES are wrapped in `impl/` (marked `onlyheader` in aes.xml) and look the
+  user function up by dialog/list box/sub dialog/font id. A new callback type with short parameters needs the same treatment.
 - ptsin/ptsout counts in contrl are in points (2 words); local pts arrays must be an even number of words.
 
 ## Verifying generator changes
@@ -42,11 +46,6 @@ Also supports NVDI and other newer APIs.
 - `line_a.xml` and everything related to line-a functions have been abandoned and should be ignored.
 - Allow `onlyheader` functions in xml to have `id` attribute even if it isn't needed.
 - Allow repeated `id` functions as long as they have different names.
-
-## Known issues
-
-- WDIALOG callbacks (`HNDL_OBJ`, `SET_ITEM`, `SLCT_ITEM`, ...) are called with Pure C conventions: short parameters are 2 bytes
-  on the stack, gcc reads 4. A callback declared as in aes.h gets wrong short arguments (and everything after them).
 
 ## Testing
 

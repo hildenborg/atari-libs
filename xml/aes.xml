@@ -1772,7 +1772,7 @@
 			<arg name="errcode" type="int32_t" dst="intin" />
 			<arg name="errfile" type="cint8_t*" dst="addrin" />
 		</function>
-		<function name="wdlg_create" id="160" threaded="1">
+		<function name="wdlg_create" id="160" threaded="1" onlyheader="1">
 			<return type="DIALOG*" src="addrout" />
 			<arg name="handle_exit" type="HNDL_OBJ" dst="addrin" />
 			<arg name="tree" type="OBJECT*" dst="addrin" />
@@ -1797,7 +1797,7 @@
 			<arg name="x" type="int16_t*" src="intout" nullchk="1" />
 			<arg name="y" type="int16_t*" src="intout" nullchk="1" />
 		</function>
-		<function name="wdlg_delete" id="163" threaded="1">
+		<function name="wdlg_delete" id="163" threaded="1" onlyheader="1">
 			<return type="int16_t" />
 			<arg name="dialog" type="DIALOG*" dst="addrin" />
 		</function>
@@ -1871,7 +1871,7 @@
 			<arg name="obj" type="int16_t" dst="intin" />
 			<arg name="depth" type="int16_t" dst="intin" />
 		</function>
-		<function name="lbox_create" id="170" threaded="1">
+		<function name="lbox_create" id="170" threaded="1" onlyheader="1">
 			<return type="LIST_BOX*" src="addrout" />
 			<arg name="tree" type="OBJECT*" dst="addrin" />
 			<arg name="slct" type="SLCT_ITEM" dst="addrin" />
@@ -1900,7 +1900,7 @@
 			<arg name="box" type="LIST_BOX*" dst="addrin" />
 			<arg name="obj" type="int16_t" dst="intin" />
 		</function>
-		<function name="lbox_delete" id="173" threaded="1">
+		<function name="lbox_delete" id="173" threaded="1" onlyheader="1">
 			<return type="int16_t" />
 			<arg name="box" type="LIST_BOX*" dst="addrin" />
 		</function>
@@ -2012,7 +2012,7 @@
 			<arg name="sample" type="cint8_t*" dst="addrin" />
 			<arg name="opt_button" type="cint8_t*" dst="addrin" />
 		</function>
-		<function name="fnts_delete" id="181" threaded="1">
+		<function name="fnts_delete" id="181" threaded="1" onlyheader="1">
 			<return type="int16_t" />
 			<arg name="fnt_dialog" type="FNT_DIALOG*" dst="addrin" />
 			<arg name="vdi_handle" type="int16_t" dst="intin" />
@@ -2063,13 +2063,13 @@
 			<arg name="mono" type="int16_t*" src="intout" />
 			<arg name="outline" type="int16_t*" src="intout" />
 		</function>
-		<function name="fnts_add" id="185" threaded="1">
+		<function name="fnts_add" id="185" threaded="1" onlyheader="1">
 			<return type="int16_t" />
 			<arg dst="intin" type="int16_t" value="0" />
 			<arg name="fnt_dialog" type="FNT_DIALOG*" dst="addrin" />
 			<arg name="user_fonts" type="FNTS_ITEM*" dst="addrin" />
 		</function>
-		<function name="fnts_remove" id="185" threaded="1">
+		<function name="fnts_remove" id="185" threaded="1" onlyheader="1">
 			<return type="void" />
 			<arg dst="intin" type="int16_t" value="1" />
 			<arg name="fnt_dialog" type="FNT_DIALOG*" dst="addrin" />
@@ -2167,7 +2167,7 @@
 			<return type="PRN_DIALOG*" src="addrout" />
 			<arg name="dialog_flags" type="int16_t" dst="intin" />
 		</function>
-		<function name="pdlg_delete" id="201" threaded="1">
+		<function name="pdlg_delete" id="201" threaded="1" onlyheader="1">
 			<return type="int16_t" />
 			<arg name="prn_dialog" type="PRN_DIALOG*" dst="addrin" />
 		</function>
@@ -2208,13 +2208,13 @@
 			<arg value="0" type="void*" dst="addrin" />
 			<arg name="document_name" type="cint8_t*" dst="addrin" />
 		</function>
-		<function name="pdlg_add_sub_dialogs" id="205" threaded="1">
+		<function name="pdlg_add_sub_dialogs" id="205" threaded="1" onlyheader="1">
 			<return type="int16_t" />
 			<arg dst="intin" type="int16_t" value="3" />
 			<arg name="prn_dialog" type="PRN_DIALOG*" dst="addrin" />
 			<arg name="sub_dialogs" type="PDLG_SUB*" dst="addrin" />
 		</function>
-		<function name="pdlg_remove_sub_dialogs" id="205" threaded="1">
+		<function name="pdlg_remove_sub_dialogs" id="205" threaded="1" onlyheader="1">
 			<return type="int16_t" />
 			<arg dst="intin" type="int16_t" value="4" />
 			<arg name="prn_dialog" type="PRN_DIALOG*" dst="addrin" />

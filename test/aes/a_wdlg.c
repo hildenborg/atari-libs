@@ -8,8 +8,10 @@
 	Availability comes from appl_getinfo(7). fslx_ (file selector) and edit_ (editor) need MagiC.
 
 	WDIALOG calls back into the program (handle_exit, list box callbacks) with Pure C conventions:
-	short parameters are 2 bytes on the stack. Each callback goes through a stub that saves the
-	raw stack, so the tests can show what WDIALOG passed and what the C code received.
+	short parameters are 2 bytes on the stack. The library puts trampolines in between (impl/aes_tramp.c).
+	The test callbacks are plain C functions, as an application would write them. The trampolines are
+	also called directly with Pure C style arguments (test_trampolines), for callbacks WDIALOG can't be
+	made to call here.
 */
 
 #include <string.h>
@@ -19,55 +21,22 @@
 static short gi7;	// appl_getinfo(7) bits: 1 wdlg, 2 lbox, 4 fnts, 8 fslx, 16 pdlg
 
 /*
-	Callback stubs: copy 24 bytes of arguments from the stack, then jump to the C function.
-*/
-volatile short raw_args[12];
-__asm__(
-	".globl save_args\n"
-	"save_args:\n\t"
-	"lea	raw_args, %a0\n\t"
-	"move.l	%a7@(8), %a0@+\n\t"
-	"move.l	%a7@(12), %a0@+\n\t"
-	"move.l	%a7@(16), %a0@+\n\t"
-	"move.l	%a7@(20), %a0@+\n\t"
-	"move.l	%a7@(24), %a0@+\n\t"
-	"move.l	%a7@(28), %a0@+\n\t"
-	"rts\n"
-	".globl hndl_stub\n"
-	"hndl_stub:\n\t"
-	"jsr	save_args\n\t"
-	"jmp	hndl_c\n"
-	".globl set_stub\n"
-	"set_stub:\n\t"
-	"jsr	save_args\n\t"
-	"jmp	set_c\n"
-	".globl slct_stub\n"
-	"slct_stub:\n\t"
-	"jsr	save_args\n\t"
-	"jmp	slct_c\n");
-short hndl_stub(DIALOG* dialog, EVNT* events, short obj, short clicks, void* data);
-short set_stub(LIST_BOX* box, OBJECT* tree, LBOX_ITEM* item, short obj_index, void* user_data, GRECT* rect, short first);
-void slct_stub(LIST_BOX* box, OBJECT* tree, LBOX_ITEM* item, void* user_data, short obj_index, short last_state);
-
-/*
 	Window dialog.
 */
 static int h_calls;
-static short h_obj, h_clicks, h_raw[12];
+static short h_obj, h_clicks;
 static void* h_data;
 static int h_closed;
 
-short hndl_c(DIALOG* dialog, EVNT* events, short obj, short clicks, void* data)
+static short hndl_c(DIALOG* dialog, EVNT* events, short obj, short clicks, void* data)
 {
 	if (h_calls++ == 0)
 	{
-		memcpy(h_raw, (const void*)raw_args, sizeof(h_raw));
 		h_obj = obj;
 		h_clicks = clicks;
 		h_data = data;
 	}
-	// Pure C passes obj as the first word after the two pointers.
-	if (raw_args[4] == HNDL_CLSD)
+	if (obj == HNDL_CLSD)
 	{
 		h_closed = 1;
 		return 0;
@@ -97,16 +66,15 @@ static void test_wdlg(void)
 
 	t_run("wdlg_create");
 	h_calls = 0;
-	DIALOG* d = wdlg_create(hndl_stub, tree, &udata, 77, &cdata, 0);
+	DIALOG* d = wdlg_create(hndl_c, tree, &udata, 77, &cdata, 0);
 	if (!CHECK_TRUE("wdlg_create", d != 0, "wdlg_create() = %p", d))
 	{
 		return;
 	}
-	CHECK_TRUE("wdlg_create", h_calls >= 1 && h_raw[4] == HNDL_INIT && h_raw[5] == 77, "WDIALOG called handle_exit %d times, raw stack obj %d clicks %d",
-		h_calls, h_raw[4], h_raw[5]);
-	CHECK_TRUE("wdlg_create", h_obj == HNDL_INIT && h_clicks == 77 && h_data == &cdata,
-		"handle_exit(obj, clicks, data) as declared in aes.h receives obj %d clicks %d data %p (WDIALOG passed %d, 77, %p)",
-		h_obj, h_clicks, h_data, HNDL_INIT, &cdata);
+	// During wdlg_create WDIALOG calls handle_exit(HNDL_INIT) with clicks = code and the data pointer.
+	CHECK_TRUE("wdlg_create", h_calls >= 1 && h_obj == HNDL_INIT && h_clicks == 77 && h_data == &cdata,
+		"handle_exit called %d times, first with obj %d clicks %d data %p (expected %d, 77, %p)",
+		h_calls, h_obj, h_clicks, h_data, HNDL_INIT, &cdata);
 
 	t_run("wdlg_open");
 	short wh = wdlg_open(d, "WDIALOG test", NAME | MOVER | CLOSER, -1, -1, 0, 0);
@@ -174,21 +142,33 @@ static void test_wdlg(void)
 enum { L_ROOT, L_BOX, L_I1, L_I2, L_I3, L_I4, L_UP, L_DOWN, L_BACK, L_SLID, L_LEFT, L_RIGHT, L_HBACK, L_HSLID, L_COUNT };
 static OBJECT ltree[L_COUNT];
 static char lstr[4][24];
-static int s_calls, c_calls;
-static short s_raw[12];
+static int s_calls, s_bad, c_calls, c_bad;
+static short c_objs[4], c_states[4];
+static void* lbox_udata;
 
-short set_c(LIST_BOX* box, OBJECT* tree, LBOX_ITEM* item, short obj_index, void* user_data, GRECT* rect, short first)
+static short set_c(LIST_BOX* box, OBJECT* tree, LBOX_ITEM* item, short obj_index, void* user_data, GRECT* rect, short first)
 {
-	if (s_calls++ == 0)
+	s_calls++;
+	if (tree != ltree || obj_index < L_I1 || obj_index > L_I4 || user_data != lbox_udata || first != 0)
 	{
-		memcpy(s_raw, (const void*)raw_args, sizeof(s_raw));
+		s_bad++;
 	}
 	return 0;
 }
 
-void slct_c(LIST_BOX* box, OBJECT* tree, LBOX_ITEM* item, void* user_data, short obj_index, short last_state)
+static void slct_c(LIST_BOX* box, OBJECT* tree, LBOX_ITEM* item, void* user_data, short obj_index, short last_state)
 {
+	if (c_calls < 4)
+	{
+		c_objs[c_calls] = obj_index;
+		c_states[c_calls] = last_state;
+	}
 	c_calls++;
+	// obj_index is 0 for an item that isn't visible (deselected after scrolling).
+	if (tree != ltree || (obj_index != 0 && (obj_index < L_I1 || obj_index > L_I4)) || user_data != lbox_udata)
+	{
+		c_bad++;
+	}
 }
 
 static void build_ltree(void)
@@ -257,14 +237,16 @@ static void test_lbox(void)
 
 	t_run("lbox_create");
 	s_calls = 0;
-	LIST_BOX* box = lbox_create(ltree, slct_stub, set_stub, items, 4, 0, ctrl, objs,
+	lbox_udata = &udata;
+	s_bad = c_calls = c_bad = 0;
+	LIST_BOX* box = lbox_create(ltree, slct_c, set_c, items, 4, 0, ctrl, objs,
 		LBOX_VERT | LBOX_AUTO | LBOX_SNGL | LBOX_REAL | LBOX_2SLDRS, 20, &udata, 0, 10, 0, 30, 20);
 	if (!CHECK_TRUE("lbox_create", box != 0, "lbox_create() = %p", box))
 	{
 		return;
 	}
-	// set_item(box, tree, item, obj_index, user_data, rect, first): obj_index is the word after the 3 pointers.
-	CHECK_TRUE("lbox_create", s_calls >= 4 && s_raw[6] >= L_I1 && s_raw[6] <= L_I4, "set_item called %d times, raw stack obj_index %d", s_calls, s_raw[6]);
+	// set_item(box, tree, item, obj_index, user_data, rect, first) for each visible item object.
+	CHECK_TRUE("lbox_create", s_calls >= 4 && s_bad == 0, "set_item called %d times, %d with wrong arguments (tree, item object, user data)", s_calls, s_bad);
 
 	t_run("lbox_cnt_items");
 	CHECK_EQ("lbox_cnt_items", lbox_cnt_items(box), 6);
@@ -331,6 +313,10 @@ static void test_lbox(void)
 	short f0 = lbox_get_first(box);
 	short dr = lbox_do(box, L_DOWN);
 	CHECK_TRUE("lbox_do", lbox_get_first(box) == f0 + 1, "lbox_do(down arrow) = %d, first %d -> %d", dr, f0, lbox_get_first(box));
+	// A click on an item selects it and calls slct_item.
+	lbox_do(box, L_I3);
+	CHECK_TRUE("lbox_do", c_calls >= 1 && c_bad == 0, "lbox_do(item) called slct_item %d times (obj %d state %d, obj %d state %d), %d with wrong arguments",
+		c_calls, c_objs[0], c_states[0], c_objs[1], c_states[1], c_bad);
 
 	// New items, free the old list, then free the new ones through the box.
 	t_run("lbox_set_items");
@@ -507,6 +493,152 @@ static void test_pdlg(void)
 	CHECK_TRUE("pdlg_delete", pdlg_delete(pd) != 0, "pdlg_delete()");
 }
 
+/*
+	The trampolines are also called directly here, with a Pure C style argument block (shorts as words),
+	for the callbacks that WDIALOG/MagiC can't be made to call in these tests.
+*/
+__asm__(
+	".globl pc_call\n"
+	"pc_call:\n\t"				// pc_call(fn, words, nwords): push the words, words[0] lowest, call fn
+	"movem.l	%d2/%a2, %a7@-\n\t"
+	"move.l	%a7@(12), %a2\n\t"
+	"move.l	%a7@(16), %a0\n\t"
+	"move.l	%a7@(20), %d2\n\t"
+	"move.l	%d2, %d1\n\t"
+	"add.l	%d1, %d1\n\t"
+	"add.l	%d1, %a0\n\t"
+	"move.l	%d2, %d1\n\t"
+	"bra.s	2f\n"
+	"1:\n\t"
+	"move.w	%a0@-, %a7@-\n"
+	"2:\n\t"
+	"dbra	%d1, 1b\n\t"
+	"jsr	%a2@\n\t"
+	"add.l	%d2, %d2\n\t"
+	"add.l	%d2, %a7\n\t"
+	"movem.l	%a7@+, %d2/%a2\n\t"
+	"rts\n");
+long pc_call(void* fn, const short* words, long nwords);
+
+// Internal library symbols (impl/aes_tramp.c).
+void _aes_tramp_hndl_obj(void);
+void _aes_tramp_set_item(void);
+void _aes_tramp_slct_item(void);
+void _aes_tramp_xfrm_popup(void);
+void _aes_tramp_pdlg_hndl(void);
+void _aes_tramp_utxt(void);
+short _aes_hndl_register(DIALOG* dialog, HNDL_OBJ fn);
+void _aes_hndl_unregister(DIALOG* dialog);
+short _aes_lbox_register(LIST_BOX* box, SET_ITEM set, SLCT_ITEM slct);
+void _aes_lbox_unregister(LIST_BOX* box);
+void _aes_xfrm_popup_set(XFRM_POPUP_CB fn);
+short _aes_pdlg_subs_register(PRN_DIALOG* dialog, PDLG_SUB* subs);
+void _aes_pdlg_subs_unregister(PRN_DIALOG* dialog);
+short _aes_fnts_register(FNT_DIALOG* dialog, FNTS_ITEM* items);
+void _aes_fnts_unregister(FNT_DIALOG* dialog);
+
+#define HI(p) ((short)((long)(p) >> 16))
+#define LO(p) ((short)(long)(p))
+static long got[8];
+
+static short t_hndl(DIALOG* d, EVNT* e, short obj, short clicks, void* data)
+{
+	got[0] = (long)d; got[1] = (long)e; got[2] = obj; got[3] = clicks; got[4] = (long)data;
+	return 42;
+}
+static short t_set(LIST_BOX* box, OBJECT* tree, LBOX_ITEM* item, short obj_index, void* user_data, GRECT* rect, short first)
+{
+	got[0] = (long)box; got[1] = (long)tree; got[2] = (long)item; got[3] = obj_index; got[4] = (long)user_data;
+	got[5] = (long)rect; got[6] = first;
+	return 43;
+}
+static void t_slct(LIST_BOX* box, OBJECT* tree, LBOX_ITEM* item, void* user_data, short obj_index, short last_state)
+{
+	got[0] = (long)box; got[1] = (long)tree; got[2] = (long)item; got[3] = (long)user_data; got[4] = obj_index; got[5] = last_state;
+}
+static void t_xfrm(OBJECT* tree, short scrollpos, short nlines, void* param)
+{
+	got[0] = (long)tree; got[1] = scrollpos; got[2] = nlines; got[3] = (long)param;
+}
+static int t_pdlg(PRN_SETTINGS* settings, PDLG_SUB* sub, short exit_obj)
+{
+	got[0] = (long)settings; got[1] = (long)sub; got[2] = exit_obj;
+	return 0x12345678;
+}
+static void t_utxt(short x, short y, short* clip_rect, int id, int pt, int ratio, char* string)
+{
+	got[0] = x; got[1] = y; got[2] = (long)clip_rect; got[3] = id; got[4] = pt; got[5] = ratio; got[6] = (long)string;
+}
+
+static void test_trampolines(void)
+{
+	void* A = (void*)0x00123456L;
+	void* B = (void*)0x00abcdefL;
+	void* C = (void*)0x00fedcbaL;
+	void* D = (void*)0x00135790L;
+
+	t_run("wdlg_create");
+	memset(got, 0, sizeof(got));
+	_aes_hndl_register((DIALOG*)A, t_hndl);
+	short w1[] = { HI(A), LO(A), HI(B), LO(B), -1, 77, HI(C), LO(C) };
+	long r = pc_call(_aes_tramp_hndl_obj, w1, 8);
+	_aes_hndl_unregister((DIALOG*)A);
+	CHECK_TRUE("wdlg_create", (short)r == 42 && got[0] == (long)A && got[1] == (long)B && got[2] == -1 && got[3] == 77 && got[4] == (long)C,
+		"handle_exit trampoline: returned %d, args %lx %lx %ld %ld %lx", (short)r, got[0], got[1], got[2], got[3], got[4]);
+
+	t_run("lbox_create");
+	memset(got, 0, sizeof(got));
+	_aes_lbox_register((LIST_BOX*)A, t_set, t_slct);
+	short w2[] = { HI(A), LO(A), HI(B), LO(B), HI(C), LO(C), 5, HI(D), LO(D), HI(A), LO(A), -2 };
+	r = pc_call(_aes_tramp_set_item, w2, 12);
+	CHECK_TRUE("lbox_create", (short)r == 43 && got[0] == (long)A && got[1] == (long)B && got[2] == (long)C && got[3] == 5
+		&& got[4] == (long)D && got[5] == (long)A && got[6] == -2, "set_item trampoline: returned %d, obj_index %ld user_data %lx first %ld",
+		(short)r, got[3], got[4], got[6]);
+	memset(got, 0, sizeof(got));
+	short w3[] = { HI(A), LO(A), HI(B), LO(B), HI(C), LO(C), HI(D), LO(D), 6, 1 };
+	pc_call(_aes_tramp_slct_item, w3, 10);
+	_aes_lbox_unregister((LIST_BOX*)A);
+	CHECK_TRUE("lbox_create", got[0] == (long)A && got[3] == (long)D && got[4] == 6 && got[5] == 1,
+		"slct_item trampoline: user_data %lx obj_index %ld last_state %ld", got[3], got[4], got[5]);
+
+	t_run("xfrm_popup");
+	memset(got, 0, sizeof(got));
+	_aes_xfrm_popup_set(t_xfrm);
+	short w4[] = { HI(A), LO(A), 3, 9, HI(B), LO(B) };
+	pc_call(_aes_tramp_xfrm_popup, w4, 6);
+	_aes_xfrm_popup_set(0);
+	CHECK_TRUE("xfrm_popup", got[0] == (long)A && got[1] == 3 && got[2] == 9 && got[3] == (long)B,
+		"init trampoline: scrollpos %ld nlines %ld param %lx", got[1], got[2], got[3]);
+
+	t_run("pdlg_add_sub_dialogs");
+	memset(got, 0, sizeof(got));
+	static PDLG_SUB sub;
+	memset(&sub, 0, sizeof(sub));
+	sub.do_dlg = t_pdlg;
+	_aes_pdlg_subs_register((PRN_DIALOG*)C, &sub);
+	int replaced = sub.do_dlg == (PDLG_HNDL)_aes_tramp_pdlg_hndl;
+	short w5[] = { HI(A), LO(A), HI(&sub), LO(&sub), 12 };
+	r = pc_call((void*)sub.do_dlg, w5, 5);
+	_aes_pdlg_subs_unregister((PRN_DIALOG*)C);
+	CHECK_TRUE("pdlg_add_sub_dialogs", replaced && r == 0x12345678 && got[0] == (long)A && got[1] == (long)&sub && got[2] == 12 && sub.do_dlg == t_pdlg,
+		"do_dlg trampoline: returned 0x%lx, exit_obj %ld, handler put back: %s", r, got[2], sub.do_dlg == t_pdlg ? "yes" : "no");
+
+	t_run("fnts_add");
+	memset(got, 0, sizeof(got));
+	static FNTS_ITEM fi;
+	memset(&fi, 0, sizeof(fi));
+	fi.display = t_utxt;
+	fi.id = 1234;
+	_aes_fnts_register((FNT_DIALOG*)C, &fi);
+	replaced = fi.display == (UTXT_FN)_aes_tramp_utxt;
+	short w6[] = { 10, -3, HI(B), LO(B), 0, 1234, 0, 12, 1, 0, HI(D), LO(D) };
+	pc_call((void*)fi.display, w6, 12);
+	_aes_fnts_unregister((FNT_DIALOG*)C);
+	CHECK_TRUE("fnts_add", replaced && got[0] == 10 && got[1] == -3 && got[2] == (long)B && got[3] == 1234 && got[4] == 12 && got[5] == 0x10000
+		&& got[6] == (long)D && fi.display == t_utxt, "display trampoline: x %ld y %ld id %ld pt %ld ratio 0x%lx, put back: %s",
+		got[0], got[1], got[3], got[4], got[5], fi.display == t_utxt ? "yes" : "no");
+}
+
 static void test_magic_only(void)
 {
 	static const char* fslx[] = { "fslx_open", "fslx_close", "fslx_getnxtfile", "fslx_evnt", "fslx_do", "fslx_set_flags", 0 };
@@ -540,6 +672,7 @@ int main(void)
 	test_wdlg();
 	test_lbox();
 	test_fnts();
+	test_trampolines();
 	test_magic_only();
 	test_pdlg();
 	return a_end();

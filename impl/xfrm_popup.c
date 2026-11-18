@@ -22,10 +22,13 @@ INT16_T mt_xfrm_popup(OBJECT* tree, INT16_T x, INT16_T y, INT16_T firstscrlob, I
 	intin[4] = nlines;
 	intin[5] = *lastscrlpos;
 	addrin[0] = (void*)tree;
-	addrin[1] = (void*)init;
+	// MagiC calls init with Pure C conventions, it goes through a trampoline (aes_tramp.c).
+	addrin[1] = init ? (void*)_aes_tramp_xfrm_popup : 0;
 	addrin[2] = (void*)param;
 	intout[1] = *lastscrlpos;
+	_aes_xfrm_popup_set(init);
 	aes_call(&lcl_aespb);
+	_aes_xfrm_popup_set(0);
 	*lastscrlpos = intout[1];
 	return intout[0];
 }

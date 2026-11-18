@@ -261,7 +261,9 @@ def main():
 		pass
 
 	tosimpl = ["tos.c"]
-	aesimpl = ["aes.c", "aes_def.h", "wind_get.c", "evnt_multi.c", "appl_init.c", "form_wkeybd.c", "xfrm_popup.c", "fslx_do.c", "_appl_yield.c"]
+	aesimpl = ["aes.c", "aes_def.h", "wind_get.c", "evnt_multi.c", "appl_init.c", "form_wkeybd.c", "xfrm_popup.c", "fslx_do.c", "_appl_yield.c",
+		"aes_tramp.c", "wdlg_create.c", "wdlg_delete.c", "lbox_create.c", "lbox_delete.c", "fnts_add.c", "fnts_remove.c", "fnts_delete.c",
+		"pdlg_add_sub_dialogs.c", "pdlg_remove_sub_dialogs.c", "pdlg_delete.c"]
 	vdiimpl = ["vdi.c", "vdi_def.h", "v_opnvwk.c", "vq_vgdos.c", "vq_gdos.c", "vs_clip.c", "vsm_locator.c", "v_opnbm.c", "v_opnprn.c", "vst_map_mode.c", "vqt_xfntinfo.c", "vs_document_info.c", "v_bez.c", "v_bez_fill.c", "vq_prn_scaling.c", "vqt_ext_name.c"]
 	if testing != "False":
 		vdiimpl.append("test.h")
