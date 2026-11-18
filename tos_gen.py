@@ -7,6 +7,9 @@ def GetTosTypeSize(t: str, dicts):
 	[isConst, typename, isPtr, isArray, isBitfield] = header_gen.GetTypeName(t, dicts)
 	if isPtr or isArray:
 		return 4	# ptrs are longs
+	base = t[1:] if t[0] == 'c' else t
+	if t in dicts["callbackDict"] or base in dicts["callbackDict"]:
+		return 4	# callbacks are function pointers
 	if "int32" in t:
 		return 4
 	return 2

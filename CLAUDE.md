@@ -47,3 +47,8 @@ Also supports NVDI and other newer APIs.
 - A gemdos drive for Hatari with NVDI installed is at: `$HOME/testhd`
 - An image of emutos can be found as: `$HOME/tos/etos512se.img`
 - An example `makefile` and `main.c` for building Atari PRG files with the installed libraries is in: `test/`
+- TOS library tests: `test/tos/run.sh -g <gen dir> [config ...]` builds the test programs against a generated and built
+  library (`make GEN_PATH=<dir> all`), runs them headless in Hatari on st-emutos, ste-tos206, tt-emutos, falcon-tos404
+  and falcon-emutos (TOS images from `$HOME/tos`), and prints failures. Without `-g` it tests the installed library.
+  Results come back through Hatari NatFeats, the harness (`test/tos/harness.c`) only uses raw traps, never the library.
+  Each test program reports per function; a crash only loses that program's results (`CRASHED?` shows the last call).

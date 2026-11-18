@@ -1052,6 +1052,7 @@
 			<arg name="vector" type="VOID_TOS_CB" />
 		</function>
 		<function id="32" name="Dosound">
+			<return type="int8_t*" />
 			<arg name="buf" type="int8_t*" />
 		</function>
 		<function id="33" name="Setprt">
