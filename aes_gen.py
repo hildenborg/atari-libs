@@ -62,6 +62,10 @@ def CodeAESFunction(iname, build_dir, ff, dicts):
 		got_global = False
 		first = True
 		[_, wordType, _, _, _] = header_gen.GetTypeName("int16_t", dicts)
+		intinSize = intin
+		intoutSize = intout
+		addrinSize = addrin
+		addroutSize = addrout
 		for a in ff.findall('arg'):
 			n = a.attrib.get("name")
 			if n == "aes_global":
@@ -87,38 +91,53 @@ def CodeAESFunction(iname, build_dir, ff, dicts):
 				beginnc = "\tif(" + n + " != 0)\n\t{\n\t"
 				endnc = "\t}\n"
 
+			# idx places the arg at that word (or address) index, otherwise it follows the previous one.
+			# The array sizes are the highest index used.
+			idx = a.attrib.get("idx")
 			if src == "intout":
+				pos = int(idx) if idx else intout
 				if (bt == "int16_t*" or bt == "uint16_t*"):
-					s_intout += beginnc + "\t*" + n + " = " + "intout[" + str(intout) + "];\n" + endnc
-					intout = intout + 1
+					s_intout += beginnc + "\t*" + n + " = " + "intout[" + str(pos) + "];\n" + endnc
+					size = 1
 				elif bt == "GRECT*":
-					s_intout += beginnc + "\t*" + n + " = " + "*(GRECT*)(&intout[" + str(intout) + "]);\n" + endnc
-					intout = intout + 4
+					s_intout += beginnc + "\t*" + n + " = " + "*(GRECT*)(&intout[" + str(pos) + "]);\n" + endnc
+					size = 4
 				else:
-					[_, castType, castPtr, _, _] = header_gen.GetTypeName(t, dicts)
-					s_intout += beginnc + "\tAES_COPY_LONG(&intout[" + str(intout) + "], " + n + ");\n" + endnc
-					intout = intout + 2
+					s_intout += beginnc + "\tAES_COPY_LONG(&intout[" + str(pos) + "], " + n + ");\n" + endnc
+					size = 2
+				intout = pos + size
+				intoutSize = max(intoutSize, intout)
 			elif src == "addrout":
-				s_addrout += beginnc + "\t*" + n + " = " + "addrout[" + str(addrout) + "];\n" + endnc
-				addrout = addrout + 1
+				pos = int(idx) if idx else addrout
+				s_addrout += beginnc + "\t*" + n + " = " + "addrout[" + str(pos) + "];\n" + endnc
+				addrout = pos + 1
+				addroutSize = max(addroutSize, addrout)
 			if dst == "intin":
+				pos = int(idx) if idx else intin
 				if (bt == "int32_t" or bt == "uint32_t"):
-					[_, longType, _, _, _] = header_gen.GetTypeName("int32_t", dicts)
-					s_intin += beginnc + "\tAES_COPY_LONG(&" + n + ", &intin[" + str(intin) + "]);\n" + endnc
-					intin = intin + 2
+					s_intin += beginnc + "\tAES_COPY_LONG(&" + n + ", &intin[" + str(pos) + "]);\n" + endnc
+					size = 2
 				elif bt == "GRECT*":
-					s_intin += beginnc + "\t*(GRECT*)(&" + "intin[" + str(intin) + "]) = " + isPtr + n + ";\n" + endnc
-					intin = intin + 4
+					s_intin += beginnc + "\t*(GRECT*)(&" + "intin[" + str(pos) + "]) = " + isPtr + n + ";\n" + endnc
+					size = 4
 				elif (bt != "int16_t*" and bt != "uint16_t*") and isPtr:
-					s_intin += beginnc + "\tAES_COPY_LONG(&" + n + ", &intin[" + str(intin) + "]);\n" + endnc
-					intin = intin + 2
+					s_intin += beginnc + "\tAES_COPY_LONG(&" + n + ", &intin[" + str(pos) + "]);\n" + endnc
+					size = 2
 				else:
-					s_intin += beginnc + "\t" + "intin[" + str(intin) + "] = " + isPtr + n + ";\n" + endnc
-					intin = intin + 1
+					s_intin += beginnc + "\t" + "intin[" + str(pos) + "] = " + isPtr + n + ";\n" + endnc
+					size = 1
+				intin = pos + size
+				intinSize = max(intinSize, intin)
 			elif dst == "addrin":
-				s_addrin += beginnc + "\t" + "addrin[" + str(addrin) + "] = (void*)" + n + ";\n" + endnc
-				addrin = addrin + 1
+				pos = int(idx) if idx else addrin
+				s_addrin += beginnc + "\t" + "addrin[" + str(pos) + "] = (void*)" + n + ";\n" + endnc
+				addrin = pos + 1
+				addrinSize = max(addrinSize, addrin)
 
+		intin = intinSize
+		intout = max(intout, intoutSize)
+		addrin = addrinSize
+		addrout = max(addrout, addroutSize)
 		f.write(funcDecl)
 		if threaded:
 			if not first:

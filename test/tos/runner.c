@@ -11,9 +11,17 @@
 
 #include "harness.h"
 
+// The program list and directory can be set at compile time (the AES suite uses its own).
+#ifndef TEST_PROGS
+#define TEST_PROGS "T_GEMDOS", "T_FILE", "T_BIOS", "T_XBIOS", "T_DISK", "T_EXT", "T_SOUND", "T_MINT", "T_DSP"
+#endif
+#ifndef TEST_DIR
+#define TEST_DIR "C:\\TOSTEST\\"
+#endif
+
 static const char* progs[] =
 {
-	"T_GEMDOS", "T_FILE", "T_BIOS", "T_XBIOS", "T_DISK", "T_EXT", "T_SOUND", "T_MINT", "T_DSP", 0
+	TEST_PROGS, 0
 };
 
 static long raw_pexec0(const char* name, const char* cmd)
@@ -55,7 +63,7 @@ int main(void)
 	{
 		const char* p = progs[i];
 		int n = 0;
-		const char* pre = "C:\\TOSTEST\\";
+		const char* pre = TEST_DIR;
 		while (*pre)
 		{
 			path[n++] = *pre++;

@@ -1312,8 +1312,8 @@
 			<return type="int16_t" />
 			<arg name="tree" type="OBJECT*" dst="addrin" />
 			<arg name="obj" type="int16_t" dst="intin" />
-			<arg name="nxtobj" type="int16_t" dst="intin" />
-			<arg name="kc" type="int16_t" dst="intin" />
+			<arg name="nxtobj" type="int16_t" dst="intin" idx="2" />
+			<arg name="kc" type="int16_t" dst="intin" idx="1" />
 			<arg name="newobj" type="int16_t*" src="intout" />
 			<arg name="keyout" type="int16_t*" src="intout" />
 		</function>
@@ -2249,7 +2249,7 @@
 		</function>
 		<function name="pdlg_save_default_settings" id="205" threaded="1">
 			<return type="int16_t" />
-			<arg dst="intin" type="int16_t" value="1" />
+			<arg dst="intin" type="int16_t" value="10" />
 			<arg name="prn_dialog" type="PRN_DIALOG*" dst="addrin" />
 			<arg name="settings" type="PRN_SETTINGS*" dst="addrin" />
 		</function>

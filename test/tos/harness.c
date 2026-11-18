@@ -225,12 +225,32 @@ void t_key(unsigned char scancode, unsigned char ascii)
 	t_super(put_key_fn);
 }
 
+// Scancodes of a-z on an Atari keyboard.
+static const unsigned char letter_scan[26] =
+{
+	0x1e, 0x30, 0x2e, 0x20, 0x12, 0x21, 0x22, 0x23, 0x17, 0x24, 0x25, 0x26, 0x32,
+	0x31, 0x18, 0x19, 0x10, 0x13, 0x1f, 0x14, 0x16, 0x2f, 0x11, 0x2d, 0x15, 0x2c
+};
+
 void t_keys(const char* str)
 {
 	while (*str)
 	{
 		unsigned char c = (unsigned char)*str++;
-		t_key(c == '\r' ? 0x1c : 0x10, c);
+		unsigned char scan = 0x39;	// Space for anything else
+		if (c == '\r')
+		{
+			scan = 0x1c;
+		}
+		else if (c >= 'a' && c <= 'z')
+		{
+			scan = letter_scan[c - 'a'];
+		}
+		else if (c >= 'A' && c <= 'Z')
+		{
+			scan = letter_scan[c - 'A'];
+		}
+		t_key(scan, c);
 	}
 }
 

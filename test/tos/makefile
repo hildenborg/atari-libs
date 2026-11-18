@@ -16,6 +16,8 @@ ELFTOPRG := $(TOOLCHAIN_BIN)/m68k-atari-elf-prg
 
 CFLAGS := -O1 -g -Wall -Wextra -Wno-unused-parameter
 LDFLAGS :=
+# Relink when the library changes.
+LIBFILES := $(addprefix $(if $(GEN_PATH),$(GEN_PATH),$(TOOLCHAIN_M68K)/m68k-atari-elf/lib)/,libtos.a)
 ifneq ($(GEN_PATH),)
 CFLAGS += -I$(GEN_PATH)
 LDFLAGS += -L$(GEN_PATH)
@@ -33,11 +35,11 @@ $(BUILD_DIR)/%.o: %.c harness.h | $(BUILD_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 # The child program doesn't use the harness.
-$(BUILD_DIR)/child.elf: $(BUILD_DIR)/child.o
-	$(CC) $^ -o $@ $(LDFLAGS) -ltos
+$(BUILD_DIR)/child.elf: $(BUILD_DIR)/child.o $(LIBFILES)
+	$(CC) $(filter %.o,$^) -o $@ $(LDFLAGS) -ltos
 
-$(BUILD_DIR)/%.elf: $(BUILD_DIR)/%.o $(BUILD_DIR)/harness.o
-	$(CC) $^ -o $@ $(LDFLAGS) -ltos
+$(BUILD_DIR)/%.elf: $(BUILD_DIR)/%.o $(BUILD_DIR)/harness.o $(LIBFILES)
+	$(CC) $(filter %.o,$^) -o $@ $(LDFLAGS) -ltos
 
 $(BUILD_DIR)/%.prg: $(BUILD_DIR)/%.elf
 	$(ELFTOPRG) $< $@ > /dev/null

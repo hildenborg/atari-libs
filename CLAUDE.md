@@ -26,6 +26,8 @@ Also supports NVDI and other newer APIs.
   defines are re-keyed. Renaming to a name that already exists is an error.
 - A `<sequence>` becomes an array arg of its own (`vdi_gen.PreprocessSequences`): `idx` is its index in the vdi array, like any arg;
   the word offset into the parent pointer is stored separately (`seqOffset`), and its `name` is a pointer expression to that data.
+- AES args take an optional `idx` (array index in intin/intout/addrin/addrout), used when the C prototype order
+  differs from the AES array order (e.g. `form_keybd`). Without it, args fill the arrays in order.
 - ptsin/ptsout counts in contrl are in points (2 words); local pts arrays must be an even number of words.
 
 ## Verifying generator changes
@@ -41,6 +43,11 @@ Also supports NVDI and other newer APIs.
 - Allow `onlyheader` functions in xml to have `id` attribute even if it isn't needed.
 - Allow repeated `id` functions as long as they have different names.
 
+## Known issues
+
+- WDIALOG callbacks (`HNDL_OBJ`, `SET_ITEM`, `SLCT_ITEM`, ...) are called with Pure C conventions: short parameters are 2 bytes
+  on the stack, gcc reads 4. A callback declared as in aes.h gets wrong short arguments (and everything after them).
+
 ## Testing
 
 - Libraries can only be verified in Hatari emulator.
@@ -52,3 +59,8 @@ Also supports NVDI and other newer APIs.
   and falcon-emutos (TOS images from `$HOME/tos`), and prints failures. Without `-g` it tests the installed library.
   Results come back through Hatari NatFeats, the harness (`test/tos/harness.c`) only uses raw traps, never the library.
   Each test program reports per function; a crash only loses that program's results (`CRASHED?` shows the last call).
+- AES library tests: `test/aes/run.sh -g <gen dir> [config ...]`, same idea, the runner is started under GEM with Hatari `--auto`.
+  Input is simulated (keys into the BIOS buffer, mouse packets to the IKBD vector, timed steps from a Timer A interrupt
+  while a modal call runs). Config ste-tos206-nvdi copies `$HOME/testhd` (NVDI + WDIALOG, needs 4 MB) for the wdlg/lbox/fnts/pdlg tests.
+  The AES keyboard queue and button state survive between programs: mouse tracking tests live in `a_graf.c`, which runs
+  before anything ends a dialog with simulated keys. NVDI ignores simulated mouse buttons.

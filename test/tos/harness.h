@@ -74,7 +74,9 @@ void t_skip(const char* func, const char* fmt, ...) __attribute__((format(printf
 	({ long _g = (long)(got); long _w = (long)(want); \
 		t_check(_g == _w, func, "%s = %ld (0x%lx), expected %ld", #got, _g, _g, _w); })
 
-#define CHECK_TRUE(func, cond, ...) t_check((cond) ? 1 : 0, func, __VA_ARGS__)
+// The condition is evaluated before the message arguments, so the message shows values set by calls in it.
+#define CHECK_TRUE(func, cond, ...) \
+	({ int _ok = (cond) ? 1 : 0; t_check(_ok, func, __VA_ARGS__); })
 
 // Raw helpers, independent of the library under test.
 long t_super(long (*fn)(void));			// XBIOS Supexec via raw trap

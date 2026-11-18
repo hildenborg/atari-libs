@@ -1,7 +1,7 @@
 #include "aes_def.h"
 
 #ifdef TARGET_M68K_ATARI_MINTELF
-INT16_T mt_evnt_multi(INT16_T events, INT16_T bclicks, INT16_T bmask, INT16_T bstate, INT16_T m1flag, INT16_T m1x, INT16_T m1y, INT16_T m1w, INT16_T m1h, INT16_T m2flag, INT16_T m2x, INT16_T m2y, INT16_T m2w, INT16_T m2h, INT16_T* msg, INT32_T interval, INT16_T* mx, INT16_T* my, INT16_T* button, INT16_T* kstate, INT16_T* kreturn, INT16_T* breturn, INT16_T* aes_global)
+INT16_T mt_evnt_multi(INT16_T events, INT16_T bclicks, INT16_T bmask, INT16_T bstate, INT16_T m1flag, INT16_T m1x, INT16_T m1y, INT16_T m1w, INT16_T m1h, INT16_T m2flag, INT16_T m2x, INT16_T m2y, INT16_T m2w, INT16_T m2h, INT16_T* msg, UINT32_T interval, INT16_T* mx, INT16_T* my, INT16_T* button, INT16_T* kstate, INT16_T* kreturn, INT16_T* breturn, INT16_T* aes_global)
 {
 	INT16_T control[5] = {25, 16, 7, 1, 0};
 	INT16_T intin[16];
@@ -30,7 +30,9 @@ INT16_T mt_evnt_multi(INT16_T events, INT16_T bclicks, INT16_T bmask, INT16_T bs
 	intin[11] = m2y;
 	intin[12] = m2w;
 	intin[13] = m2h;
-	*(INT32_T*)(&intin[14]) = interval;
+	// The AES wants the low word of the timer first.
+	intin[14] = (INT16_T)interval;
+	intin[15] = (INT16_T)(interval >> 16);
 	addrin[0] = (void*)msg;
 	aes_call(&lcl_aespb);
 	if(mx) {*mx = intout[1];}
@@ -42,7 +44,7 @@ INT16_T mt_evnt_multi(INT16_T events, INT16_T bclicks, INT16_T bmask, INT16_T bs
 	return intout[0];
 }
 
-INT16_T evnt_multi(INT16_T events, INT16_T bclicks, INT16_T bmask, INT16_T bstate, INT16_T m1flag, INT16_T m1x, INT16_T m1y, INT16_T m1w, INT16_T m1h, INT16_T m2flag, INT16_T m2x, INT16_T m2y, INT16_T m2w, INT16_T m2h, INT16_T* msg, INT32_T interval, INT16_T* mx, INT16_T* my, INT16_T* button, INT16_T* kstate, INT16_T* kreturn, INT16_T* breturn)
+INT16_T evnt_multi(INT16_T events, INT16_T bclicks, INT16_T bmask, INT16_T bstate, INT16_T m1flag, INT16_T m1x, INT16_T m1y, INT16_T m1w, INT16_T m1h, INT16_T m2flag, INT16_T m2x, INT16_T m2y, INT16_T m2w, INT16_T m2h, INT16_T* msg, UINT32_T interval, INT16_T* mx, INT16_T* my, INT16_T* button, INT16_T* kstate, INT16_T* kreturn, INT16_T* breturn)
 {
 	return mt_evnt_multi(events, bclicks, bmask, bstate, m1flag, m1x, m1y, m1w, m1h, m2flag, m2x, m2y, m2w, m2h, msg, interval, mx, my, button, kstate, kreturn, breturn, 0);
 }
@@ -78,7 +80,9 @@ INT16_T mt_evnt_multi(INT16_T events, INT16_T bclicks, INT16_T bmask, INT16_T bs
 		intin[9] = m2flag;
 		*(GRECT*)(&intin[10]) = *g2;
 	}
-	AES_COPY_LONG(&ms, &intin[14]);
+	// The AES wants the low word of the timer first.
+	intin[14] = (INT16_T)ms;
+	intin[15] = (INT16_T)(ms >> 16);
 	addrin[0] = (void*)msg;
 	aes_call(&lcl_aespb);
 	*ev = *(EVNTDATA*)(&intout[1]);
@@ -134,7 +138,7 @@ void MT_EVNT_multi(INT16_T events, INT16_T bclicks, INT16_T bmask, INT16_T bstat
 {
 	INT16_T control[5] = {25, 16, 7, 1, 0};
 	INT16_T intin[16];
-	INT16_T intout[8];
+	INT16_T intout[7];
 	void* addrin[1];
 	AESPB lcl_aespb =
 	{
@@ -158,15 +162,17 @@ void MT_EVNT_multi(INT16_T events, INT16_T bclicks, INT16_T bmask, INT16_T bstat
 	{
 		*((MOBLK*)(&intin[9])) = *m2;
 	}
-	AES_COPY_LONG(&ms, &intin[14]);
+	// The AES wants the low word of the timer first.
+	intin[14] = (INT16_T)ms;
+	intin[15] = (INT16_T)(ms >> 16);
 	addrin[0] = (void*)msg;
 	aes_call(&lcl_aespb);
-	ev->mwhich = intout[1];
-	ev->mx = intout[2];
-	ev->my = intout[3];
-	ev->mbutton = intout[4];
-	ev->kstate = intout[5];
-	ev->key = intout[6];
-	ev->mclicks = intout[7];
+	ev->mwhich = intout[0];
+	ev->mx = intout[1];
+	ev->my = intout[2];
+	ev->mbutton = intout[3];
+	ev->kstate = intout[4];
+	ev->key = intout[5];
+	ev->mclicks = intout[6];
 }
 
