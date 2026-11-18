@@ -1984,8 +1984,8 @@
 					<arg name="handle" dst="contrl" idx="6" type="int16_t" />
 					<arg name="devnum" dst="intin" type="int16_t" />
 					<arg name="devexists" src="ptsout" type="int16_t*" />
-					<arg name="filename" src="ptsout" words="contrl[2]" type="int8_t*" /> <!-- this is not according to public specs. -->
-					<arg name="devstr" src="intout" words="contrl[4]" type="int8_t*" />
+					<arg name="filename" src="ptsout" words="contrl[2]" type="int8_t*" estimate="16" /> <!-- this is not according to public specs. -->
+					<arg name="devstr" src="intout" words="contrl[4]" type="int8_t*" estimate="16" />
 				</override>
 				<override name="v_opnwk">
 					<return type="void" />

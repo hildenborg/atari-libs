@@ -13,6 +13,28 @@ Also supports NVDI and other newer APIs.
   The libraries are compiled with the **m68k-atari-elf** toolchain and installed into the `$HOME/toolchain/m68k-atari-elf/` path.
 - Specifications for the xml files is on the wiki: `https://github.com/hildenborg/atari-libs/wiki`+
 
+## Generator
+
+- `gen.py` main: per API (`tos`, `aes`, `vdi`) it loads `global.xml` types/settings, collects the API xml into dicts
+  (`AddToDicts`), then applies the matching `<target>` (overrides first, then renames).
+  `header_gen.py` writes `<api>.h`, `code_gen.py` dispatches each non-`onlyheader` function to
+  `tos_gen.py` / `aes_gen.py` / `vdi_gen.py` (one `.c` per function) and writes `<api>.mk`. Files in `impl/` are then copied over the generated ones.
+- Run `gen.py` from the repo root (xml and `impl/` paths are relative). With no arguments it builds into `gen/` with testing enabled.
+- Types beginning with lowercase `c` mean const. Generator code that compares types must strip that prefix first (e.g. `cGRECT*` vs `GRECT*`).
+- An `<override>` always takes `id`/`subid`/`grpid` from the original function and inherits its other attributes (`threaded`, `onlyheader`, ...) unless set on the override.
+- A `<rename>` keeps the dict key as the original xml name (so type references to it still resolve) and only changes the emitted name;
+  defines are re-keyed. Renaming to a name that already exists is an error.
+- A `<sequence>` becomes an array arg of its own (`vdi_gen.PreprocessSequences`): `idx` is its index in the vdi array, like any arg;
+  the word offset into the parent pointer is stored separately (`seqOffset`), and its `name` is a pointer expression to that data.
+- ptsin/ptsout counts in contrl are in points (2 words); local pts arrays must be an even number of words.
+
+## Verifying generator changes
+
+- `build.sh` installs into the toolchain. To check changes without installing, generate into a scratch dir before and after the change and diff:
+  `python3 gen.py <dir> m68k-atari-elf` (also `m68k-atari-mintelf`, which is a `<target>` in the xml files).
+- Compile without installing: `make GEN_PATH=<dir> all`.
+- Only the m68k-atari-elf toolchain is installed; mintelf output can at most be syntax checked with the elf compiler (`-fsyntax-only -I<dir>`).
+
 ## Pitfalls
 
 - `line_a.xml` and everything related to line-a functions have been abandoned and should be ignored.

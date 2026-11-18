@@ -57,6 +57,22 @@ def FindDefenitionCategory(name, dicts):
 			return c
 	return None
 
+def EmittedNames(dicts):
+	# All names as they will be written to the header (after any earlier renames).
+	names = set()
+	for s in dicts["structDict"].values():
+		names.add(s.attrib.get("name"))
+	for cb in dicts["callbackDict"].values():
+		names.add(cb.attrib.get("name"))
+	for td in dicts["typedefDict"].values():
+		names.add(td.attrib.get("typename"))
+	for d in dicts["functionDict"].values():
+		for ff in d.values():
+			names.add(ff.attrib.get("name"))
+	for d in dicts["defineDict"].values():
+		names.update(d.keys())
+	return names
+
 def OverrideFunction(oo, dicts):
 	functionDict = dicts["functionDict"]
 	n = oo.attrib.get("name")
@@ -128,18 +144,27 @@ def AddToDicts(el, dicts):
 		for o in el.findall('overrides'):
 			for oo in o.findall('override'):
 				OverrideFunction(oo, dicts)
-		# Rename types/structs/functions/defines
+		# Rename structs/callbacks/typedefs/functions/defines.
+		# Dict keys stay the original xml name (so type references in the xml still resolve),
+		# only the emitted name is changed. Defines are plain strings and are re-keyed instead.
 		for r in el.findall('renames/rename'):
 			n = r.attrib.get("name")
 			nn = r.attrib.get("newname")
+			if nn in EmittedNames(dicts):
+				print("Cannot rename: " + n + " to " + nn + " as that name already exists.")
+				raise ValueError
 			fc = FindFunctionCategory(n, dicts)
 			dc = FindDefenitionCategory(n, dicts)
 			if n in structDict:
 				structDict[n].set("name", nn)
+			elif n in callbackDict:
+				callbackDict[n].set("name", nn)
+			elif n in typedefDict:
+				typedefDict[n].set("typename", nn)
 			elif fc is not None:
 				functionDict[fc][n].set("name", nn)
 			elif dc is not None:
-				defineDict[dc][n].set("name", nn)
+				defineDict[dc] = {(nn if k == n else k): v for k, v in defineDict[dc].items()}
 			else:
 				print("Cannot rename: " + n + " as no such name can be found.")
 				raise ValueError

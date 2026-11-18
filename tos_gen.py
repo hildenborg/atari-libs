@@ -3,6 +3,14 @@
 
 import header_gen
 
+def GetTosTypeSize(t: str, dicts):
+	[isConst, typename, isPtr, isArray, isBitfield] = header_gen.GetTypeName(t, dicts)
+	if isPtr or isArray:
+		return 4	# ptrs are longs
+	if "int32" in t:
+		return 4
+	return 2
+
 def CodeTosFunction(iname, build_dir, ff, dicts):
 	name = ff.attrib.get("name")
 	id = ff.attrib.get("id")		# Trap function
@@ -58,7 +66,8 @@ def CodeTosFunction(iname, build_dir, ff, dicts):
 		for a in reversed(ff.findall('arg')):
 			t = a.attrib.get("type")
 			v = a.attrib.get("value")
-			if t == "int16_t" or t == "uint16_t":
+			siz = GetTosTypeSize(t, dicts)
+			if siz != 4:
 				f.write('\t\t"move.w')
 				stackadd = stackadd + 2
 			else:

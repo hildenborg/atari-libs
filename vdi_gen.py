@@ -78,9 +78,6 @@ def GetArraySize(arrUse: ArrayUse):
 		topIdx = arrUse.ret
 	for a in arrUse.xmlArgs:
 		idx = a.attrib.get("idx")
-		seqIdx = a.attrib.get("seqIdx")
-		if seqIdx and "src" in arrUse.name:
-			idx = seqIdx
 		if int(idx) >= int(topIdx):
 			topIdx = idx
 			est = a.attrib.get("estimate")
@@ -239,26 +236,51 @@ def PreprocessSizeAndIdx(ff, arrUse: ArrayUse):
 						a.set("words", "_wstr_len")
 						arrUse.usesStrlen = a
 		else:
-			# Only for intout and ptsout
-			seqIdx = 0
 			for s in a.findall('sequence'):
 				if IsSrcOrDst(s, arrUse.name):
-					s.set("seqIdx", str(seqIdx))
 					arrUse.xmlArgs.append(s)
-					seqIdx = seqIdx + 1
+					idx = SetDefaultSizeAndIdx(s, idx, arrUse)
 
-def PreprocessSequences(ff):
-	idx = 0	# None of the functions that have sequences uses return
+# A <sequence> splits the data that a pointer arg points to over several vdi arrays.
+# Each sequence becomes an array arg of its own: "idx" is its index in the vdi array (as for any arg),
+# "seqOffset" is its word offset into the data pointed to by the parent arg, and "name" is a pointer
+# expression to that data, so the normal array writers can be used.
+def PreprocessSequences(ff, dicts):
+	[_, wordType, _, _, _] = header_gen.GetTypeName("int16_t", dicts)
+	fname = ff.attrib.get("name")
 	for a in ff.findall('arg'):
+		seqs = a.findall('sequence')
+		if not seqs:
+			continue
 		type = a.attrib.get("type")
 		name = a.attrib.get("name")
-		# Only for intout and ptsout
-		for s in a.findall('sequence'):
-			src = s.attrib.get("src")
-			if src and "out" in src:
-				s.set("type", type)
-				s.set("name", name)
-				idx = SetDefaultSizeAndIdx(s, idx, None)
+		if "*" not in type or "int8_t" in type:
+			print("Error: " + fname + " " + name + ": <sequence> needs a word sized pointer arg.")
+			raise ValueError
+		const = "const " if type[0] == 'c' else ""
+		offset = 0
+		for i, s in enumerate(seqs):
+			if offset is None:
+				print("Error: " + fname + " " + name + ": only the last <sequence> can have a non numeric size.")
+				raise ValueError
+			s.set("type", type)
+			s.set("seqArg", name)
+			s.set("seqOffset", str(offset))
+			ptr = "(" + const + wordType + "*)" + name
+			if offset != 0:
+				ptr = "(" + ptr + " + " + str(offset) + ")"
+			else:
+				ptr = "(" + ptr + ")"
+			s.set("name", ptr)
+			words = s.attrib.get("words")
+			longs = s.attrib.get("longs")
+			size = words if words is not None else longs
+			if size is None:
+				offset += 1	# Default is one word.
+			elif size.isnumeric():
+				offset += int(size) * (1 if words is not None else 2)
+			else:
+				offset = None
 
 # Sets deafult values and determines the type of code we need to build for this array.
 def PreprocessInArray(ff, chkarr, arrUse: ArrayUse, dicts):
@@ -320,9 +342,9 @@ def PreprocessOutArray(ff, chkarr, arrUse: ArrayUse, dicts):
 
 def	PreprocessFunction(ff, dicts):
 	funcUse = FuncUse()
+	PreprocessSequences(ff, dicts)
 	PreprocessInArray(ff, "intin", funcUse.intin, dicts)
 	PreprocessInArray(ff, "ptsin", funcUse.ptsin, dicts)
-	PreprocessSequences(ff)
 	PreprocessOutArray(ff, "intout", funcUse.intout, dicts)
 	PreprocessOutArray(ff, "ptsout", funcUse.ptsout, dicts)
 	return funcUse
@@ -341,11 +363,11 @@ def WriteInString(f, a, arrUse : ArrayUse, words, dicts):
 	if isinstance(words, int) or words.isnumeric():
 		if int(words) == 1:
 			# Simple typecast
-			f.write(arrUse.vdipb + "[" + str(idx) + "]) = (" + wordType + ")")
+			f.write("\t" + arrUse.vdipb + "[" + str(idx) + "] = (" + wordType + ")")
 			[_, _, isPtr, _, _] = header_gen.GetTypeName(type, dicts)
 			if isPtr:
 				f.write("*")
-			f.write(name)
+			f.write(name + ";\n")
 			return
 	strWords = str(words).replace("contrl", "lcl_contrl")
 	f.write("\tVDI_CAST_FROM_BYTES(" + name + ", &" + arrUse.vdipb + "[" + str(idx) + "], " + strWords + ");\n")
@@ -437,13 +459,13 @@ def WriteOutWords(f, a, arrUse : ArrayUse, words, dicts):
 			return
 	name = a.attrib.get("name")
 	idx = a.attrib.get("idx")
-	seqIdx = a.attrib.get("seqIdx")
 	if isinstance(words, int) or words.isnumeric():
 		# Compile time known length
 		words = int(words)
 		if words == 1:
-			if seqIdx:
-				f.write("\t" + name + "[" + str(seqIdx) + "] = " + arrUse.vdipb + "[" + str(idx) + "];\n")
+			if a.tag == "sequence" and type.lstrip("c") in ("int16_t*", "uint16_t*"):
+				# Index the word pointer directly, more readable than pointer arithmetic.
+				f.write("\t" + a.attrib.get("seqArg") + "[" + a.attrib.get("seqOffset") + "] = " + arrUse.vdipb + "[" + str(idx) + "];\n")
 			else:
 				f.write("\t*" + name + " = " + arrUse.vdipb + "[" + str(idx) + "];\n")
 			return
@@ -508,8 +530,7 @@ def WriteWorkInSetup(f, ff, arrUse : ArrayUse, dicts):
 			# Clear the padding word so VDI doesn't read uninitialized data.
 			f.write("\t" + arrUse.vdipb + "[" + str(arrUse.padIdx) + "] = 0;\n")
 	elif arrUse.directPointer:
-		argname = arrUse.xmlArgs[0].attrib.get("name")
-		idx = arrUse.xmlArgs[0].attrib.get("idx")
+		[argname, idx] = DirectPointerArg(arrUse.xmlArgs[0])
 		if int(idx) == 0:
 			arrUse.vdipb = "(" + wordType + "*)" + argname
 		else:
@@ -550,8 +571,7 @@ def WriteWorkOutSetup(f, arrUse : ArrayUse, dicts):
 		f.write("\t" + wordType + " " + arrUse.vdipb + "[" + count + "];\n")
 #		WriteWorkOutArgSetup(f, arrUse, dicts)
 	elif arrUse.directPointer:
-		argname = arrUse.xmlArgs[0].attrib.get("name")
-		idx = arrUse.xmlArgs[0].attrib.get("idx")
+		[argname, idx] = DirectPointerArg(arrUse.xmlArgs[0])
 		if int(idx) == 0:
 			arrUse.vdipb = "(" + wordType + "*)" + argname
 		else:
@@ -559,6 +579,12 @@ def WriteWorkOutSetup(f, arrUse : ArrayUse, dicts):
 		#arrUse.contrl = count
 	else:
 		print ("Error: Nope, don't understand.")
+
+# Name and word offset to use when the vdi array points directly into an arg.
+def DirectPointerArg(a):
+	if a.tag == "sequence":
+		return [a.attrib.get("seqArg"), a.attrib.get("seqOffset")]
+	return [a.attrib.get("name"), a.attrib.get("idx")]
 
 def MakeContrlArg(value, idx):
 	newElement = ET.Element("arg")
@@ -801,13 +827,13 @@ def GetTypeUse(t: str, dicts):
 		t = t[:-1]
 
 	if t in callbackDict:
-		typename = t
+		typename = callbackDict[t].attrib.get("name")
 		isCallback = True
 	elif t in structDict:
 		typename = structDict[t].attrib.get("name")
 		isStruct = True
 	elif t in typedefDict:
-		typename = t
+		typename = typedefDict[t].attrib.get("typename")
 	elif t in typeDict:
 		typename = typeDict[t]
 	else:

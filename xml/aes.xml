@@ -2507,9 +2507,6 @@
 	</functions>
 	<targets>
 		<target name="m68k-atari-mintelf">
-			<renames>
-				<rename name="graf_movebox" newname="graf_mbox" />
-			</renames>
 			<overrides>
 				<override name="evnt_timer">
 					<return type="int16_t" />

@@ -68,11 +68,11 @@ def GetTypeName(t: str, dicts):
 		pass	
 
 	if t in callbackDict:
-		typename = t
+		typename = callbackDict[t].attrib.get("name")
 	elif t in structDict:
 		typename = structDict[t].attrib.get("name")
 	elif t in typedefDict:
-		typename = t	# It is typedef'ed so we don't need to convert.
+		typename = typedefDict[t].attrib.get("typename")	# It is typedef'ed so we don't need to convert.
 	elif t in typeDict:
 		typename = typeDict[t]
 	else:
@@ -82,7 +82,6 @@ def GetTypeName(t: str, dicts):
 		typename = t
 
 	return [isConst, typename, isPtr, isArray, isBitfield]
-
 
 def WriteType(f, name: str, t: str, dicts):
 	[isPtr,tstr] = GetTypeString(name, t, dicts)
