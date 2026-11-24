@@ -195,57 +195,30 @@ static void real_tests(void)
 		vst_unload_fonts(h, 0);
 	}
 
-	// Cell array of a black/white area. Not all drivers implement it.
-	// The ROM VDIs (TOS 2.06, EmuTOS) overwrite memory in vq_cellarray, also when called directly.
-	if (!v_nvdi)
-	{
-		t_skip("vq_cellarray", "the ROM VDI corrupts memory in vq_cellarray");
-		return;
-	}
+	// Cell array of a black/white area. None of the drivers here implement it (nothing is returned),
+	// but it must not disturb anything.
 	v_scr_begin();
 	short x = v_ox, y = v_oy;
 	v_clear(x, y, 8, 4);
 	vr_recfl(h, W(x, y, x + 3, y + 3));
 	t_run("vq_cellarray");
-	short col[16], el = -1, rows = -1, st = -1;
-	for (int i = 0; i < 16; i++) col[i] = -1;
-	// Ask the VDI directly first: the binding hands it a 16 word dummy array for intout.
-	static V_RAW raw;
-	memset(&raw, 0, sizeof(raw));
-	raw.contrl[0] = 27;
-	raw.contrl[1] = 2;
-	raw.contrl[6] = h;
-	raw.contrl[7] = 8;
-	raw.contrl[8] = 4;
-	memcpy(raw.ptsin, W(x, y + 3, x + 7, y), 8);
-	for (int i = 0; i < 300; i++) raw.intout[i] = 0x7e7e;
-	v_raw(&raw);
-	int written = 0;
-	for (int i = 0; i < 300; i++)
+	struct { short before[4]; short col[32]; short after[4]; } ca;
+	for (int i = 0; i < 40; i++) ((short*)&ca)[i] = CANARY;
+	short el = -1, rows = -1, st = -1, changed = 0;
+	v_spy();
+	vq_cellarray(h, W(x, y + 3, x + 7, y), 8, 4, &el, &rows, &st, ca.col);
+	v_off();
+	for (int i = 0; i < 4; i++) changed |= ca.before[i] != CANARY || ca.after[i] != CANARY;
+	t_check(!changed, "vq_cellarray", "words around colarray untouched");
+	if (v_rec[0].nintout == 0)
 	{
-		if (raw.intout[i] != 0x7e7e) written = i + 1;
-	}
-	if (written > 16)
-	{
-		t_check(0, "vq_cellarray", "the VDI writes %d intout words (contrl[4] = %d), more than the binding's 16 word dummy array, not called",
-			written, raw.contrl[4]);
-		v_scr_end();
-		return;
-	}
-	if (raw.contrl[9] <= 0)
-	{
-		t_skip("vq_cellarray", "not implemented by the driver (direct call: elements %d rows %d, %d intout words)", raw.contrl[9], raw.contrl[10], written);
-		v_scr_end();
-		return;
-	}
-	vq_cellarray(h, W(x, y + 3, x + 7, y), 8, 4, &el, &rows, &st, col);
-	if (0)
-	{
+		v_words("vq_cellarray", "el_used, rows_used, status (not implemented)", W(el, rows, st), W(0, 0, 0), 3);
+		t_skip("vq_cellarray", "not implemented by the driver (no intout words)");
 	}
 	else
 	{
-		t_check(el == 8 && rows == 4 && col[0] == 1 && col[4] == 0, "vq_cellarray", "elements %d rows %d status %d, row 0: %d %d %d %d %d %d %d %d",
-			el, rows, st, col[0], col[1], col[2], col[3], col[4], col[5], col[6], col[7]);
+		t_check(el == 8 && rows == 4 && ca.col[0] == 1 && ca.col[4] == 0, "vq_cellarray", "elements %d rows %d status %d, row 0: %d %d %d %d %d %d %d %d",
+			el, rows, st, ca.col[0], ca.col[1], ca.col[2], ca.col[3], ca.col[4], ca.col[5], ca.col[6], ca.col[7]);
 	}
 	v_scr_end();
 }

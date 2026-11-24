@@ -619,8 +619,18 @@ static void real_tests(void)
 
 	// Set the colour table back, then the default one.
 	t_run("v_ctab");
-	r = v_ctab(h, &ct.t);
-	t_check(r != 0, "v_ctab", "v_ctab() = %d", r);
+	COLOR_ENTRY old5 = ct.c[5];
+	ct.c[5].rgb.red = 0xffff;
+	ct.c[5].rgb.green = 0;
+	ct.c[5].rgb.blue = 0xffff;
+	r = v_ctab(h, &ct.t);		// returns the number of colours set
+	COLOR_ENTRY e5;
+	memset(&e5, 0x55, sizeof(e5));
+	vq_ctab_entry(h, 5, &e5);
+	t_check(r == ct.t.no_colors && e5.rgb.red == 0xffff && e5.rgb.green == 0 && e5.rgb.blue == 0xffff, "v_ctab",
+		"v_ctab() = %d, entry 5 = %04x %04x %04x", r, e5.rgb.red, e5.rgb.green, e5.rgb.blue);
+	ct.c[5] = old5;
+	v_ctab(h, &ct.t);
 	t_run("v_ctab_entry");
 	r = v_ctab_entry(h, ci, CSPACE_RGB, &black);
 	CHECK_EQ("v_ctab_entry", r, 1);
@@ -644,7 +654,15 @@ static void real_tests(void)
 		}
 		t_run("v_delete_ctab");
 		r = v_delete_ctab(h, nt);
-		t_check(1, "v_delete_ctab", "v_delete_ctab() = %d", r);
+		if (r == 0)
+		{
+			// Its handler for 206/9 calls the inverse table routine (the one behind v_delete_itab).
+			t_skip("v_delete_ctab", "NVDI can't delete colour tables (returns 0, frees nothing)");
+		}
+		else
+		{
+			CHECK_EQ("v_delete_ctab", r, 1);
+		}
 	}
 
 	// v_setrgb sets the foreground colour of a group: 1 = fill.
@@ -829,12 +847,16 @@ static void real_tests(void)
 	v_scr_begin();
 	vst_font(h, vid);
 	vst_arbpt(h, 20, &a, &b, &c, &d);
+	vst_alignment(h, 0, 5, &dummy, &dummy);		// v_scr_begin sets the default
 	short x = v_ox, y = v_oy;
+	v_clear(x, y, 100, 40);
+	v_ftext(h, x + 2, y + 2, "Hi");
+	int narrow = v_count_ink(x, y, 100, 40);
 	t_run("v_ftext_wide");
 	v_clear(x, y, 100, 40);
 	v_ftext_wide(h, x + 2, y + 2, (unsigned short*)W('H', 'i', 0));
 	int ink = v_count_ink(x, y, 100, 40);
-	t_check(ink > 0, "v_ftext_wide", "\"Hi\": %d pixels", ink);
+	t_check(ink > 20 && ink == narrow, "v_ftext_wide", "\"Hi\": %d pixels, v_ftext %d", ink, narrow);
 	t_run("vqt_extent_wide");
 	short e1[8], e2[8];
 	vqt_extent_wide(h, (unsigned short*)W('H', 'i', 0), e1);

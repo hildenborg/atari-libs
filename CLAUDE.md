@@ -73,5 +73,5 @@ Also supports NVDI and other newer APIs.
   In spy mode the real VDI writes into sentinel buffers of the hook, which counts the words actually written: TOS and
   EmuTOS write more than `contrl[4]` says (e.g. 34 words for `vqt_name`). Real tests read the screen memory directly
   (geometry from Line-A). ste-tos206-nvdi also tests GDOS/vector fonts, NVDI colour/bitmap calls and a META.SYS metafile.
-  The ROM VDIs (TOS, EmuTOS) corrupt memory in `vq_cellarray` and have quirks (0 based modes in `vqin_mode`, type-1 in
-  `vqm_attributes`); `v_show_c` with reset 0 shows at once, reset 1 undoes one `v_hide_c`.
+  The ROM VDIs (TOS, EmuTOS) have quirks (0 based modes in `vqin_mode`, type-1 in `vqm_attributes`), no driver here
+  implements `vq_cellarray`, and NVDI's `v_delete_ctab` never works (its handler calls the inverse table routine); `v_show_c` with reset 0 shows at once, reset 1 undoes one `v_hide_c`.

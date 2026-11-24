@@ -907,6 +907,10 @@
 			<arg name="xyarray" dst="ptsin" longs="2" type="int16_t*" />
 			<arg name="row_length" dst="contrl" idx="7" type="int16_t" />
 			<arg name="num_rows" dst="contrl" idx="8" type="int16_t" />
+			<!-- Drivers that don't implement this leave contrl[9..11] alone. -->
+			<arg value="0" dst="contrl" idx="9" type="int16_t" />
+			<arg value="0" dst="contrl" idx="10" type="int16_t" />
+			<arg value="0" dst="contrl" idx="11" type="int16_t" />
 			<arg name="el_used" src="contrl" idx="9" type="int16_t*" />
 			<arg name="rows_used" src="contrl" idx="10" type="int16_t*" />
 			<arg name="status" src="contrl" idx="11" type="int16_t*" />

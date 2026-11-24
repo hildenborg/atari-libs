@@ -3,33 +3,62 @@
 #	Copyright (C) 2026 Mikael Hildenborg
 #	SPDX-License-Identifier: MIT
 
+# Usage: build.sh [TOOLKIT_PATH TARGET GEN_PATH BUILD_THREADS]
+# Generates, builds and installs the libraries for all multilibs of the toolchain.
+# Nothing is installed unless everything could be built.
+
+set -euo pipefail
+
+die() {
+	echo "build.sh: error: $*" >&2
+	exit 1
+}
+
 if (( $# == 4 )); then
-	export MULTILIB_TOOLKIT=$1
-	export MULTILIB_TARGET=$2
-	export GEN_PATH=$(readlink -f $3)
+	MULTILIB_TOOLKIT=$1
+	MULTILIB_TARGET=$2
+	GEN_PATH=$3
 	BUILD_THREADS=$4
-else
-	export MULTILIB_TOOLKIT=$HOME/toolchain/m68k-atari-elf
-	export MULTILIB_TARGET=m68k-atari-elf
-	export GEN_PATH=$(readlink -f gen)
+elif (( $# == 0 )); then
+	MULTILIB_TOOLKIT=$HOME/toolchain/m68k-atari-elf
+	MULTILIB_TARGET=m68k-atari-elf
+	GEN_PATH=gen
 	BUILD_THREADS=1
+else
+	echo "Usage: $0 [TOOLKIT_PATH TARGET GEN_PATH BUILD_THREADS]" >&2
+	exit 2
 fi
 
-if [ ! -d $GEN_PATH ]; then
-	mkdir -p $GEN_PATH
-fi
+[ -n "$GEN_PATH" ] || die "GEN_PATH is empty"
+[[ $BUILD_THREADS =~ ^[1-9][0-9]*$ ]] || die "BUILD_THREADS must be a positive number, not '$BUILD_THREADS'"
+[ -f gen.py ] || die "gen.py not found, run build.sh from the repository root"
+command -v python3 > /dev/null || die "python3 not found"
+command -v make > /dev/null || die "make not found"
 
-python3 ./gen.py $GEN_PATH $MULTILIB_TARGET
+# -m: also works when the directory doesn't exist yet.
+GEN_PATH=$(realpath -m -- "$GEN_PATH") || die "bad GEN_PATH"
+GCC=$MULTILIB_TOOLKIT/bin/$MULTILIB_TARGET-gcc
+[ -x "$GCC" ] || die "compiler not found: $GCC"
+export MULTILIB_TOOLKIT MULTILIB_TARGET GEN_PATH
 
-multiliblist="$($MULTILIB_TOOLKIT/bin/$MULTILIB_TARGET-gcc -print-multi-lib)"
-while IFS= read -r line 
-do
-	semi=$(expr index "$line" ";")
-	path=${line:0:$semi-1}
-	flags=${line:$semi}
-	flags=${flags//"@"/" -"}
-	export MULTILIB_PATH=$path
-	export MULTILIB_FLAGS=$flags
-	make -j$BUILD_THREADS
-	make install
-done <<< "$multiliblist"
+mkdir -p -- "$GEN_PATH" || die "cannot create $GEN_PATH"
+python3 ./gen.py "$GEN_PATH" "$MULTILIB_TARGET" || die "gen.py failed"
+
+# Each line is <path>;<flags>, with the flags separated by @.
+multiliblist=$("$GCC" -print-multi-lib) || die "$GCC -print-multi-lib failed"
+[ -n "$multiliblist" ] || die "$GCC -print-multi-lib returned no multilibs"
+mapfile -t multilibs <<< "$multiliblist"
+
+# Run make for all multilibs, with the given make arguments.
+make_multilibs() {
+	local line flags
+	for line in "${multilibs[@]}"; do
+		flags=${line#*;}
+		export MULTILIB_PATH=${line%%;*}
+		export MULTILIB_FLAGS=${flags//@/ -}
+		make "$@" || die "make $* failed for multilib '$MULTILIB_PATH'"
+	done
+}
+
+make_multilibs -j"$BUILD_THREADS" all
+make_multilibs install

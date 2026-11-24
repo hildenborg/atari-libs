@@ -422,13 +422,13 @@ unsigned short v_clear(short x, short y, short w, short h)
 	short xy[4] = { x, y, (short)(x + w - 1), (short)(y + h - 1) };
 	short attr[5];
 	vqf_attributes(v_handle, attr);
-	short mode = vswr_mode(v_handle, MD_REPLACE);
+	vswr_mode(v_handle, MD_REPLACE);
 	vsf_interior(v_handle, FIS_SOLID);
 	vsf_color(v_handle, 0);
 	vr_recfl(v_handle, xy);
 	vsf_interior(v_handle, attr[0]);
 	vsf_color(v_handle, attr[1]);
-	vswr_mode(v_handle, mode);
+	vswr_mode(v_handle, attr[3]);
 	white = v_pixel(x, y);
 	return white;
 }

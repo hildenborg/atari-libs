@@ -71,14 +71,14 @@ clean:
 
 install:
 ifndef MULTILIB_PATH
-	$(shell yes | cp -rf $(GEN_PATH)/def_types.h $(TOOLKIT_INC)/def_types.h)
-	$(shell yes | cp -rf $(GEN_PATH)/tos.h $(TOOLKIT_INC)/tos.h)
-	$(shell yes | cp -rf $(GEN_PATH)/aes.h $(TOOLKIT_INC)/aes.h)
-	$(shell yes | cp -rf $(GEN_PATH)/aes_def.h $(TOOLKIT_INC)/aes_def.h)
-	$(shell yes | cp -rf $(GEN_PATH)/vdi.h $(TOOLKIT_INC)/vdi.h)
-	$(shell yes | cp -rf $(GEN_PATH)/vdi_def.h $(TOOLKIT_INC)/vdi_def.h)
+	cp -f $(GEN_PATH)/def_types.h $(TOOLKIT_INC)/def_types.h
+	cp -f $(GEN_PATH)/tos.h $(TOOLKIT_INC)/tos.h
+	cp -f $(GEN_PATH)/aes.h $(TOOLKIT_INC)/aes.h
+	cp -f $(GEN_PATH)/aes_def.h $(TOOLKIT_INC)/aes_def.h
+	cp -f $(GEN_PATH)/vdi.h $(TOOLKIT_INC)/vdi.h
+	cp -f $(GEN_PATH)/vdi_def.h $(TOOLKIT_INC)/vdi_def.h
 endif
-	$(shell yes | cp -rf $(BUILD_PATH)/libtos.a $(TOOLKIT_LIB)/libtos.a)
-	$(shell yes | cp -rf $(BUILD_PATH)/libaes.a $(TOOLKIT_LIB)/libaes.a)
-	$(shell yes | cp -rf $(BUILD_PATH)/libvdi.a $(TOOLKIT_LIB)/libvdi.a)
+	cp -f $(BUILD_PATH)/libtos.a $(TOOLKIT_LIB)/libtos.a
+	cp -f $(BUILD_PATH)/libaes.a $(TOOLKIT_LIB)/libaes.a
+	cp -f $(BUILD_PATH)/libvdi.a $(TOOLKIT_LIB)/libvdi.a
 	

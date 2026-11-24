@@ -401,9 +401,25 @@ static void real_tests(void)
 	t_check(ink > 30, "v_ftext", "\"Hello\": %d pixels", ink);
 	t_run("v_ftext_offset");
 	v_clear(x, y, 100, 40);
-	v_ftext_offset(h, x + 2, y + 2, "HH", W(0, 0, 40, 0));
-	int left = v_count_ink(x, y, 30, 40), right = v_count_ink(x + 40, y, 40, 40);
-	t_check(left > 10, "v_ftext_offset", "\"HH\" with offsets 0,0 40,0: %d pixels left, %d right", left, right);
+	// The offset of the first character moves it exactly that far.
+	v_ftext(h, x + 2, y + 2, "H");
+	int plain = v_count_ink(x, y, 30, 40);
+	v_clear(x, y, 100, 40);
+	v_ftext_offset(h, x + 2, y + 2, "H", W(40, 0));
+	int left = v_count_ink(x, y, 40, 40), moved = v_count_ink(x + 40, y, 30, 40);
+	t_check(plain > 10 && left == 0 && moved == plain, "v_ftext_offset", "'H' moved 40 pixels: %d pixels left, %d moved, %d without offset", left, moved, plain);
+	// NVDI adds the offsets up and takes only every second pair: "HI" with pairs 0,0 and 40,0 doesn't put 'I' at 40.
+	v_clear(x, y, 100, 40);
+	v_ftext_offset(h, x + 2, y + 2, "HI", W(0, 0, 40, 0, 0, 0));
+	int second = v_count_ink(x + 40, y, 30, 40);
+	if (second == 0)
+	{
+		t_skip("v_ftext_offset", "NVDI doesn't use the second offset pair for the second character");
+	}
+	else
+	{
+		t_check(second > 5, "v_ftext_offset", "'I' moved to 40: %d pixels", second);
+	}
 
 	t_run("vst_kern");
 	short tr = -1, pr = -1;
